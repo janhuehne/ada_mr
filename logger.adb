@@ -12,6 +12,11 @@ package body Logger is
     Verbose_Mode := false;
   end Disable_Verbose_Mode;
   
+  procedure Put(Item : String) is
+  begin
+    Ada.Text_IO.Put(Item);
+  end Put;
+  
   procedure Put_Line(Item : String) is
   begin
     Ada.Text_IO.Put_Line(Item);

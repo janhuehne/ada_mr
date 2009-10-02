@@ -7,6 +7,8 @@ use Utility;
 with Server;
 with Logger;
 
+with Worker;
+
 package body Master is
   
   task body Master_Task is
@@ -26,7 +28,7 @@ package body Master is
         end Start_Master;
         
         Ada.Text_IO.Put_Line("Starting Master Service");
-        Main_Server.Start(Me);
+        Main_Server.Start;
       or
         accept Split_Data;
         Ada.Text_IO.Put_Line("Split Data!"); 
@@ -75,6 +77,7 @@ package body Master is
           Ada.Text_IO.Put_Line("");
           Ada.Text_IO.Put_Line("  Commands:");
           Ada.Text_IO.Put_Line("    start        Starts the Ada MR Master Server");
+          Ada.Text_IO.Put_Line("    idle-mappers Prints the idle workers");
           Ada.Text_IO.Put_Line("    quit         Exit Ada MR Server Server");
           Ada.Text_IO.Put_Line("    verbose-on   Enable verbose mode to display log entries");
           Ada.Text_IO.Put_Line("    verbose-off  Disable verbose mode");
@@ -90,6 +93,8 @@ package body Master is
         elsif (Is_Equal(In_String, In_Last, "verbose-off", true)) then
           Logger.Disable_Verbose_Mode;
           Ada.Text_IO.Put_Line("Verbose mode: Off");
+        elsif (Is_Equal(In_String, In_Last, "idle-mappers", true)) then
+          Worker.Print_All_Idle_Mapper;
         else
           Ada.Text_IO.Put_Line("Unknown command: " & In_String(1..In_Last));
         end if;

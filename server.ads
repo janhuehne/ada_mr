@@ -1,6 +1,9 @@
 with GNAT.Sockets;
 use GNAT.Sockets;
 
+with Master;
+with Echo;
+
 package Server is
   
   protected Aborted is
@@ -12,16 +15,6 @@ package Server is
     Abort_Master  : Boolean := false;
     Abort_Clients : Boolean := false;
   end Aborted;
-  
-  
-  type Echo; 
-  type Echo_Access is access Echo;
-  --
-  task type Echo is
-    entry Start (N_Sock : IN Socket_Type; Self : IN Echo_Access);
-    entry ReStart (N_Sock : IN Socket_Type);
-  end Echo;
-  
   
 --  type Task_Array is array ( Index ) of Echo_Access;
 --  
@@ -40,7 +33,7 @@ package Server is
   
   Server          : Socket_Type;
   New_Sock        : Socket_Type;
-  Slave           : Echo_Access;
+  Slave           : Echo.Echo_Access;
   Addr            : Sock_Addr_Type;
   Peer_Addr       : Sock_Addr_Type;
   Avail           : Boolean := False;
@@ -52,7 +45,7 @@ package Server is
   Accept_Status   : Selector_Status;
   
   task type P_Server is
-    entry Start(Master_Task : Master.Master_Task_Access);
+    entry Start;
     entry Stop;
   end P_Server;
   

@@ -1,5 +1,5 @@
 with Ada.Containers.Vectors;
-with Server;
+with Echo;
 
 generic
   type My_Job is private;
@@ -8,26 +8,12 @@ generic
   
 package Master is
   
-  type Worker_Type is (Mapper, Reducer);
-  
-  type Worker is record
-    Identifier : String(1..10);
-    W_Type     : Worker_Type;
-    Echo       : Server.Echo_Access;
-  end record;
-  
-  type Worker_Access is access Worker;
   
   package Job_Vector is new Ada.Containers.Vectors(
     Element_Type => My_Job, 
     Index_Type => Positive
   );
-  
-  package Worker_Vector is new Ada.Containers.Vectors(
-    Element_Type => Worker_Access,
-    Index_Type => Positive
-  );
-  
+    
   type Master_Task;
   type Master_Task_Access is access Master_Task;
   
@@ -46,11 +32,5 @@ package Master is
   end Master_Console;
   
   Unprocessed_Jobs : Job_Vector.Vector;
-  
-  Idle_Mapper   : Worker_Vector.Vector;
-  Active_Mapper : Worker_Vector.Vector;
-  
-  Active_Reducer : Worker_Vector.Vector;
-  
   
 end Master;

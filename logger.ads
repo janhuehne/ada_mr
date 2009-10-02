@@ -3,6 +3,7 @@ package Logger is
   procedure Enable_Verbose_Mode;
   procedure Disable_Verbose_Mode;
     
+  procedure Put(Item : String);
   procedure Put_Line(Item : String);
   procedure New_Line(Item : String);
 

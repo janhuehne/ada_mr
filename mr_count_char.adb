@@ -9,7 +9,7 @@ begin
     declare
         M : Master_MR.Master_Task_Access := new Master_MR.Master_Task;
         M_C : Master_MR.Master_Console;
-        J : Char_Job.Job_Vector.Vector;
+--        J : Char_Job.Job_Vector.Vector;
     begin
 --      M.Import_Jobs(J);
       M_C.Start(M);
