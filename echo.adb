@@ -15,6 +15,8 @@ package body Echo is
       Input_Set : Socket_Set_Type;
       WSet : Socket_Set_Type;
       Input_Status : Selector_Status;
+      
+      Initialization_Complete : Boolean := false;
     begin 
       --set up selector 
       Create_Selector(Input_Selector);
@@ -66,14 +68,27 @@ package body Echo is
                     Xml_Root : Xml.Node_Access := Xml_Parser.Parse(Content => Str);
                     Client_Type : String := Xml.Get_Value(Xml_Root, "client-type");
                   begin
-                    if Utility.Is_Equal(Client_Type, "Mapper") or Utility.Is_Equal(Client_Type, "Reducer") then
-                      Worker.Add_New_Worker(
-                        Client_Type,
-                        Xml.Get_Value(Xml_Root, "client-identifier"),
-                        Me
-                      );
-                    else
-                      Ada.Text_IO.Put_Line("Mist. Was anderes!");
+                    
+                    if Utility.Is_Equal(Xml.Get_Tag(Xml_Root), "adamr-client-initialization") then
+                      if Initialization_Complete = false then
+                        if Utility.Is_Equal(Client_Type, "Mapper") or Utility.Is_Equal(Client_Type, "Reducer") then
+                          Worker.Add_New_Worker(
+                            Client_Type,
+                            Xml.Get_Value(Xml_Root, "client-identifier"),
+                            Me
+                          );
+                          
+                          Initialization_Complete := true;
+                        else
+                          String'Output(S, "Unknow worker type tries to register.");
+                          Ada.Text_IO.Put_Line("Unknow worker type tries to register.");
+                          exit;
+                        end if;
+                      else
+                        String'Output(S, "Client already registered.");
+                        Ada.Text_IO.Put_Line("Client already registered.");
+                      end if;
+                      
                     end if;
                   end;
 

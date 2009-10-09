@@ -62,4 +62,9 @@ package body Xml is
     end if;
   end Get_Value;
   
+  function Get_Tag(Root : Node_Access) return String is
+  begin
+    return ASU.To_String(Root.Tag);
+  end Get_Tag;
+  
 end Xml;

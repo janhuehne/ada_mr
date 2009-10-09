@@ -28,8 +28,9 @@ package Worker is
   procedure Print_All_Idle_Mapper;
   
   Invalid_Worker : exception;
+    
   
-private
+--private
 
   
   Idle_Mapper   : Worker_Vector.Vector;

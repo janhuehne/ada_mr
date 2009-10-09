@@ -26,11 +26,18 @@ package Master is
     entry Say_Hello;
   end Master_Task;
   
+  type Job_Management_Task;
+  type Job_Management_Task_Access is access Job_Management_Task;
+  
+  task type Job_Management_Task;
+  
   
   task type Master_Console is
     entry Start(M_Arg : Master_Task_Access);
   end Master_Console;
   
   Unprocessed_Jobs : Job_Vector.Vector;
+  
+  procedure Add_New_Job(Job : My_Job);
   
 end Master;

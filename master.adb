@@ -48,6 +48,25 @@ package body Master is
     end loop;
   end Master_Task;
   
+  task body Job_Management_Task is
+  begin
+    Ada.Text_IO.Put_Line("Job Management started.");
+    
+    loop
+      exit when Server.Aborted.Check_Master = true;
+      
+      if not Unprocessed_Jobs.Is_Empty and not Worker.Idle_Mapper.Is_Empty then
+        Ada.Text_IO.Put_Line("Wir haben was zu tun! Jobs und Mapper sind da.");
+      end if;
+      
+--      Ada.Text_IO.Put_Line(
+--        Unprocessed_Jobs.Length'Img & " -- " & Worker.Idle_Mapper.Length'Img
+--      );
+      
+      
+    end loop;    
+  end Job_Management_Task;
+  
   
   task body Master_Console is
     In_String       : String(1..20);
@@ -81,10 +100,11 @@ package body Master is
           Ada.Text_IO.Put_Line("    quit         Exit Ada MR Server Server");
           Ada.Text_IO.Put_Line("    verbose-on   Enable verbose mode to display log entries");
           Ada.Text_IO.Put_Line("    verbose-off  Disable verbose mode");
+          Ada.Text_IO.Put_Line("    jobs         Number of unprocessed jobs");
           Ada.Text_IO.Put_Line("    help         Displays this message");
           Ada.Text_IO.Put_Line("   ");
-          Ada.Text_IO.Put_Line("");
-          Ada.Text_IO.Put_Line("");
+          Ada.Text_IO.New_Line;
+          Ada.Text_IO.New_Line;
           
         elsif (Is_Equal(In_String, In_Last, "verbose-on", true)) then
           Logger.Enable_Verbose_Mode;
@@ -95,6 +115,8 @@ package body Master is
           Ada.Text_IO.Put_Line("Verbose mode: Off");
         elsif (Is_Equal(In_String, In_Last, "idle-mappers", true)) then
           Worker.Print_All_Idle_Mapper;
+        elsif (Is_Equal(In_String, In_Last, "jobs", true)) then
+          Ada.Text_IO.Put_Line(Unprocessed_Jobs.Length'Img & " unprocessed jobs");
         else
           Ada.Text_IO.Put_Line("Unknown command: " & In_String(1..In_Last));
         end if;
@@ -104,5 +126,10 @@ package body Master is
     end loop;
     
   end Master_Console;
+  
+  procedure Add_New_Job(Job : My_Job) is
+  begin
+    Unprocessed_Jobs.Append(Job);
+  end Add_New_Job;
   
 end Master;

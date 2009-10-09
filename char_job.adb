@@ -1,4 +1,4 @@
-with Ada.Strings.Unbounded;
+with Ada.Text_IO;
 
 package body Char_Job is
   
@@ -24,10 +24,33 @@ package body Char_Job is
     return J;
   end From_Xml;
   
-  function Split_Job(Job : in Main_Job) return Job_Vector.Vector is
-    Jobs : Job_Vector.Vector;
+  procedure Split_Data_Into_Jobs(Process : Add_Job_Procedure) is
+    First : Natural := Complete_String'First;
+    Last  : Natural;
+    Step  : Natural := 10;
   begin
-    return Jobs;
-  end Split_Job;
+    
+    loop
+      Last := First + Step - 1;
+      
+      if Last > Complete_String'Last then
+        Last := Complete_String'Last;
+      end if;
+      
+      declare
+        Job : My_Job;
+      begin
+        Job.Computable_String := ASU.To_Unbounded_String(Complete_String(First .. Last));
+        Job.Length := Last - First + 1;
+        
+        Process(Job);
+      end;
+      
+      First := Last + 1;
+      
+      exit when Last = Complete_String'Last;
+    end loop;
+    
+  end Split_Data_Into_Jobs;
   
 end Char_Job;
