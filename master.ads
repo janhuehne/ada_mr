@@ -5,6 +5,7 @@ generic
   type My_Job is private;
   with function From_Xml(Xml : in String) return My_Job;
   with function To_Xml(Job : in My_Job) return String;
+  with function Get_Job_id(Job : in My_Job) return Natural;
   
 package Master is
   
@@ -26,10 +27,10 @@ package Master is
     entry Say_Hello;
   end Master_Task;
   
-  type Job_Management_Task;
-  type Job_Management_Task_Access is access Job_Management_Task;
-  
-  task type Job_Management_Task;
+--  type Job_Management_Task;
+--  type Job_Management_Task_Access is access Job_Management_Task;
+--  
+--  task type Job_Management_Task;
   
   
   task type Master_Console is
@@ -37,7 +38,9 @@ package Master is
   end Master_Console;
   
   Unprocessed_Jobs : Job_Vector.Vector;
+--  Jobs_In_Progress : Job_Vector.Vector;
+--  Processed_Jobs   : Job_Vector.Vector;
   
   procedure Add_New_Job(Job : My_Job);
-  
+  function Get_Next_Job(Remove_From_Vector : Boolean := true) return My_Job;
 end Master;

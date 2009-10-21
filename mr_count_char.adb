@@ -8,7 +8,7 @@ begin
   
   declare
     M : Master_MR.Master_Task_Access := new Master_MR.Master_Task;
-    M_J : Master_MR.Job_Management_Task_Access := new Master_MR.Job_Management_Task;
+--    M_J : Master_MR.Job_Management_Task_Access := new Master_MR.Job_Management_Task;
     M_C : Master_MR.Master_Console;
     
   begin

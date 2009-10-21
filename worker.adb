@@ -38,6 +38,16 @@ package body Worker is
   end Add_New_Worker;
   
   
+  procedure Add_New_Worker(Xml_Node : Xml.Node_Access; W_Echo : Echo.Echo_Access) is
+  begin
+    Add_New_Worker(
+      Xml.Get_Value(Xml_Node, "type"),
+      Xml.Get_Value(Xml_Node, "identifier"),
+      W_Echo
+    );
+  end Add_New_Worker;
+  
+  
   procedure Print_Worker(C : Worker_Vector.Cursor) is
   begin
     To_String(Worker_Vector.Element(C).all);
@@ -70,4 +80,15 @@ package body Worker is
     Ada.Text_IO.New_Line;
   end Print_All_Idle_Mapper;
   
+  
+  function Get_Idle_Mapper(Remove_From_Vector : Boolean := true) return Worker_Access is
+    Worker_Cursor : Worker_Vector.Cursor := Idle_Mapper.First;
+    Worker        : Worker_Access        := Idle_Mapper.Element(Worker_Vector.To_Index(Worker_Cursor));
+  begin
+    if Remove_From_Vector = true then
+      Idle_Mapper.Delete(Worker_Vector.To_Index(Worker_Cursor));
+    end if;
+    
+    return Worker;
+  end Get_Idle_Mapper;
 end Worker;

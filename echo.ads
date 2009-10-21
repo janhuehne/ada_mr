@@ -1,7 +1,11 @@
 with GNAT.Sockets;
 use GNAT.Sockets;
 
+with Ada.Strings.Unbounded;
+
 package Echo is
+  
+  package ASU renames Ada.Strings.Unbounded;
   
   type Echo; 
   type Echo_Access is access Echo;

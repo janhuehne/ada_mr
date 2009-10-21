@@ -8,6 +8,7 @@ with Server;
 with Logger;
 
 with Worker;
+with Xml_Queue;
 
 package body Master is
   
@@ -28,6 +29,20 @@ package body Master is
         end Start_Master;
         
         Ada.Text_IO.Put_Line("Starting Master Service");
+        
+        declare
+          Cursor : Job_Vector.Cursor := Unprocessed_Jobs.First;
+        begin
+          Ada.Text_IO.Put_Line("  .. Preparing job containers");
+          loop
+            Xml_Queue.Add_Job(Get_Job_Id(Job_Vector.Element(Cursor)), To_Xml(Job_Vector.Element(Cursor)));
+            Job_Vector.Next(Cursor);
+            
+            exit when Job_Vector."="(Cursor, Job_Vector.No_Element);
+          end loop;
+          Ada.Text_IO.Put_Line("      -> " & Xml_Queue.Count_Jobs(Xml_Queue.Pending)'Img & " jobs imported.");
+        end;
+        
         Main_Server.Start;
       or
         accept Split_Data;
@@ -48,24 +63,35 @@ package body Master is
     end loop;
   end Master_Task;
   
-  task body Job_Management_Task is
-  begin
-    Ada.Text_IO.Put_Line("Job Management started.");
-    
-    loop
-      exit when Server.Aborted.Check_Master = true;
-      
-      if not Unprocessed_Jobs.Is_Empty and not Worker.Idle_Mapper.Is_Empty then
-        Ada.Text_IO.Put_Line("Wir haben was zu tun! Jobs und Mapper sind da.");
-      end if;
-      
---      Ada.Text_IO.Put_Line(
---        Unprocessed_Jobs.Length'Img & " -- " & Worker.Idle_Mapper.Length'Img
---      );
-      
-      
-    end loop;    
-  end Job_Management_Task;
+--   task body Job_Management_Task is
+--   begin
+--     Ada.Text_IO.Put_Line("Job Management started.");
+--     
+--     loop
+--       exit when Server.Aborted.Check_Master = true;
+--       
+--       if not Unprocessed_Jobs.Is_Empty and not Worker.Idle_Mapper.Is_Empty then
+--         declare
+--           Next_Job : My_Job               := Get_Next_Job;
+--           Mapper   : Worker.Worker_Access := Worker.Get_Idle_Mapper;
+--         begin
+--           
+-- --          String'Output(Mapper.W_Echo.S, "Jetzt wird mal ein Job ausgeliefert!");
+--           
+--           Jobs_In_Progress.Append(Next_Job);
+--           Worker.Active_Mapper.Append(Mapper);
+--         end;
+--         
+--         Ada.Text_IO.Put_Line("Wir haben was zu tun! Jobs und Mapper sind da.");
+--       end if;
+--       
+-- --      Ada.Text_IO.Put_Line(
+-- --        Unprocessed_Jobs.Length'Img & " -- " & Worker.Idle_Mapper.Length'Img
+-- --      );
+--       
+--       
+--     end loop;    
+--   end Job_Management_Task;
   
   
   task body Master_Console is
@@ -102,7 +128,7 @@ package body Master is
           Ada.Text_IO.Put_Line("    verbose-off  Disable verbose mode");
           Ada.Text_IO.Put_Line("    jobs         Number of unprocessed jobs");
           Ada.Text_IO.Put_Line("    help         Displays this message");
-          Ada.Text_IO.Put_Line("   ");
+          Ada.Text_IO.New_Line;
           Ada.Text_IO.New_Line;
           Ada.Text_IO.New_Line;
           
@@ -116,7 +142,8 @@ package body Master is
         elsif (Is_Equal(In_String, In_Last, "idle-mappers", true)) then
           Worker.Print_All_Idle_Mapper;
         elsif (Is_Equal(In_String, In_Last, "jobs", true)) then
-          Ada.Text_IO.Put_Line(Unprocessed_Jobs.Length'Img & " unprocessed jobs");
+--          Ada.Text_IO.Put_Line(Unprocessed_Jobs.Length'Img & " unprocessed jobs");
+          Xml_Queue.Print_Jobs;
         else
           Ada.Text_IO.Put_Line("Unknown command: " & In_String(1..In_Last));
         end if;
@@ -131,5 +158,16 @@ package body Master is
   begin
     Unprocessed_Jobs.Append(Job);
   end Add_New_Job;
+  
+  function Get_Next_Job(Remove_From_Vector : Boolean := true) return My_Job is
+    Job_Cursor : Job_Vector.Cursor := Unprocessed_Jobs.First;
+    Job        : My_Job            := Unprocessed_Jobs.Element(Job_Vector.To_Index(Job_Cursor));
+  begin
+    if Remove_From_Vector = true then
+      Unprocessed_Jobs.Delete(Job_Vector.To_Index(Job_Cursor));
+    end if;
+    
+    return Job;
+  end Get_Next_Job;
   
 end Master;

@@ -4,6 +4,7 @@ with Xml;
 with Xml_Parser;
 with Server;
 with Worker;
+with Xml_Queue;
 
 package body Echo is
   
@@ -59,44 +60,68 @@ package body Echo is
                 Str : String := String'Input(S);
               begin
                 Ada.Text_IO.Put_Line(Str);
-
+                
                 if Utility.Starts_With(Str, "<?xml") then
                   Ada.Text_IO.Put_Line("XML found!");
                   String'Output(S, "XML received: " & Str);
-
+                  
                   declare
-                    Xml_Root : Xml.Node_Access := Xml_Parser.Parse(Content => Str);
-                    Client_Type : String := Xml.Get_Value(Xml_Root, "client-type");
+                    Xml_Root    : Xml.Node_Access := Xml_Parser.Parse(Content => Str);
+--                    Xml_Details : Xml.Node_Access := Xml.Find_Child_With_Tag(Xml_Root, "details");
                   begin
                     
-                    if Utility.Is_Equal(Xml.Get_Tag(Xml_Root), "adamr-client-initialization") then
+                    if Utility.Is_Equal(Xml.Get_Tag(Xml_Root), "adamr-client") then
+                      
                       if Initialization_Complete = false then
-                        if Utility.Is_Equal(Client_Type, "Mapper") or Utility.Is_Equal(Client_Type, "Reducer") then
-                          Worker.Add_New_Worker(
-                            Client_Type,
-                            Xml.Get_Value(Xml_Root, "client-identifier"),
-                            Me
-                          );
-                          
+                        
+                        if Utility.Is_Equal(Xml.Get_Value(Xml_Root, "command"), "initialization") then
+                          Worker.Add_New_Worker(Xml.Find_Child_With_Tag(Xml_Root, "details"), Me);
                           Initialization_Complete := true;
                         else
-                          String'Output(S, "Unknow worker type tries to register.");
-                          Ada.Text_IO.Put_Line("Unknow worker type tries to register.");
-                          exit;
+                          Ada.Text_IO.Put_Line("Initialization missing.");
+                          String'Output(S, "Initialization missing.");
                         end if;
+                        
                       else
-                        String'Output(S, "Client already registered.");
-                        Ada.Text_IO.Put_Line("Client already registered.");
+                        
+                        if Utility.Is_Equal(Xml.Get_Value(Xml_Root, "command"), "jobrequest") then
+                          
+                          if Xml_Queue.Count_Jobs(Xml_Queue.Pending) > 0 then
+                          
+                            declare
+                              Job : Xml_Queue.Xml_Job_Entry_Access := Xml_Queue.Find_First_Job_By_State(Xml_Queue.Pending);
+                            begin
+                              Xml_Queue.Change_Job_State(Job, Xml_Queue.In_Progress);
+                              String'Output(S, ASU.To_String(Job.Xml));
+                            end;
+                          else
+                            String'Output(S, "<?xml version=""1.0"" ?><adamr-master><sysctrl><message>quit</sysctrl></adamr-master>");
+                          end if;
+                            
+                        else
+                          Ada.Text_IO.Put_Line("Unknown command.");
+                          String'Output(S, "Unknown command.");
+                        end if;
+                        
                       end if;
-                      
-                    end if;
-                  end;
 
+                    end if;
+                  
+                  exception
+                    when Xml.Node_Not_Found =>
+                      Ada.Text_IO.Put_Line("Can't play with the xml request!");
+                      
+                    when Worker.Invalid_Worker =>
+                      String'Output(S, "Unknow worker type tries to register.");
+                      Ada.Text_IO.Put_Line("Unknow worker type tries to register.");
+                      exit;
+                  end;
+                  
                 else
                   Ada.Text_IO.Put_Line("Unknown command");
                   String'Output(S, "Unknown command: " & Str);
                 end if;
-  --              
+
               end;
             end if;
 

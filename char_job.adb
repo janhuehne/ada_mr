@@ -7,6 +7,9 @@ package body Char_Job is
   begin
     Ada.Strings.Unbounded.Append(Xml_String, "<?xml version=""1.0"" ?>");
     Ada.Strings.Unbounded.Append(Xml_String, "<mr-job>");
+      Ada.Strings.Unbounded.Append(Xml_String, "<job-id>");
+        Ada.Strings.Unbounded.Append(Xml_String, Job.Job_Id'Img);
+      Ada.Strings.Unbounded.Append(Xml_String, "</job-id>");
       Ada.Strings.Unbounded.Append(Xml_String, "<computable-string>");
         Ada.Strings.Unbounded.Append(Xml_String, Job.Computable_String);
       Ada.Strings.Unbounded.Append(Xml_String, "</computable-string>");
@@ -24,6 +27,11 @@ package body Char_Job is
     return J;
   end From_Xml;
   
+  function Get_Job_Id(Job : My_Job) return Natural is
+  begin
+    return Job.Job_Id;
+  end Get_Job_Id;
+  
   procedure Split_Data_Into_Jobs(Process : Add_Job_Procedure) is
     First : Natural := Complete_String'First;
     Last  : Natural;
@@ -40,6 +48,7 @@ package body Char_Job is
       declare
         Job : My_Job;
       begin
+        Job.Job_Id := Get_Next_Job_Counter;
         Job.Computable_String := ASU.To_Unbounded_String(Complete_String(First .. Last));
         Job.Length := Last - First + 1;
         
@@ -52,5 +61,15 @@ package body Char_Job is
     end loop;
     
   end Split_Data_Into_Jobs;
+  
+  function Get_Next_Job_Counter(Auto_Inc : Boolean := true) return Natural is
+    Return_Value : Natural := Job_Counter;
+  begin
+    if Auto_Inc = true then
+      Job_Counter := Job_Counter + 1;
+    end if;
+      
+    return Return_Value;
+  end Get_Next_Job_Counter;
   
 end Char_Job;
