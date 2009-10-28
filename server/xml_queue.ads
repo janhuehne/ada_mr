@@ -5,6 +5,7 @@ with Ada.Containers.Vectors;
 package Xml_Queue is
   
   Job_Not_Found : Exception;
+  Invalid_Job_State : Exception;
   
   package ASU renames Ada.Strings.Unbounded;
   
@@ -29,6 +30,10 @@ package Xml_Queue is
   procedure Change_Job_State(Job_Id : Natural; New_State : Job_State);
   
   procedure Change_Job_State(Job : Xml_Job_Entry_Access; New_State : Job_State);
+    
+  procedure Change_Job_State(Job_Id : String; New_State : String);
+  
+  function Get_Job_State(Job_Id : Integer) return String;
   
   procedure Print_Jobs;
   

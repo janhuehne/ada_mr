@@ -72,4 +72,13 @@ package body Char_Job is
     return Return_Value;
   end Get_Next_Job_Counter;
   
+  procedure Print_Job(Job : in My_Job; Get_State : Get_State_Function) is
+  begin
+    Ada.Text_IO.Put(Job.Job_Id'Img);
+    Ada.Text_IO.Put(ASU.To_String(Job.Computable_String));
+    Ada.Text_IO.Put(Job.Responsible_Reducer);
+    Ada.Text_IO.Put(Get_State(Job.Job_Id));
+    Ada.Text_IO.New_Line;
+  end Print_Job;
+  
 end Char_Job;

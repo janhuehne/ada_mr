@@ -15,6 +15,8 @@ package Char_Job is
     
   type Add_Job_Procedure is access procedure(Job : My_Job);
   
+  type Get_State_Function is access function(Job_Id: Natural) return String;
+  
     
   package Job_Vector is new Ada.Containers.Vectors(
     Element_Type => My_Job, 
@@ -31,6 +33,9 @@ package Char_Job is
   Complete_String : String := "abcdefghijklmnopqrstuvwxyz-abcdefghijklmnopqrstuvwxyz";
   
   function Get_Next_Job_Counter(Auto_Inc : Boolean := true) return Natural;
+  
+  procedure Print_Job(Job : in My_Job; Get_State : Get_State_Function);
+  
   
   
   Job_Counter : Natural := 1;

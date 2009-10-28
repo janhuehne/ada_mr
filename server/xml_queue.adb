@@ -1,4 +1,5 @@
 with Ada.Text_IO;
+with Utility;
 
 package body Xml_Queue is
   
@@ -93,6 +94,23 @@ package body Xml_Queue is
   end Change_Job_State;
   
   
+  procedure Change_Job_State(Job_Id : String; New_State : String) is
+    State : Job_State;
+  begin
+    null;
+    if Utility.Is_Equal(New_State, "Pending", true) then
+      State := Pending;
+    elsif Utility.Is_Equal(New_State, "In_Progress", true) then
+      State := In_Progress;
+    elsif Utility.Is_Equal(New_State, "Done", true) then
+      State := Done;
+    else
+      raise Invalid_Job_State;
+    end if;
+    
+    Change_Job_State(Integer'Value(Job_Id), State);
+  end Change_Job_State;
+  
   procedure Print_Jobs is
     
     procedure Print(Position : Unbounded_String_Vector.Cursor) is
@@ -116,7 +134,13 @@ package body Xml_Queue is
       when Done => return "Done";
     end case;
   end To_String;
---  function Get_Next_Auto_Inc_Value return Positive is
+  
+  
+  function Get_Job_State(Job_Id : Integer) return String is
+  begin
+    return To_String(Find_Job_By_Id(Job_Id).State);
+  end Get_Job_State;
+--  function Get_NextAuto_Inc_Value return Positive is
 --  begin
 --    Auto_Inc_Counter := Auto_Inc_Counter + 1;
 --    return Auto_Inc_Counter;

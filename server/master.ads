@@ -3,9 +3,11 @@ with Echo;
 
 generic
   type My_Job is private;
+  type Get_State_Function is private;
   with function From_Xml(Xml : in String) return My_Job;
   with function To_Xml(Job : in My_Job) return String;
   with function Get_Job_id(Job : in My_Job) return Natural;
+  with procedure Print_Job(Job : in My_Job; Get_State : Get_State_Function);
   
 package Master is
   
@@ -43,4 +45,9 @@ package Master is
   
   procedure Add_New_Job(Job : My_Job);
   function Get_Next_Job(Remove_From_Vector : Boolean := true) return My_Job;
+  
+  
+  procedure Print_Jobs;
+  
+  
 end Master;

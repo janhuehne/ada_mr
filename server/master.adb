@@ -170,4 +170,18 @@ package body Master is
     return Job;
   end Get_Next_Job;
   
+  procedure Print_Jobs is
+    
+    procedure Print(Position : Job_Vector.Cursor) is
+    begin
+      Print_Job(
+        Unprocessed_Jobs.Element(Job_Vector.To_Index(Position)),
+        Xml_Queue.Get_Job_State'Access
+      );
+    end Print;
+    
+  begin
+    Unprocessed_Jobs.Iterate(Print'Access);
+  end Print_Jobs;
+  
 end Master;

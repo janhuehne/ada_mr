@@ -18,16 +18,26 @@
   </details>
 </adamr-client>
 
-
 <?xml version="1.0" ?><adamr-client><command>initialization</command><details><type>Mapper</type><identifier>mapper_1</identifier></details></adamr-client>
-
-
 
 
 
 <?xml version="1.0" ?>
 <adamr-client>
-  <command>jobrequest</command>
+  <command>job_request</command>
 </adamr-client>
 
-<?xml version="1.0" ?><adamr-client><command>jobrequest</command></adamr-client>
+<?xml version="1.0" ?><adamr-client><command>job_request</command></adamr-client>
+
+
+
+<?xml version="1.0" ?>
+<adamr-client>
+  <command>change_job_state</command>
+  <details>
+    <id>1</id>
+    <state>done</state>
+  </details>
+</adamr-client>
+
+<?xml version="1.0" ?><adamr-client><command>change_job_state</command><details><id> 2</id><state>done</state></details></adamr-client>

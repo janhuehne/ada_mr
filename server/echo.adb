@@ -67,7 +67,6 @@ package body Echo is
                   
                   declare
                     Xml_Root    : Xml.Node_Access := Xml_Parser.Parse(Content => Str);
---                    Xml_Details : Xml.Node_Access := Xml.Find_Child_With_Tag(Xml_Root, "details");
                   begin
                     
                     if Utility.Is_Equal(Xml.Get_Tag(Xml_Root), "adamr-client") then
@@ -84,7 +83,7 @@ package body Echo is
                         
                       else
                         
-                        if Utility.Is_Equal(Xml.Get_Value(Xml_Root, "command"), "jobrequest") then
+                        if Utility.Is_Equal(Xml.Get_Value(Xml_Root, "command"), "job_request") then
                           
                           if Xml_Queue.Count_Jobs(Xml_Queue.Pending) > 0 then
                           
@@ -98,13 +97,31 @@ package body Echo is
                             String'Output(S, "<?xml version=""1.0"" ?><adamr-master><sysctrl><message>quit</sysctrl></adamr-master>");
                           end if;
                             
+                        elsif Utility.Is_Equal(Xml.Get_Value(Xml_Root, "command"), "change_job_state") then
+                          
+                          Ada.Text_IO.Put_Line("Entering change_job_state");
+                          
+                          declare
+                            Xml_Job_Details : Xml.Node_Access := Xml.Find_Child_With_Tag(Xml_Root, "details");
+                          begin
+                            Xml_Queue.Change_Job_State(Xml.Get_Value(Xml_Job_Details, "id"), Xml.Get_Value(Xml_Job_Details, "state"));
+                            String'Output(S, "<?xml version=""1.0"" ?><adamr-master><sysctrl><message>ok</sysctrl></adamr-master>");
+                          exception
+                            when Xml_Queue.Invalid_Job_State => 
+                              Ada.Text_IO.Put_Line("Unknow job state");
+                              String'Output(S, "Unknown job state.");
+                            when others =>
+                              Ada.Text_IO.Put_Line("Can not change job state");
+                              String'Output(S, "Can not change job state");
+                          end;
+                          
                         else
                           Ada.Text_IO.Put_Line("Unknown command.");
                           String'Output(S, "Unknown command.");
                         end if;
-                        
+                      
                       end if;
-
+                    
                     end if;
                   
                   exception
