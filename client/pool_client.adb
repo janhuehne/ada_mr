@@ -13,7 +13,7 @@ procedure Pool_Client is
 Sock : Socket_Type ;
 S : Stream_Access ;
 Addr : Sock_Addr_Type ( Family_Inet ) ;
-Msg : String ( 1 .. 2000 ) ;
+Msg : String ( 1 .. 2000   ) ;
 Last : Natural ;
 B : Boolean ;
 Read_Selector : Selector_Type ;

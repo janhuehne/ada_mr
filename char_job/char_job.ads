@@ -1,5 +1,4 @@
 with Ada.Containers.Vectors;
-with Master;
 with Ada.Strings.Unbounded;
 
 package Char_Job is

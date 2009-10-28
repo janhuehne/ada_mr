@@ -1,0 +1,2 @@
+#!/bin/bash
+/usr/local/ada-4.3/bin/gnatmake -I../client -I../lib mr_client_count_char.adb

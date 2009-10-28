@@ -2,7 +2,7 @@ with Ada.Text_IO;
 with Master_Count_Char; use Master_Count_Char;
 with Char_Job;
 
-procedure MR_Count_Char is
+procedure MR_Master_Count_Char is
 begin
   Ada.Text_IO.Put_Line("Main-Procedure is working.");
   
@@ -26,5 +26,5 @@ begin
     Ada.Text_IO.New_Line;
     Ada.Text_IO.Put_Line("Main-Procedure is terminated.");
 
-end MR_Count_Char;
+end MR_Master_Count_Char;
 
