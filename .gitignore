@@ -1,3 +1,4 @@
 *.ali
 *.o
 mr_count_char
+.DS_Store
