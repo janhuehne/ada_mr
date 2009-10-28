@@ -143,7 +143,8 @@ package body Master is
           Worker.Print_All_Idle_Mapper;
         elsif (Is_Equal(In_String, In_Last, "jobs", true)) then
 --          Ada.Text_IO.Put_Line(Unprocessed_Jobs.Length'Img & " unprocessed jobs");
-          Xml_Queue.Print_Jobs;
+--          Xml_Queue.Print_Jobs;
+            Print_Jobs;
         else
           Ada.Text_IO.Put_Line("Unknown command: " & In_String(1..In_Last));
         end if;
@@ -173,15 +174,17 @@ package body Master is
   procedure Print_Jobs is
     
     procedure Print(Position : Job_Vector.Cursor) is
+      Job : My_Job := Unprocessed_Jobs.Element(Job_Vector.To_Index(Position));
     begin
       Print_Job(
-        Unprocessed_Jobs.Element(Job_Vector.To_Index(Position)),
-        Xml_Queue.Get_Job_State'Access
+        Job,
+        Xml_Queue.Get_Job_State(Get_Job_Id(Job))
       );
     end Print;
     
   begin
     Unprocessed_Jobs.Iterate(Print'Access);
   end Print_Jobs;
+
   
 end Master;

@@ -12,12 +12,9 @@ package Char_Job is
     Responsible_Reducer : String(1..15) := "127.000.000.001";
     Length : Natural;
   end record;
-    
+  
   type Add_Job_Procedure is access procedure(Job : My_Job);
   
-  type Get_State_Function is access function(Job_Id: Natural) return String;
-  
-    
   package Job_Vector is new Ada.Containers.Vectors(
     Element_Type => My_Job, 
     Index_Type => Positive
@@ -34,7 +31,7 @@ package Char_Job is
   
   function Get_Next_Job_Counter(Auto_Inc : Boolean := true) return Natural;
   
-  procedure Print_Job(Job : in My_Job; Get_State : Get_State_Function);
+  procedure Print_Job(Job : in My_Job; State : String);
   
   
   

@@ -45,4 +45,37 @@ package body Utility is
     when others => return false;
   end Is_Equal;
   
+  
+  procedure Put(Str : String; Field_Length : Natural := 0; Space_Pos : Natural := 1) is
+    
+    procedure Print_Spaces is
+      Space_Counter : Natural := 0;
+    begin
+      loop
+        exit when Field_Length - Str'Length = Space_Counter;
+          Ada.Text_IO.Put(" ");
+          Space_Counter := Space_Counter + 1;
+      end loop;
+    end Print_Spaces;
+    
+  begin
+    if Space_Pos = 1 then
+      Print_Spaces;
+    end if;
+      
+    Ada.Text_IO.Put(Str);
+    
+    if Space_Pos = 2 then
+      Print_Spaces;
+    end if;
+
+  end Put;
+  
+  procedure Put_Line(Str : String; Field_Length : Natural := 0; Space_Pos : Natural := 1) is
+  begin
+    Put(Str, Field_Length, Space_Pos);
+    Ada.Text_IO.New_Line;
+  end Put_Line;
+  
+  
 end Utility;
