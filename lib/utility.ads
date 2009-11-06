@@ -15,4 +15,6 @@ package Utility is
   procedure Put(Str : String; Field_Length : Natural := 0; Space_Pos : Natural := 1);
   procedure Put_Line(Str : String; Field_Length : Natural := 0; Space_Pos : Natural := 1);
   
+  function Does_File_Exist(Name : String) return Boolean;
+  
 end Utility;

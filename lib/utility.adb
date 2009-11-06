@@ -77,5 +77,13 @@ package body Utility is
     Ada.Text_IO.New_Line;
   end Put_Line;
   
-  
+  function Does_File_Exist (Name : String) return Boolean is
+    The_File : Ada.Text_IO.File_Type;
+  begin
+    Ada.Text_IO.Open (The_File, Ada.Text_IO.In_File, Name);
+    Ada.Text_IO.Close (The_File);
+    return True;
+  exception
+    when Ada.Text_IO.Name_Error => return False;
+  end Does_File_Exist;
 end Utility;

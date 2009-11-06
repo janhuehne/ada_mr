@@ -5,6 +5,7 @@ with Xml_Parser;
 with Server;
 with Worker;
 with Xml_Queue;
+with Xml_Helper;
 
 package body Echo is
   
@@ -63,19 +64,20 @@ package body Echo is
                 
                 if Utility.Starts_With(Str, "<?xml") then
                   Ada.Text_IO.Put_Line("XML found!");
-                  String'Output(S, "XML received: " & Str);
+--                  String'Output(S, "XML received: " & Str);
                   
                   declare
                     Xml_Root    : Xml.Node_Access := Xml_Parser.Parse(Content => Str);
                   begin
                     
-                    if Utility.Is_Equal(Xml.Get_Tag(Xml_Root), "adamr-client") then
+                    if Utility.Is_Equal(Xml.Get_Tag(Xml_Root), "adamr-mapper") then
                       
                       if Initialization_Complete = false then
                         
                         if Utility.Is_Equal(Xml.Get_Value(Xml_Root, "command"), "initialization") then
                           Worker.Add_New_Worker(Xml.Find_Child_With_Tag(Xml_Root, "details"), Me);
                           Initialization_Complete := true;
+                          String'Output(S, Xml_Helper.Create_System_Control(Xml_Helper.Master, "okay"));
                         else
                           Ada.Text_IO.Put_Line("Initialization missing.");
                           String'Output(S, "Initialization missing.");

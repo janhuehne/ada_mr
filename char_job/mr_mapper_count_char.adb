@@ -1,10 +1,11 @@
 with Ada.Text_IO;
 with Ada.Command_Line;
 
-with Client_Count_Char; use Client_Count_Char;
+with Mapper_Count_Char; use Mapper_Count_Char;
+with Utility;
 --with Char_Job;
 
-procedure MR_Client_Count_Char is
+procedure MR_Mapper_Count_Char is
 begin
   Ada.Text_IO.New_Line;
   Ada.Text_IO.New_Line;
@@ -18,19 +19,23 @@ begin
   Ada.Text_IO.New_Line;
   Ada.Text_IO.New_Line;
   
-  if Ada.Command_Line.Argument_Count = 0 then
-    Ada.Text_IO.Put_Line("ERROR: Configuration file missing!");
+  
+  if Utility.Does_File_Exist("client_config.xml") then
+    Ada.Text_IO.Put_Line("Found config file!");
   else
-    declare
-      C   : Client_MR.Client_Task_Access := new Client_MR.Client_Task;
-      C_C : Client_MR.Console;
-      
-    begin
-      C_C.Start(C);
-    end;
+    Ada.Text_IO.Put_Line("No config file found!");
   end if;
+    
+--  Ada.Text_IO.Put_Line(Ada.Command_Line.Argument_Count'Img);
+
+  declare
+    C   : Mapper_MR.Mapper_Task_Access := new Mapper_MR.Mapper_Task;
+    C_C : Mapper_MR.Console;
+  begin
+    C_C.Start(C);
+  end;
   
   Ada.Text_IO.New_Line;
   Ada.Text_IO.Put_Line("Map&Reduce client terminated.");
   Ada.Text_IO.New_Line;
-end MR_Client_Count_Char;
+end MR_Mapper_Count_Char;
