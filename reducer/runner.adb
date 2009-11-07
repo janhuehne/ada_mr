@@ -10,28 +10,16 @@ with Xml;
 with Xml_Parser;
 with Xml_Helper;
 
+with Reducer_Helper;
+
 with Ada.Exceptions;
 
 package body Runner is 
   
-  protected body Aborted is
-  
-    procedure Stop is
-    begin
-      Abort_It := true;
-    end Stop;
-    
-    function Check return Boolean is
-    begin
-      return Abort_It;
-    end Check;
-    
-  end Aborted;
-  
   task body Runner_Task is
     Server          : Socket_Type;
     New_Sock        : Socket_Type;
---    Slave           : Echo.Echo_Access;
+    Slave           : Echo_MR.Echo_Access;
     Addr            : Sock_Addr_Type;
     Peer_Addr       : Sock_Addr_Type;
     Avail           : Boolean := False;
@@ -50,7 +38,7 @@ package body Runner is
           Create_Socket(Server);
           
           Addr.Addr := Addresses(Get_Host_By_Name ("127.0.0.1"), 1);
-          Addr.Port := 7000;
+          Addr.Port := 7100;
           
           --  allow server address to be reused for multiple connections 
           Set_Socket_Option(Server, Socket_Level, (Reuse_Address, True));
@@ -66,9 +54,31 @@ package body Runner is
           --  Server 
           Empty(Accept_Set);
           Empty(WSet);
-  
+          
           loop 
-            exit when Aborted.Check = true;
+            exit when Reducer_Helper.Aborted.Check = true;
+            
+            --  check for input (connection requests) on Server socket 
+            Set(Accept_Set, Server);
+            
+            --  time-out on check if no request within 1 second 
+            Check_Selector(Accept_Selector, Accept_Set, WSet, Accept_Status, 1.0);
+            
+            if Accept_Status = Completed then 
+              --  must be an event on Server socket as it is the only 
+              --  one that we are checking. 
+              --  Hence the Accept_Socket call should not block. 
+              Accept_Socket(Server, New_Sock, Peer_Addr);
+              Ada.Text_IO.New_Line;
+              Ada.Text_IO.Put_Line("Connection accepted -- allocating slave");
+              
+              Slave := new Echo_MR.Echo;
+              Ada.Text_IO.Put_Line ( "New slave task started" );
+              
+              --  call entry Start to activate task 
+              Slave.Start(New_Sock, Slave);
+            end if;
+
           end loop;
       or
         accept Stop;

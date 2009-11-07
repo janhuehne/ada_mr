@@ -4,6 +4,7 @@ with Utility;
 use Utility;
 
 with Logger;
+with Reducer_Helper;
 
 package body Reducer is
   
@@ -17,7 +18,7 @@ package body Reducer is
         R.Start;
       or
         accept Stop;
-        Runner_MR.Aborted.Stop;
+        Reducer_Helper.Aborted.Stop;
         R.Stop;
         exit;
       end select;

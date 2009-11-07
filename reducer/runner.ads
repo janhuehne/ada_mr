@@ -1,20 +1,16 @@
 with GNAT.Sockets;
 use GNAT.Sockets;
 with Xml;
---with Mapper;
+with Echo;
 
 
 generic
   with function Merge_Jobs return Boolean;
   with function Finalize return Boolean;
     
-package Runner is  
-  protected Aborted is
-    procedure Stop;
-    function Check return Boolean;
-  private
-    Abort_It  : Boolean := false;
-  end Aborted;
+package Runner is
+  
+  package Echo_MR is new Echo(Merge_Jobs, Finalize);
   
   task type Runner_Task is
     entry Start;

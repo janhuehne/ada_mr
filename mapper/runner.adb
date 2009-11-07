@@ -10,6 +10,8 @@ with Xml;
 with Xml_Parser;
 with Xml_Helper;
 
+with Mapper_Helper;
+
 with Ada.Exceptions;
 
 package body Runner is 
@@ -119,13 +121,16 @@ package body Runner is
                         Job : My_Job := From_Xml(Xml.Find_Child_With_Tag(Xml_Root, "details"));
                       begin
                         if Compute_Job(Job) then
-                                                  
-                          -- send later to the responding reducer!
-                          String'Output(
-                            S, 
-                            Xml_Helper.Xml_Command(Xml_Helper.Mapper, "job_done", To_Xml(Job))
-                          );
                           
+                          if Mapper_Helper.Send_Job_Result_To_Reducer(Job_Result_To_Xml, "127.0.0.1", "7100") then
+                            -- send later to the responding reducer!
+                            String'Output(
+                              S, 
+                              Xml_Helper.Xml_Command(Xml_Helper.Mapper, "job_done", To_Xml(Job))
+                            );
+                          else
+                            Ada.Text_IO.Put_Line("ACHTUNG: Job konnte nicht an einen Reducer gesendet werden!!!!!!");
+                          end if;
                           
                           -- TODO: Error handling, if happens!
                           declare
