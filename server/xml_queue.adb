@@ -93,6 +93,11 @@ package body Xml_Queue is
     Job.State := New_State;
   end Change_Job_State;
   
+  procedure Change_Job_State(Job_Id : String; New_State : Job_State) is
+  begin
+    Change_Job_State(Integer'Value(Job_Id), New_State);
+  end Change_Job_State;
+  
   
   procedure Change_Job_State(Job_Id : String; New_State : String) is
     State : Job_State;

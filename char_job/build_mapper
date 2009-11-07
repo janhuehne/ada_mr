@@ -1,2 +1,2 @@
 #!/bin/bash
-/usr/local/ada-4.3/bin/gnatmake -I../mapper -I../lib mr_mapper_count_char.adb
+/usr/local/ada-4.3/bin/gnatmake -I../mapper -I../lib mr_mapper_count_char.adb && rm *.ali && rm *.o

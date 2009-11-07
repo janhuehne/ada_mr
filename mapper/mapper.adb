@@ -1,17 +1,14 @@
 with Ada.Text_IO;
 
-
 with Utility;
 use Utility;
 
 with Logger;
 
-with Runner;
-
 package body Mapper is
   
   task body Mapper_Task is
-    R : Runner.Runner_Task;
+    R : Runner_MR.Runner_Task;
   begin
     loop
       select
@@ -20,7 +17,7 @@ package body Mapper is
         R.Start;
       or
         accept Stop;
-        Runner.Aborted.Stop;
+        Runner_MR.Aborted.Stop;
         exit;
       end select;
     end loop;

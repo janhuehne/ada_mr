@@ -1,4 +1,5 @@
 with Ada.Strings.Unbounded;
+with Utility;
 
 package body Xml_Helper is
 
@@ -37,27 +38,16 @@ package body Xml_Helper is
     
   end Xml_Command;
   
-  function Xml_Command(G_T : Group_Tag; Command : String; Details : String_String_Maps.Map) return String is
-    Detail_Cursor : String_String_Maps.Cursor := String_String_Maps.First(Details);
+  function Xml_Command(G_T : Group_Tag; Command : String; Details : Utility.String_String_Maps.Map) return String is
+    Detail_Cursor : Utility.String_String_Maps.Cursor := Utility.String_String_Maps.First(Details);
     Detail_String : Ada.Strings.Unbounded.Unbounded_String;
-  begin
-    while String_String_Maps.Has_Element(Detail_Cursor) loop
-      Ada.Strings.Unbounded.Append(Detail_String, "<");
-      Ada.Strings.Unbounded.Append(Detail_String, String_String_Maps.Key(Detail_Cursor));
-      Ada.Strings.Unbounded.Append(Detail_String, ">");
-      Ada.Strings.Unbounded.Append(Detail_String, String_String_Maps.Element(Detail_Cursor));
-      Ada.Strings.Unbounded.Append(Detail_String, "</");
-      Ada.Strings.Unbounded.Append(Detail_String, String_String_Maps.Key(Detail_Cursor));
-      Ada.Strings.Unbounded.Append(Detail_String, ">");
-      String_String_Maps.Next(Detail_Cursor);
-    end loop;
-    
-    return Xml_Command(G_T, Command, Ada.Strings.Unbounded.To_String(Detail_String));
+  begin    
+    return Xml_Command(G_T, Command, Hash_To_Xml_String(Details));
   end Xml_Command;
   
   
   function Create_Initialization(G_T : Group_Tag; Identifier : String) return String is
-    Details : Xml_Helper.String_String_Maps.Map;
+    Details : Utility.String_String_Maps.Map;
   begin
     Details.Insert("type", "Mapper");
     Details.Insert("identifier", Identifier);
@@ -88,5 +78,28 @@ package body Xml_Helper is
     
     return Ada.Strings.Unbounded.To_String(Xml_String);
   end Create_System_Control;
+  
+  function Is_Valid_Xml_String(Str : String) return Boolean is
+  begin
+    return Utility.Starts_With(Str, "<?xml");
+  end Is_Valid_Xml_String;
+  
+  function Hash_To_Xml_String(Details : Utility.String_String_Maps.Map) return String is
+    Detail_Cursor : Utility.String_String_Maps.Cursor := Utility.String_String_Maps.First(Details);
+    Detail_String : Ada.Strings.Unbounded.Unbounded_String;
+  begin
+    while Utility.String_String_Maps.Has_Element(Detail_Cursor) loop
+      Ada.Strings.Unbounded.Append(Detail_String, "<");
+      Ada.Strings.Unbounded.Append(Detail_String, Utility.String_String_Maps.Key(Detail_Cursor));
+      Ada.Strings.Unbounded.Append(Detail_String, ">");
+      Ada.Strings.Unbounded.Append(Detail_String, Utility.String_String_Maps.Element(Detail_Cursor));
+      Ada.Strings.Unbounded.Append(Detail_String, "</");
+      Ada.Strings.Unbounded.Append(Detail_String, Utility.String_String_Maps.Key(Detail_Cursor));
+      Ada.Strings.Unbounded.Append(Detail_String, ">");
+      Utility.String_String_Maps.Next(Detail_Cursor);
+    end loop;
+    
+    return ASU.To_String(Detail_String);
+  end Hash_To_Xml_String;
 
 end Xml_Helper;

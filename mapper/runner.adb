@@ -10,6 +10,8 @@ with Xml;
 with Xml_Parser;
 with Xml_Helper;
 
+with Ada.Exceptions;
+
 package body Runner is 
   
   protected body Aborted is
@@ -91,22 +93,79 @@ package body Runner is
           Check_Selector(Read_Selector, Read_Set, WSet, Read_Status, 0.005);
           
           if Read_Status = Expired then
+            
             -- ask for new job
             String'Output(
               S, 
               Xml_Helper.Create_Job_Request
             );
-          end if ;
+            
+--            Ada.Text_IO.Put_Line("Server Request: " & Xml_Helper.Create_Job_Request);
           
-          declare
-            -- receive message
-            Str : String := String'Input(S);
-          begin
-            Ada.Text_IO.Put_Line(Str);
-            exit when Str = "Server aborted";
-          end;
+            declare
+              -- receive message
+              Str : String := String'Input(S);
+            begin
+--              Ada.Text_IO.Put_Line("Server Response: " & Str);
+              
+              if Xml_Helper.Is_Valid_Xml_String(Str) then
+                
+                declare
+                  Xml_Root : Xml.Node_Access := Xml_Parser.Parse(Content => Str);
+                begin
+                  if Utility.Is_Equal(Xml.Get_Tag(Xml_Root), "adamr-master") then
+                    if Utility.Is_Equal(Xml.Get_Value(Xml_Root, "command"), "new_job") then
+                      declare
+                        Job : My_Job := From_Xml(Xml.Find_Child_With_Tag(Xml_Root, "details"));
+                      begin
+                        if Compute_Job(Job) then
+                                                  
+                          -- send later to the responding reducer!
+                          String'Output(
+                            S, 
+                            Xml_Helper.Xml_Command(Xml_Helper.Mapper, "job_done", To_Xml(Job))
+                          );
+                          
+                          
+                          -- TODO: Error handling, if happens!
+                          declare
+                            Str : String := String'Input(S);
+                          begin
+                            null;
+                          end;
+--                          Ada.Text_IO.Put_Line("Server Request: " & Xml_Helper.Xml_Command(Xml_Helper.Mapper, "job_done", To_Xml(Job)));
+--                          Ada.Text_IO.Put_Line("Server Response: " & String'Input(S));
+                          
+                          Ada.Text_IO.Put_Line(Job_Result_To_Xml);
+                        else
+                          Ada.Text_IO.Put_Line("Job Fehler!!!!");
+                        end if;
+                      end;
+                    elsif Utility.Is_Equal(Xml.Get_Value(Xml_Root, "command"), "exit") then
+                      exit;
+                    elsif Utility.Is_Equal(Xml.Get_Value(Xml_Root, "command"), "sleep") then
+                      declare
+                        Time : Float := Float'Value(Xml.Get_Value(Xml.Find_Child_With_Tag(Xml_Root, "details"), "seconds"));
+                      begin
+                        Ada.Text_IO.Put_Line("No further job found. Waiting " & Float'Image(Time) & " seconds until next job request!");
+                        delay Duration(Time);
+                      end;
+                    else
+                      Ada.Text_IO.Put_Line("Unknown command!");
+                    end if;
+                  end if;
+                end;
+              else
+                Ada.Text_IO.Put_Line("Not a valid xml response!");
+              end if;
+              
+              exit when Str = "Server aborted";
+            end;
+            
+          end if;
           
-          exit;
+          Ada.Text_IO.New_Line;
+          
         end loop;
         
         --  tidy up 
@@ -121,8 +180,12 @@ package body Runner is
       end select;
     end loop;
   exception 
-    when others =>
+    when Error : others =>
       Ada.Text_IO.Put_Line ("Exception: Client quitting ..." ) ;
+      Ada.Text_IO.Put_Line (Ada.Exceptions.Exception_Name(Error));
+      Ada.Text_IO.Put_Line (Ada.Exceptions.Exception_Message(Error));
+      Ada.Text_IO.Put_Line (Ada.Exceptions.Exception_Information(Error));
+      
       Close_Socket(Sock);
       Close_Selector(Read_Selector);
       Finalize;

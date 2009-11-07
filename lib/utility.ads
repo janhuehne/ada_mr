@@ -5,6 +5,8 @@ use Ada.Characters.Handling;
 
 with Ada.Strings.Unbounded;
 
+with Ada.Containers.Indefinite_Hashed_Maps,
+     Ada.Strings.Hash;
 
 package Utility is
   function Starts_With(Item : String; Pattern : String; Ignore_Case : Boolean := false) return Boolean;
@@ -17,4 +19,17 @@ package Utility is
   
   function Does_File_Exist(Name : String) return Boolean;
   
+  package String_String_Maps is new Ada.Containers.Indefinite_Hashed_Maps(
+    Key_Type        => String,
+    Element_Type    => String,
+    Hash            => Ada.Strings.Hash,
+    Equivalent_Keys => "="
+  );
+  
+  package String_Integer_Maps is new Ada.Containers.Indefinite_Hashed_Maps(
+    Key_Type        => String,
+    Element_Type    => Integer,
+    Hash            => Ada.Strings.Hash,
+    Equivalent_Keys => "="
+  );
 end Utility;

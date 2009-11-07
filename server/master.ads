@@ -1,9 +1,10 @@
 with Ada.Containers.Vectors;
 with Echo;
+with Xml;
 
 generic
   type My_Job is private;
-  with function From_Xml(Xml : in String) return My_Job;
+  with function From_Xml(Xml_Node : Xml.Node_Access) return My_Job;
   with function To_Xml(Job : in My_Job) return String;
   with function Get_Job_Id(Job : in My_Job) return Natural;
   with procedure Print_Job(Job : in My_Job; State : String);

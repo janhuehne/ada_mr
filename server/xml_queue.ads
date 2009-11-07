@@ -28,9 +28,8 @@ package Xml_Queue is
   function Find_First_Job_By_State(State : Job_State) return Xml_Job_Entry_Access;
   
   procedure Change_Job_State(Job_Id : Natural; New_State : Job_State);
-  
   procedure Change_Job_State(Job : Xml_Job_Entry_Access; New_State : Job_State);
-    
+  procedure Change_Job_State(Job_Id : String; New_State : Job_State);
   procedure Change_Job_State(Job_Id : String; New_State : String);
   
   function Get_Job_State(Job_Id : Integer) return String;

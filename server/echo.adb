@@ -67,7 +67,7 @@ package body Echo is
 --                  String'Output(S, "XML received: " & Str);
                   
                   declare
-                    Xml_Root    : Xml.Node_Access := Xml_Parser.Parse(Content => Str);
+                    Xml_Root : Xml.Node_Access := Xml_Parser.Parse(Content => Str);
                   begin
                     
                     if Utility.Is_Equal(Xml.Get_Tag(Xml_Root), "adamr-mapper") then
@@ -93,10 +93,13 @@ package body Echo is
                               Job : Xml_Queue.Xml_Job_Entry_Access := Xml_Queue.Find_First_Job_By_State(Xml_Queue.Pending);
                             begin
                               Xml_Queue.Change_Job_State(Job, Xml_Queue.In_Progress);
-                              String'Output(S, ASU.To_String(Job.Xml));
+                              String'Output(S, Xml_Helper.Xml_Command(Xml_Helper.Master, "new_job", ASU.To_String(Job.Xml)));
                             end;
                           else
-                            String'Output(S, "<?xml version=""1.0"" ?><adamr-master><sysctrl><message>quit</sysctrl></adamr-master>");
+                            -- Close client if no further jobs! TODO: client should x seconds and ask again fro a new job
+--                            String'Output(S, Xml_Helper.Xml_Command(Xml_Helper.Master, "exit"));
+                            String'Output(S, Xml_Helper.Xml_Command(Xml_Helper.Master, "sleep", "<seconds>10</seconds>"));
+                            
                           end if;
                             
                         elsif Utility.Is_Equal(Xml.Get_Value(Xml_Root, "command"), "change_job_state") then
@@ -108,6 +111,22 @@ package body Echo is
                           begin
                             Xml_Queue.Change_Job_State(Xml.Get_Value(Xml_Job_Details, "id"), Xml.Get_Value(Xml_Job_Details, "state"));
                             String'Output(S, "<?xml version=""1.0"" ?><adamr-master><sysctrl><message>ok</sysctrl></adamr-master>");
+                          exception
+                            when Xml_Queue.Invalid_Job_State => 
+                              Ada.Text_IO.Put_Line("Unknow job state");
+                              String'Output(S, "Unknown job state.");
+                            when others =>
+                              Ada.Text_IO.Put_Line("Can not change job state");
+                              String'Output(S, "Can not change job state");
+                          end;
+                        
+                        elsif Utility.Is_Equal(Xml.Get_Value(Xml_Root, "command"), "job_done") then
+                        
+                          declare
+                            Xml_Job_Details : Xml.Node_Access := Xml.Find_Child_With_Tag(Xml_Root, "details");
+                          begin
+                            Xml_Queue.Change_Job_State(Xml.Get_Value(Xml_Job_Details, "job_id"), Xml_Queue.Done);
+                            String'Output(S, Xml_Helper.Create_System_Control(Xml_Helper.Master, "okay"));
                           exception
                             when Xml_Queue.Invalid_Job_State => 
                               Ada.Text_IO.Put_Line("Unknow job state");
