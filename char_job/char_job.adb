@@ -119,4 +119,13 @@ package body Char_Job is
     return ASU.To_String(Result_String);
   end Job_Result_To_Xml;
   
+  function Merge_Jobs return Boolean is
+  begin
+    return true;
+  end Merge_Jobs;
+  
+  function Finalize return Boolean is
+  begin
+    return true;
+  end Finalize;
 end Char_Job;

@@ -20,7 +20,7 @@ begin
   Ada.Text_IO.New_Line;
   
   
-  if Utility.Does_File_Exist("client_config.xml") then
+  if Utility.Does_File_Exist("mapper_config.xml") then
     Ada.Text_IO.Put_Line("Found config file!");
   else
     Ada.Text_IO.Put_Line("No config file found!");
