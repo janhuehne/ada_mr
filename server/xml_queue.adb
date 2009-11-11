@@ -151,4 +151,23 @@ package body Xml_Queue is
 --    return Auto_Inc_Counter;
 --  end
   
+  function All_Jobs_Done return Boolean is
+    
+    Unfinished_Jobs : Exception;
+    
+    procedure Check_State(Position : Unbounded_String_Vector.Cursor) is
+      Job : Xml_Job_Entry_Access := Jobs.Element(Unbounded_String_Vector.To_Index(Position));
+    begin
+      if Job.State /= Done then
+        raise Unfinished_Jobs;
+      end if;
+    end Check_State;
+  
+  begin
+    Jobs.Iterate(Check_State'Access);
+    return true;
+  exception
+    when others => return false;
+  end All_Jobs_Done;
+  
 end Xml_Queue;

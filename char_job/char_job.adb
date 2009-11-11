@@ -119,13 +119,57 @@ package body Char_Job is
     return ASU.To_String(Result_String);
   end Job_Result_To_Xml;
   
-  function Merge_Jobs return Boolean is
+  function Merge_Jobs(Xml_Node : Xml.Node_Access) return Boolean is
+    Cursor : Xml.Node_Access_Vector.Cursor := Xml_Node.Children.First;
   begin
+    loop
+      exit when Xml.Node_Access_Vector."="(Cursor, Xml.Node_Access_Vector.No_Element);
+      
+      declare
+        Map_Cursor : Utility.String_Integer_Maps.Cursor := Utility.String_Integer_Maps.Find(
+          Result_Hash, 
+          ASU.To_String(Xml.Node_Access_Vector.Element(Cursor).Tag)
+        );
+      begin
+        if Utility.String_Integer_Maps."="(Map_Cursor, Utility.String_Integer_Maps.No_Element) then
+          Result_Hash.Insert(
+            ASU.To_String(Xml.Node_Access_Vector.Element(Cursor).Tag),
+            Integer'Value(ASU.To_String(Xml.Node_Access_Vector.Element(Cursor).Value))
+          );
+        else
+          
+          Result_Hash.Replace_Element(
+            Map_Cursor,
+            Utility.String_Integer_Maps.Element(Map_Cursor) + Integer'Value(ASU.To_String(Xml.Node_Access_Vector.Element(Cursor).Value))
+          );
+        end if;
+      end;
+
+      Xml.Node_Access_Vector.Next(Cursor);
+    end loop;
+    
+    
     return true;
   end Merge_Jobs;
   
   function Finalize return Boolean is
+    Cursor : Utility.String_Integer_Maps.Cursor := Result_Hash.First;
   begin
+    
+    Ada.Text_IO.Put_Line("Reducer result:");
+    
+    loop
+      exit when Utility.String_Integer_Maps."="(Cursor, Utility.String_Integer_Maps.No_Element);
+      
+      Ada.Text_IO.Put("  ");
+      Ada.Text_IO.Put(Utility.String_Integer_Maps.Key(Cursor));
+      Ada.Text_IO.Put(": ");
+      Ada.Text_IO.Put(Utility.String_Integer_Maps.Element(Cursor)'Img);
+      Ada.Text_IO.New_Line;
+      
+      Utility.String_Integer_Maps.Next(Cursor);
+    end loop;
+      
     return true;
   end Finalize;
 end Char_Job;

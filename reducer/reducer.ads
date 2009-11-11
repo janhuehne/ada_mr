@@ -3,12 +3,12 @@ with Runner;
 with Xml;
 
 generic
-  with function Merge_Jobs return Boolean;
-  with function Finalize return Boolean;
+  with function Merge_Jobs(Xml_Node : Xml.Node_Access) return Boolean;
+  with function Finalize_Jobs return Boolean;
   
 package Reducer is
   
-  package Runner_MR is new Runner(Merge_Jobs, Finalize);
+  package Runner_MR is new Runner(Merge_Jobs, Finalize_Jobs);
   
   type Reducer_Task;
   type Reducer_Task_Access is access Reducer_Task;

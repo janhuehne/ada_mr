@@ -53,13 +53,11 @@ package body Xml is
   end Find_Child_With_Tag;
   
   function Get_Value(Root : Node_Access; Tag : String) return String is
-    Found_Node : Node_Access := Find_Child_With_Tag(Root, Tag);
+    Found_Node : Node_Access := Find_Child_With_Tag(Root, Tag);  
   begin
-    if Xml."/="(Found_Node, null) then
-      return ASU.To_String(Found_Node.Value);
-    else
-      raise Node_Not_Found;
-    end if;
+    return ASU.To_String(Found_Node.Value);
+  exception
+    when CONSTRAINT_ERROR => raise Node_Not_Found;
   end Get_Value;
   
   function Get_Tag(Root : Node_Access) return String is
@@ -67,4 +65,8 @@ package body Xml is
     return ASU.To_String(Root.Tag);
   end Get_Tag;
   
+  function "="(Left, Right : Xml.Node_Access) return Boolean is
+  begin
+    return true;
+  end "=";
 end Xml;

@@ -40,6 +40,8 @@ package Xml_Queue is
   
   function To_String(State : Job_State) return String;
   
+  function All_Jobs_Done return Boolean;
+  
   package Unbounded_String_Vector is new Ada.Containers.Vectors(
     Element_Type => Xml_Job_Entry_Access,
     Index_Type => Positive

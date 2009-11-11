@@ -7,20 +7,15 @@ begin
   Ada.Text_IO.Put_Line("Main-Procedure is working.");
   
   declare
-    M : Master_MR.Master_Task_Access := new Master_MR.Master_Task;
---    M_J : Master_MR.Job_Management_Task_Access := new Master_MR.Job_Management_Task;
-    M_C : Master_MR.Master_Console;
-    
+    M     : Master_MR.Master_Task_Access := new Master_MR.Master_Task;
+    M_C   : Master_MR.Master_Console;
+    M_O_J : Master_MR.Observe_Jobs;
   begin
-    Ada.Text_IO.Put_Line(Master_MR.Unprocessed_Jobs.Length'Img);
-    
     M_C.Start(M);
+    M_O_J.Start;
     
     Char_Job.Split_Data_Into_Jobs(Master_MR.Add_New_Job'Access);
---    M.Split_Data;
---    M.Add_Job;
---    M.Stop_Master;
-      
+    
   end;
 
     Ada.Text_IO.New_Line;

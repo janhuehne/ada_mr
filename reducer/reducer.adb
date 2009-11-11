@@ -9,13 +9,15 @@ with Reducer_Helper;
 package body Reducer is
   
   task body Reducer_Task is
-    R : Runner_MR.Runner_Task;
+    R     : Runner_MR.Runner_Task;
+    R_M_T : Runner_MR.Result_Merge_Task;
   begin
     loop
       select
         accept Start;
         Ada.Text_IO.Put_Line("Hier muss was gestartet werden!");
         R.Start;
+        R_M_T.Start;
       or
         accept Stop;
         Reducer_Helper.Aborted.Stop;

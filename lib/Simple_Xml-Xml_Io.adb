@@ -76,15 +76,23 @@ package body Simple_Xml.XML_Io is
   function  UTF8_To_String  (Value : String) return String is
     use Ada.Characters.Handling;
     use System.WCh_StW;
+    
+    R : Wide_String(1..100);
+    L : Natural;
   begin
-    return To_String (String_To_Wide_String (Value, System.Wch_Con.WCEM_UTF8));
+    String_To_Wide_String(Value, R, L, System.Wch_Con.WCEM_UTF8);
+    return To_String (R(1..L));
   end UTF8_To_String;
 
   function  Wide_UTF8_To_Wide_String  (Value : Wide_String) return Wide_String is
     use Ada.Characters.Handling;
     use System.WCh_StW;
+    
+    R : Wide_String(1..100);
+    L : Natural;
   begin
-    return String_To_Wide_String (To_String (Value), System.Wch_Con.WCEM_UTF8);
+    String_To_Wide_String (To_String (Value), R, L, System.Wch_Con.WCEM_UTF8);
+    return R(1..L);
   end Wide_UTF8_To_Wide_String;
 
    -- String insensitive comparison

@@ -3,6 +3,8 @@ with Utility;
 with Xml;
 with Xml_Parser;
 with Xml_Helper;
+with Reducer_Helper;
+with Ada.Exceptions;
 
 package body Echo is
   
@@ -53,6 +55,42 @@ package body Echo is
                 Str : String := String'Input(S);
               begin
                 Ada.Text_IO.Put_Line(Str);
+                if Xml_Helper.Is_Valid_Xml_String(Str) then
+                  
+                  declare
+                    Xml_Root : Xml.Node_Access := Xml_Parser.Parse(Content => Str);
+                  begin
+                    if Utility.Is_Equal(Xml.Get_Tag(Xml_Root), "adamr-mapper") then
+                      
+                      if Utility.Is_Equal(Xml.Get_Value(Xml_Root, "command"), "job_result") then
+                        Reducer_Helper.Finished_Jobs_Queue.Append(Xml.Find_Child_With_Tag(Xml_Root, "details"));
+                        
+--                        String'Output(
+--                          S, 
+--                          Xml_Helper.Create_System_Control(Xml_Helper.Reducer, "okay")
+--                        );
+                      end if;
+                    elsif Utility.Is_Equal(Xml.Get_Tag(Xml_Root), "adamr-master") then
+                      if Utility.Is_Equal(Xml.Get_Value(Xml_Root, "command"), "finalize") then
+                        if Finalize_Jobs then
+                          Ada.Text_IO.Put_Line("Job done!");
+                        else
+                          Ada.Text_IO.Put_Line("Error in finalize call");
+                        end if;
+                      end if;
+                    end if;
+                  exception
+                    when Error : others =>
+                      Ada.Text_IO.Put_Line ("Error!!" ) ;
+                      Ada.Text_IO.Put_Line (Ada.Exceptions.Exception_Name(Error));
+                      Ada.Text_IO.Put_Line (Ada.Exceptions.Exception_Message(Error));
+                      Ada.Text_IO.Put_Line (Ada.Exceptions.Exception_Information(Error));
+                  end;
+                  
+                else
+                  Ada.Text_IO.Put_Line("No valid xml string!");
+                  Ada.Text_IO.Put_Line(Str);
+                end if;
               end;
               
               String'Output(

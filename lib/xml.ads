@@ -28,5 +28,7 @@ package Xml is
   function Get_Value(Root : Node_Access; Tag : String) return String;
   function Get_Tag(Root : Node_Access) return String;
   
+  function "="(Left, Right : Xml.Node_Access) return Boolean;
+  
   Wrong_Xml : Exception;
 end Xml;

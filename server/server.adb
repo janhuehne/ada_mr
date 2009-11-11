@@ -124,7 +124,7 @@ package body Server is
     ----          Ada.Text_IO.Put_Line ("Idle slave task reactivated");
     ----        end if;
           end if;
-        end loop;
+           end loop;
           
       or
         accept Stop;

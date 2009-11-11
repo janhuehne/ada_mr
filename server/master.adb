@@ -9,6 +9,8 @@ with Logger;
 
 with Worker;
 with Xml_Queue;
+with Xml_Helper;
+with GNAT.Sockets;
 
 package body Master is
   
@@ -63,35 +65,78 @@ package body Master is
     end loop;
   end Master_Task;
   
---   task body Job_Management_Task is
---   begin
---     Ada.Text_IO.Put_Line("Job Management started.");
---     
---     loop
---       exit when Server.Aborted.Check_Master = true;
---       
---       if not Unprocessed_Jobs.Is_Empty and not Worker.Idle_Mapper.Is_Empty then
---         declare
---           Next_Job : My_Job               := Get_Next_Job;
---           Mapper   : Worker.Worker_Access := Worker.Get_Idle_Mapper;
---         begin
---           
--- --          String'Output(Mapper.W_Echo.S, "Jetzt wird mal ein Job ausgeliefert!");
---           
---           Jobs_In_Progress.Append(Next_Job);
---           Worker.Active_Mapper.Append(Mapper);
---         end;
---         
---         Ada.Text_IO.Put_Line("Wir haben was zu tun! Jobs und Mapper sind da.");
---       end if;
---       
--- --      Ada.Text_IO.Put_Line(
--- --        Unprocessed_Jobs.Length'Img & " -- " & Worker.Idle_Mapper.Length'Img
--- --      );
---       
---       
---     end loop;    
---   end Job_Management_Task;
+  task body Observe_Jobs is
+    use GNAT.Sockets;
+    Reducer_IP : String := "127.0.0.1";
+    Reducer_Port : String := "7100";
+  begin
+    accept Start;
+    
+    Ada.Text_IO.Put_Line("Observing jobs ...");
+    
+    loop
+     exit when Server.Aborted.Check_Clients = true;
+      
+      if Xml_Queue.Jobs.Is_Empty = false and Xml_Queue.All_Jobs_Done = true then
+        
+        Ada.Text_IO.Put_Line("All jobs done. Sending message to the reducer!!!!");
+        
+        -- Send all jobs done message to the reducers!
+        declare
+          Sock            : Socket_Type;
+          S               : Stream_Access;
+          Addr            : Sock_Addr_Type (Family_Inet);
+--          Msg             : String (1 .. 2000);
+--          Last            : Natural;
+          B               : Boolean;
+          Read_Selector   : Selector_Type;
+          Read_Set, WSet  : Socket_Set_Type;
+          Read_Status     : Selector_Status;
+        begin
+          Create_Socket(Sock);
+          Addr.Addr := Addresses(Get_Host_By_Name (Reducer_IP), 1);
+          Addr.Port := Port_Type'Value(Reducer_Port);
+          
+          Create_Selector(Read_Selector);
+          Empty(Read_Set);
+          Empty(WSet);
+          
+          Connect_Socket(Sock, Addr);
+          S := Stream (Sock);
+          Boolean'Read (S, B);
+          
+          Set(Read_Set, Sock);
+          
+          -- check for input on socket (server may be aborting)
+          -- time-out immediately if no input pending
+          -- We seem to need a small delay here (using zero seems to block
+          -- forever)
+          -- Is this a GNAT bug or AB misreading Check_Selector docs?
+          Check_Selector(Read_Selector, Read_Set, WSet, Read_Status, 0.005);
+          
+          String'Output(
+            S,
+            Xml_Helper.Xml_Command(Xml_Helper.Master, "finalize")
+          );
+          
+          declare
+            Str : String := String'Input(S);
+          begin
+            Ada.Text_IO.Put_Line(Str);
+          end;
+          
+          ShutDown_Socket(Sock);
+          Close_Selector(Read_Selector);
+          
+          exit;
+        exception 
+          when others => exit;
+        end;
+      end if;
+      
+    end loop;
+    
+  end Observe_Jobs;
   
   
   task body Master_Console is

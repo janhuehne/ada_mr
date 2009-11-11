@@ -23,7 +23,6 @@ package body Runner is
     Addr            : Sock_Addr_Type;
     Peer_Addr       : Sock_Addr_Type;
     Avail           : Boolean := False;
-    Ch              : Character;
     Accept_Selector : Selector_Type;
     Accept_Set      : Socket_Set_Type;
     WSet            : Socket_Set_Type;
@@ -103,5 +102,30 @@ package body Runner is
       Close_Selector(Accept_Selector);
       Finalize;
   end Runner_Task;
+  
+  task body Result_Merge_Task is
+  begin
+    accept Start;
+    Ada.Text_IO.Put_Line("Result Merge Task started!");
+    loop
+      exit when Reducer_Helper.Aborted.Check = true;
+      
+      declare
+        Cursor : Reducer_Helper.Xml_Node_Access_Vectors.Cursor := Reducer_Helper.Finished_Jobs_Queue.First;
+      begin
+        loop
+          exit when Reducer_Helper.Xml_Node_Access_Vectors."="(Cursor, Reducer_Helper.Xml_Node_Access_Vectors.No_Element);
+
+          if Merge_Jobs(Reducer_Helper.Xml_Node_Access_Vectors.Element(Cursor)) then
+            Reducer_Helper.Finished_Jobs_Queue.Delete(Cursor);
+          else
+            Ada.Text_IO.Put_Line("Reducer could not merge a job.");
+          end if;
+          
+          Reducer_Helper.Xml_Node_Access_Vectors.Next(Cursor);
+        end loop;
+      end;
+    end loop;
+  end Result_Merge_Task;
     
 end Runner;

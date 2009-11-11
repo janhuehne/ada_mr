@@ -2,10 +2,11 @@ with GNAT.Sockets;
 use GNAT.Sockets;
 
 with Ada.Strings.Unbounded;
+with Xml;
 
 generic
-  with function Merge_Jobs return Boolean;
-  with function Finalize return Boolean;
+  with function Merge_Jobs(Xml_Node : Xml.Node_Access) return Boolean;
+  with function Finalize_Jobs return Boolean;
 
 package Echo is
   

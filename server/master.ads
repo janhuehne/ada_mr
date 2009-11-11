@@ -8,6 +8,7 @@ generic
   with function To_Xml(Job : in My_Job) return String;
   with function Get_Job_Id(Job : in My_Job) return Natural;
   with procedure Print_Job(Job : in My_Job; State : String);
+  with function Split_Jobs return My_Job
   
 package Master is
   
@@ -29,10 +30,9 @@ package Master is
     entry Say_Hello;
   end Master_Task;
   
---  type Job_Management_Task;
---  type Job_Management_Task_Access is access Job_Management_Task;
---  
---  task type Job_Management_Task;
+  task type Observe_Jobs  is
+    entry Start;
+  end Observe_Jobs;
   
   
   task type Master_Console is
@@ -47,6 +47,11 @@ package Master is
   function Get_Next_Job(Remove_From_Vector : Boolean := true) return My_Job;
   
   procedure Print_Jobs;
+  
+  
+  -- #### New Stuff. Server rewrite!
+  
+  
   
   
 end Master;

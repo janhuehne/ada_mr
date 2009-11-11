@@ -39,7 +39,7 @@ package Char_Job is
   
   function Job_Result_To_Xml return String;
   
-  function Merge_Jobs return Boolean;
+  function Merge_Jobs(Xml_Node : Xml.Node_Access) return Boolean;
   
   function Finalize return Boolean;
   

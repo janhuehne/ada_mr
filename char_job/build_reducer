@@ -1,2 +1,4 @@
 #!/bin/bash
-/usr/local/ada-4.3/bin/gnatmake -I../reducer -I../lib mr_reducer_count_char.adb && rm *.ali && rm *.o
+#/usr/local/ada-4.3/bin/gnatmake -I../reducer -I../lib mr_reducer_count_char.adb && rm *.ali && rm *.o
+gnatmake -I../reducer -I../lib mr_reducer_count_char.adb -largs -L/Developer/SDKs/MacOSX10.5.sdk/usr/lib -mmacosx-version-min=10.5.0 -shared-libgcc
+rm *.o *.ali
