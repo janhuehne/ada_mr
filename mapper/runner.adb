@@ -10,8 +10,6 @@ with Xml;
 with Xml_Parser;
 with Xml_Helper;
 
-with Mapper_Helper;
-
 with Ada.Exceptions;
 
 package body Runner is 
@@ -31,15 +29,6 @@ package body Runner is
   end Aborted;
   
   task body Runner_Task is
-    Sock            : Socket_Type;
-    S               : Stream_Access;
-    Addr            : Sock_Addr_Type (Family_Inet);
-    Msg             : String (1 .. 2000);
-    Last            : Natural;
-    B               : Boolean;
-    Read_Selector   : Selector_Type;
-    Read_Set, WSet  : Socket_Set_Type;
-    Read_Status     : Selector_Status;
   begin
     loop
       select
@@ -47,143 +36,226 @@ package body Runner is
         
         Ada.Text_IO.Put_Line("Runner Task started!");
         
-        Initialize;
-        Create_Socket(Sock);
-        Addr.Addr := Addresses(Get_Host_By_Name ("127.0.0.1"), 1);
-        Addr.Port := 7000;
-        
-        Create_Selector(Read_Selector);
-        Empty(Read_Set);
-        Empty(WSet);
-        
-        Connect_Socket(Sock, Addr);
-        S := Stream (Sock);
-        Boolean'Read (S, B);
-        
-        
-        Set(Read_Set, Sock);
-        
-        -- check for input on socket (server may be aborting)
-        -- time-out immediately if no input pending
-        -- We seem to need a small delay here (using zero seems to block
-        -- forever)
-        -- Is this a GNAT bug or AB misreading Check_Selector docs?
-        Check_Selector(Read_Selector, Read_Set, WSet, Read_Status, 0.005);
-        
-        String'Output(
-          S, 
-          Xml_Helper.Create_Initialization(Xml_Helper.Mapper, "Mapper_01")
-        );
-        
+        -- Initialization
         declare
-          Str : String := String'Input(S);
         begin
-          Ada.Text_IO.Put_Line(Str);
+          
+          declare
+            Response : String := Utility.Send(
+              "127.0.0.1",
+              7000,
+              Xml_Helper.Create_Initialization(Xml_Helper.Mapper, "Mapper_01")
+            );
+          begin
+            Ada.Text_IO.Put_Line(Response);
+          end;
+          
+        exception
+          when Error : others =>
+            Utility.Print_Exception(Error);
         end;
         
         
-        loop 
-          exit when Aborted.Check = true;
+        -- Ask for new jobs and work off them
+        loop
           
-          Set(Read_Set, Sock);
-          
-          -- check for input on socket (server may be aborting)
-          -- time-out immediately if no input pending
-          -- We seem to need a small delay here (using zero seems to block
-          -- forever)
-          -- Is this a GNAT bug or AB misreading Check_Selector docs?
-          Check_Selector(Read_Selector, Read_Set, WSet, Read_Status, 0.005);
-          
-          if Read_Status = Expired then
+          declare
+          begin
             
-            -- ask for new job
-            String'Output(
-              S, 
-              Xml_Helper.Create_Job_Request
-            );
-            
---            Ada.Text_IO.Put_Line("Server Request: " & Xml_Helper.Create_Job_Request);
-          
             declare
-              -- receive message
-              Str : String := String'Input(S);
-            begin
---              Ada.Text_IO.Put_Line("Server Response: " & Str);
+              Response : String := Utility.Send(
+                "127.0.0.1",
+                7000,
+                Xml_Helper.Create_Job_Request
+              );
               
-              if Xml_Helper.Is_Valid_Xml_String(Str) then
+              Xml_Tree : Xml.Node_Access := Xml_Parser.Parse(Content => Response);
+            begin
+              
+              if Xml_Helper.Is_Command(Xml_Tree, "new_job") then
                 
                 declare
-                  Xml_Root : Xml.Node_Access := Xml_Parser.Parse(Content => Str);
+                  Job : My_Job := From_Xml(Xml.Find_Child_With_Tag(Xml_Tree, "details"));
                 begin
-                  if Utility.Is_Equal(Xml.Get_Tag(Xml_Root), "adamr-master") then
-                    if Utility.Is_Equal(Xml.Get_Value(Xml_Root, "command"), "new_job") then
-                      declare
-                        Job : My_Job := From_Xml(Xml.Find_Child_With_Tag(Xml_Root, "details"));
-                      begin
-                        if Compute_Job(Job) then
-                          
-                          if Mapper_Helper.Send_Job_Result_To_Reducer(Job_Result_To_Xml, "127.0.0.1", "7100") then
-                            -- send later to the responding reducer!
-                            String'Output(
-                              S, 
-                              Xml_Helper.Xml_Command(Xml_Helper.Mapper, "job_done", To_Xml(Job))
-                            );
-                          else
-                            Ada.Text_IO.Put_Line("ACHTUNG: Job konnte nicht an einen Reducer gesendet werden!!!!!!");
-                          end if;
-                          
-                          -- TODO: Error handling, if happens!
-                          declare
-                            Str : String := String'Input(S);
-                          begin
-                            null;
-                          end;
---                          Ada.Text_IO.Put_Line("Server Request: " & Xml_Helper.Xml_Command(Xml_Helper.Mapper, "job_done", To_Xml(Job)));
---                          Ada.Text_IO.Put_Line("Server Response: " & String'Input(S));
-                          
-                          Ada.Text_IO.Put_Line(Job_Result_To_Xml);
-                        else
-                          Ada.Text_IO.Put_Line("Job Fehler!!!!");
-                        end if;
-                      end;
-                    elsif Utility.Is_Equal(Xml.Get_Value(Xml_Root, "command"), "exit") then
-                      exit;
-                    elsif Utility.Is_Equal(Xml.Get_Value(Xml_Root, "command"), "sleep") then
-                      declare
-                        Time : Float := Float'Value(Xml.Get_Value(Xml.Find_Child_With_Tag(Xml_Root, "details"), "seconds"));
-                      begin
-                        Ada.Text_IO.Put_Line("No further job found. Waiting " & Float'Image(Time) & " seconds until next job request!");
-                        delay Duration(Time);
-                      end;
-                    else
-                      Ada.Text_IO.Put_Line("Unknown command!");
-                    end if;
-                  end if;
+                  Compute_Job(Job);
+                  
+                  -- Send result to reducer
+                  declare
+                  begin
+                    declare
+                      Response : String := Utility.Send(
+                        "127.0.0.1",
+                        7100,
+                        Xml_Helper.Xml_Command(Xml_Helper.Mapper, "job_result", Job_Result_To_Xml)
+                      );
+                    begin
+                      Ada.Text_IO.Put_Line(Response);
+                    end;
+                  exception
+                    when Error : others =>
+                      Ada.Text_IO.Put_Line("-> ERROR: Reducer unreachable!");
+                      Utility.Print_Exception(Error);
+                  end;
+                  
+                  
+                  -- Send job state to master
+                  declare
+                  begin
+                    declare
+                      Response : String := Utility.Send(
+                        "127.0.0.1",
+                        7000,
+                        Xml_Helper.Xml_Command(Xml_Helper.Mapper, "job_done", To_Xml(Job))
+                      );
+                    begin
+                      Ada.Text_IO.Put_Line(Response);
+                    end;
+                  exception
+                    when Error : others =>
+                      Ada.Text_IO.Put_Line("-> ERROR: Master unreachable!");
+                      Utility.Print_Exception(Error);
+                  end;
+                   
                 end;
+                
+              elsif Xml_Helper.Is_Command(Xml_Tree, "sleep") then
+                
+                declare
+                  Time : Float := Float'Value(Xml.Get_Value(Xml.Find_Child_With_Tag(Xml_Tree, "details"), "seconds"));
+                begin
+                  Ada.Text_IO.Put_Line("No further job found. Waiting " & Float'Image(Time) & " seconds until next job request!");
+                  delay Duration(Time);
+                end;
+              
+              elsif Xml_Helper.Is_Command(Xml_Tree, "exit") then
+                exit;
+              
               else
-                Ada.Text_IO.Put_Line("Not a valid xml response!");
+                Ada.Exceptions.Raise_Exception(Utility.Unknown_Command'Identity, "Unsupported command: """ & Xml.Get_Value(Xml_Tree, "command"));
+                
               end if;
               
-              exit when Str = "Server aborted";
             end;
             
-          end if;
-          
-          Ada.Text_IO.New_Line;
+          exception
+            when Error : Xml_Parser.Xml_Parse_Error =>
+              Ada.Text_IO.Put_Line("ERROR: Could not parse incomming XML file.");
+            
+            when Error : Utility.Unknown_Command =>
+              Ada.Text_IO.Put_Line("ERROR: Unsupported command: " & Ada.Exceptions.Exception_Message(Error));
+            
+            when Error : others =>
+              Utility.Print_Exception(Error);
+          end;
           
         end loop;
         
-        --  tidy up 
-        ShutDown_Socket(Sock);
-        Close_Selector(Read_Selector);
-        Finalize;
         
-        Ada.Text_IO.New_Line;
-        Ada.Text_IO.Put_Line("Mapper task exiting ...");
-        Finalize;
-        exit;
       end select;
     end loop;
+        
+        
+        
+        
+        
+        
+--         Initialize;
+--         Create_Socket(Sock);
+--         Addr.Addr := Addresses(Get_Host_By_Name ("127.0.0.1"), 1);
+--         Addr.Port := 7000;
+--         
+--         Create_Selector(Read_Selector);
+--         Empty(Read_Set);
+--         Empty(WSet);
+--         
+--         Connect_Socket(Sock, Addr);
+--         S := Stream (Sock);
+--         Boolean'Read (S, B);
+--         
+--         
+--         Set(Read_Set, Sock);
+--         
+--         -- check for input on socket (server may be aborting)
+--         -- time-out immediately if no input pending
+--         -- We seem to need a small delay here (using zero seems to block
+--         -- forever)
+--         -- Is this a GNAT bug or AB misreading Check_Selector docs?
+--         Check_Selector(Read_Selector, Read_Set, WSet, Read_Status, 0.005);
+--         
+--         String'Output(
+--           S, 
+--           Xml_Helper.Create_Initialization(Xml_Helper.Mapper, "Mapper_01")
+--         );
+--         
+--         declare
+--           Str : String := String'Input(S);
+--         begin
+--           Ada.Text_IO.Put_Line(Str);
+--         end;
+--         
+--         
+--         loop 
+--           exit when Aborted.Check = true;
+--           
+--           Set(Read_Set, Sock);
+--           
+--           -- check for input on socket (server may be aborting)
+--           -- time-out immediately if no input pending
+--           -- We seem to need a small delay here (using zero seems to block
+--           -- forever)
+--           -- Is this a GNAT bug or AB misreading Check_Selector docs?
+--           Check_Selector(Read_Selector, Read_Set, WSet, Read_Status, 0.005);
+--           
+--           if Read_Status = Expired then
+--             
+--             -- ask for new job
+--             String'Output(
+--               S, 
+--               Xml_Helper.Create_Job_Request
+--             );
+--             
+-- --            Ada.Text_IO.Put_Line("Server Request: " & Xml_Helper.Create_Job_Request);
+--           
+--             declare
+--               -- receive message
+--               Str : String := String'Input(S);
+--             begin
+-- --              Ada.Text_IO.Put_Line("Server Response: " & Str);
+--               
+-- --              if Xml_Helper.Is_Valid_Xml_String(Str) then
+--                 
+--                 declare
+--                   Xml_Root : Xml.Node_Access := Xml_Parser.Parse(Content => Str);
+--                 begin
+--                   if Utility.Is_Equal(Xml.Get_Tag(Xml_Root), "adamr-master") then
+--                       Ada.Text_IO.Put_Line("Unknown command!");
+--                     end if;
+--                   end if;
+--                 end;
+-- --              else
+-- --                Ada.Text_IO.Put_Line("Not a valid xml response!");
+-- --              end if;
+--               
+--               exit when Str = "Server aborted";
+--             end;
+--             
+--           end if;
+--           
+--           Ada.Text_IO.New_Line;
+--           
+--         end loop;
+--         
+--         --  tidy up 
+--         ShutDown_Socket(Sock);
+--         Close_Selector(Read_Selector);
+--         Finalize;
+--         
+--         Ada.Text_IO.New_Line;
+--         Ada.Text_IO.Put_Line("Mapper task exiting ...");
+--         Finalize;
+--         exit;
+--       end select;
+--     end loop;
   exception 
     when Error : others =>
       Ada.Text_IO.Put_Line ("Exception: Client quitting ..." ) ;
@@ -191,9 +263,9 @@ package body Runner is
       Ada.Text_IO.Put_Line (Ada.Exceptions.Exception_Message(Error));
       Ada.Text_IO.Put_Line (Ada.Exceptions.Exception_Information(Error));
       
-      Close_Socket(Sock);
-      Close_Selector(Read_Selector);
-      Finalize;
+--      Close_Socket(Sock);
+--      Close_Selector(Read_Selector);
+--      Finalize;
   end Runner_Task;
     
 end Runner;

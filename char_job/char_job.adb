@@ -78,7 +78,7 @@ package body Char_Job is
     Ada.Text_IO.New_Line;
   end Print_Job;
   
-  function Compute_Job(Job : in My_Job) return Boolean is
+  procedure Compute_Job(Job : in My_Job) is
     Computable_String : String := ASU.To_String(Job.Computable_String);
     Element_Cursor : Utility.String_Integer_Maps.Cursor;
   begin
@@ -95,7 +95,8 @@ package body Char_Job is
       end if;
     end loop;
     
-    return true;
+  exception
+    when Error : others => raise Utility.Compute_Job_Error;
   end Compute_Job;
   
   function Job_Result_To_Xml return String is
@@ -172,4 +173,47 @@ package body Char_Job is
       
     return true;
   end Finalize;
+  
+  procedure Split_Raw_Data is
+    First : Natural := Complete_String'First;
+    Last  : Natural;
+    Step  : Natural := 10;
+  begin
+    Ada.Text_IO.Put_Line("-> Splitting raw data into jobs");
+    
+    loop
+      Last := First + Step - 1;
+
+      if Last > Complete_String'Last then
+        Last := Complete_String'Last;
+      end if;
+
+      declare
+        Job : My_Job;
+      begin
+        Job.Job_Id := Get_Next_Job_Counter;
+        Job.Computable_String := ASU.To_Unbounded_String(Complete_String(First .. Last));
+        Job.Length := Last - First + 1;
+        
+        Calculated_Jobs.Append(Job);
+      end;
+
+      First := Last + 1;
+
+      exit when Last = Complete_String'Last;
+    end loop;
+    
+    Ada.Text_IO.Put_Line("   .. Done");
+  end Split_Raw_Data;
+  
+  
+  function Get_Next_Raw_Job return My_Job is
+    J : My_Job := Calculated_Jobs.First_Element;
+  begin
+    Calculated_Jobs.Delete_First;
+    
+    return J;
+  end Get_Next_Raw_Job;
+  
+  
 end Char_Job;

@@ -100,10 +100,6 @@ package body Echo is
               
             end if;
             
---            if Server.Aborted.Check = true then
---              exit;
---            end if;
-          
           end loop;
           
           Ada.Text_IO.New_Line;

@@ -79,11 +79,6 @@ package body Xml_Helper is
     return Ada.Strings.Unbounded.To_String(Xml_String);
   end Create_System_Control;
   
-  function Is_Valid_Xml_String(Str : String) return Boolean is
-  begin
-    return Utility.Starts_With(Str, "<?xml");
-  end Is_Valid_Xml_String;
-  
   function Hash_To_Xml_String(Details : Utility.String_String_Maps.Map) return String is
     Detail_Cursor : Utility.String_String_Maps.Cursor := Utility.String_String_Maps.First(Details);
     Detail_String : Ada.Strings.Unbounded.Unbounded_String;
@@ -101,5 +96,24 @@ package body Xml_Helper is
     
     return ASU.To_String(Detail_String);
   end Hash_To_Xml_String;
-
+  
+  
+  function Is_Mapper_Request(Node : Xml.Node_Access) return Boolean is
+  begin
+    return Utility.Is_Equal(Xml.Get_Tag(Node), "adamr-mapper");
+  end Is_Mapper_Request;
+  
+  
+  function Is_Reducer_Request(Node : Xml.Node_Access) return Boolean is
+  begin
+    return Utility.Is_Equal(Xml.Get_Tag(Node), "adamr-reducer");
+  end Is_Reducer_Request;
+  
+  
+  function Is_Command(Node : Xml.Node_Access; Command : String) return Boolean is
+  begin
+    return Utility.Is_Equal(Xml.Get_Value(Node, "command"), Command);
+  end Is_Command;
+  
+  
 end Xml_Helper;

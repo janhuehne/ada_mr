@@ -1,0 +1,10 @@
+with GNAT.Sockets;
+use GNAT.Sockets;
+
+with Ada.Text_IO;
+
+with Xml_Helper;
+
+package body Mapper_Helper is
+  
+end Mapper_Helper;

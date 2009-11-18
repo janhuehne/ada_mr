@@ -86,4 +86,71 @@ package body Utility is
   exception
     when Ada.Text_IO.Name_Error => return False;
   end Does_File_Exist;
+  
+  procedure Print_Exception(Error : Ada.Exceptions.Exception_Occurrence; Message : String := "") is
+  begin
+    Ada.Text_IO.Put_Line(Ada.Exceptions.Exception_Name(Error));
+    Ada.Text_IO.Put_Line(Ada.Exceptions.Exception_Message(Error));
+    Ada.Text_IO.Put_Line(Ada.Exceptions.Exception_Information(Error));
+  end Print_Exception;
+  
+  
+  
+  
+  function Send(Host : String; Port : GNAT.Sockets.Port_Type; Command : String) return String is
+    use GNAT.Sockets;
+    
+    Sock            : Socket_Type;
+    S               : Stream_Access;
+    Addr            : Sock_Addr_Type(Family_Inet);
+    B               : Boolean;
+    Read_Selector   : Selector_Type;
+    Read_Set, WSet  : Socket_Set_Type;
+    Read_Status     : Selector_Status;
+  begin
+    Initialize;
+    Create_Socket(Sock);
+    Addr.Addr := Addresses(Get_Host_By_Name (Host), 1);
+    Addr.Port := Port;
+    
+    Create_Selector(Read_Selector);
+    Empty(Read_Set);
+    Empty(WSet);
+    
+    Connect_Socket(Sock, Addr);
+    S := Stream (Sock);
+    Boolean'Read (S, B);
+    
+    
+    Set(Read_Set, Sock);
+    
+    -- check for input on socket (server may be aborting)
+    -- time-out immediately if no input pending
+    -- We seem to need a small delay here (using zero seems to block
+    -- forever)
+    -- Is this a GNAT bug or AB misreading Check_Selector docs?
+    Check_Selector(Read_Selector, Read_Set, WSet, Read_Status, 0.005);
+    
+    String'Output(
+      S, 
+      Command
+    );
+    
+    declare
+      Str : String := String'Input(S);
+    begin
+      ShutDown_Socket(Sock);
+      Close_Selector(Read_Selector);
+      Finalize;
+      
+      return Str;
+    end;
+  exception
+    when Error : others =>
+      ShutDown_Socket(Sock);
+      Close_Selector(Read_Selector);
+      Finalize;
+      
+      raise;
+  end Send;
 end Utility;

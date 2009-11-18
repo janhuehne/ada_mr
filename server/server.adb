@@ -13,59 +13,22 @@ use Ada.Characters.Handling;
 with Xml;
 with Xml_Parser;
 
+with Master_Helper;
+
 package body Server is 
   
-  protected body Aborted is
-  
-    procedure Stop_Master is
-    begin
-      Abort_Master := true;
-    end Stop_Master;
-    
-    
-    procedure Stop_Clients is
-    begin
-      Abort_Clients := true;
-    end Stop_Clients;
-    
-    function Check_Master return Boolean is
-    begin
-      return Abort_Master;
-    end Check_Master;
-    
-    function Check_Clients return Boolean is
-    begin
-      return Abort_Clients;
-    end Check_Clients;
-    
-  end Aborted;
-  
-  
-
---  
---  protected body Buffer is
---    entry Deposit(X : IN Echo_Access) when Count < MaxTasks is
---    begin 
---      Buf (I) := X;
---      I := I + 1;
---      Count := Count + 1;
---    end Deposit;
---    
---    entry Extract(X : OUT Echo_Access) when Count > 0 is
---    begin 
---      X := Buf (J);
---      J := J + 1;
---      Count := Count - 1;
---    end Extract;
---    
---    function NumWaiting return Natural is
---    begin
---      return Count;
---    end NumWaiting;
---  end Buffer;
---  
-  
-  task body P_Server is
+  task body Server_Task is
+    Server          : Socket_Type;
+    New_Sock        : Socket_Type;
+    Slave           : Echo_MR.Echo_Access;
+    Addr            : Sock_Addr_Type;
+    Peer_Addr       : Sock_Addr_Type;
+    Avail           : Boolean := False;
+    TotalTasks      : Natural := 0;
+    Accept_Selector : Selector_Type;
+    Accept_Set      : Socket_Set_Type;
+    WSet            : Socket_Set_Type;
+    Accept_Status   : Selector_Status;
   begin
     loop
       select
@@ -91,8 +54,11 @@ package body Server is
         Empty(Accept_Set);
         Empty(WSet);
         
-        loop 
-          exit when Aborted.Check_Master = true;
+        Ada.Text_IO.New_Line;
+        Ada.Text_IO.Put_Line("-> Ada MR Master is ready to accept connections on port " & Addr.Port'Img & ".");
+        
+        loop
+          exit when Master_Helper.Aborted.Check_Master = true;
           
           --  check for input (connection requests) on Server socket 
           Set(Accept_Set, Server);
@@ -105,40 +71,31 @@ package body Server is
             --  one that we are checking. 
             --  Hence the Accept_Socket call should not block. 
             Accept_Socket(Server, New_Sock, Peer_Addr);
-            Ada.Text_IO.New_Line;
-            Ada.Text_IO.Put_Line("Connection accepted -- allocating slave");
             
-    ----        if Buffer.NumWaiting = 0  and TotalTasks < MaxTasks then
-    --          -- start new task 
-            Slave := new Echo.Echo;
-    --          TotalTasks := TotalTasks + 1;
-            Ada.Text_IO.Put_Line ( "New slave task started" );
-    --          
-    --          --  call entry Start to activate task 
+            Ada.Text_IO.New_Line;
+            
+            Slave := new Echo_MR.Echo;
+            
+            Ada.Text_IO.Put_Line ( "-> New incomming task" );
+            
             Slave.Start(New_Sock, Slave);
-    ----        else 
-    ----          Ada.Text_IO.Put_Line("Waiting for an idle slave task");
-    ----          Buffer.Extract (Slave);
-    ----          --  call entry Start to re-activate task 
-    ----          Slave.ReStart (New_Sock);
-    ----          Ada.Text_IO.Put_Line ("Idle slave task reactivated");
-    ----        end if;
           end if;
-           end loop;
-          
+        end loop;
+        
       or
         accept Stop;
-        Aborted.Stop_Clients;
+        Master_Helper.Aborted.Stop_Clients;
+        
         --  tidy up 
         Close_Selector(Accept_Selector);
         Empty(Accept_Set);
         Close_Socket(Server);
         Ada.Text_IO.New_Line;
-        Ada.Text_IO.Put_Line("Main server task exiting ...");
+        Ada.Text_IO.Put_Line("-> Ada MR Master server task stopped.");
         Finalize;
         exit;
       end select;
     end loop;
-  end P_Server;
+  end Server_Task;
     
 end Server;

@@ -15,7 +15,7 @@ package Char_Job is
   end record;
   
   type Add_Job_Procedure is access procedure(Job : My_Job);
-  
+    
   package Job_Vector is new Ada.Containers.Vectors(
     Element_Type => My_Job, 
     Index_Type => Positive
@@ -26,8 +26,15 @@ package Char_Job is
 --  function From_Xml(Xml : in String) return My_Job;
   function Get_Job_Id(Job : My_Job) return Natural;
   
+  -- DEPRECATED
   procedure Split_Data_Into_Jobs(Process : Add_Job_Procedure);
   
+  
+  procedure Split_Raw_Data;
+  function Get_Next_Raw_Job return My_Job;
+  
+  Calculated_Jobs : Job_Vector.Vector;
+  Calculated_Jobs_Cursor : Job_Vector.Cursor;
   
   Complete_String : String := "abcdefghijklmnopqrstuvwxyz-abcdefghijklmnopqrstuvwxyzzz";
   
@@ -35,7 +42,7 @@ package Char_Job is
   
   procedure Print_Job(Job : in My_Job; State : String);
   
-  function Compute_Job(Job : in My_Job) return Boolean;
+  procedure Compute_Job(Job : in My_Job);
   
   function Job_Result_To_Xml return String;
   

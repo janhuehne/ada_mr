@@ -3,9 +3,11 @@ with Utility;
 with Xml;
 with Xml_Parser;
 with Server;
-with Worker;
+--with Worker;
 with Xml_Queue;
 with Xml_Helper;
+with Master_Helper;
+with Ada.Exceptions;
 
 package body Echo is
   
@@ -17,156 +19,106 @@ package body Echo is
       Input_Set : Socket_Set_Type;
       WSet : Socket_Set_Type;
       Input_Status : Selector_Status;
-      
-      Initialization_Complete : Boolean := false;
     begin 
       --set up selector 
       Create_Selector(Input_Selector);
-
-      --Initialise socket sets 
-      --WSet is always empty as we are not interested in output events 
+      
+      -- Initialise socket sets 
+      -- WSet is always empty as we are not interested in output events 
       -- RSet only ever contains one socket namely Sock 
       Empty(Input_Set);
       Empty(WSet);
-
+      
       ACCEPT Start(N_Sock : IN Socket_Type; Self : IN Echo_Access) DO
         Sock := N_Sock;
         Me := Self;
       end Start;
-
+      
       loop
         -- block for exception handling
         begin
           -- set up stream on socket
           S := Stream(Sock);
-
+          
           -- acknowledge connection
           Boolean'Write(S, True);
-
-
-          --String'Output(S, "<xml version=""1.0"" />Initialier XML Kram ...");
-
+          
           loop
             -- check for input on Sock socket 
             Set(Input_Set, Sock);
-
+            
             -- time-out on check if no input within 0.5 second 
             Check_Selector(Input_Selector, Input_Set, WSet, Input_Status, 0.5);
-
---            Ada.Text_IO.Put(".");
+            
             if Input_Status = Completed then
               -- we have input, so process it 
               
               declare
                 Str : String := String'Input(S);
+                Xml_Root : Xml.Node_Access := Xml_Parser.Parse(Content => Str);
               begin
-                Ada.Text_IO.Put_Line(Str);
-                
-                if Utility.Starts_With(Str, "<?xml") then
-                  Ada.Text_IO.Put_Line("XML found!");
---                  String'Output(S, "XML received: " & Str);
+                Ada.Text_IO.Put_Line("XML Request: " & Str);
                   
-                  declare
-                    Xml_Root : Xml.Node_Access := Xml_Parser.Parse(Content => Str);
-                  begin
+                  if Xml_Helper.Is_Mapper_Request(Xml_Root) then
                     
-                    if Utility.Is_Equal(Xml.Get_Tag(Xml_Root), "adamr-mapper") then
+                    if Xml_Helper.Is_Command(Xml_Root, "initialization") then
                       
-                      if Initialization_Complete = false then
+                      declare
+                        Details : Xml.Node_Access := Xml.Find_Child_With_Tag(Xml_Root, "details");
+                        Worker_Entry : Master_Helper.Worker_Record_Access := new Master_Helper.Worker_Record;
+                      begin
+                        Worker_Entry.Identifier := ASU.To_Unbounded_String(Xml.Get_Value(Details, "identifier"));
+                        Worker_Entry.W_Type     := Master_Helper.String_To_Worker_Type(Xml.Get_Value(Details, "type"));
                         
-                        if Utility.Is_Equal(Xml.Get_Value(Xml_Root, "command"), "initialization") then
-                          Worker.Add_New_Worker(Xml.Find_Child_With_Tag(Xml_Root, "details"), Me);
-                          Initialization_Complete := true;
-                          String'Output(S, Xml_Helper.Create_System_Control(Xml_Helper.Master, "okay"));
-                        else
-                          Ada.Text_IO.Put_Line("Initialization missing.");
-                          String'Output(S, "Initialization missing.");
-                        end if;
+                        Add_Worker(Worker_Entry);
                         
-                      else
-                        
-                        if Utility.Is_Equal(Xml.Get_Value(Xml_Root, "command"), "job_request") then
-                          
-                          if Xml_Queue.Count_Jobs(Xml_Queue.Pending) > 0 then
-                          
-                            declare
-                              Job : Xml_Queue.Xml_Job_Entry_Access := Xml_Queue.Find_First_Job_By_State(Xml_Queue.Pending);
-                            begin
-                              Xml_Queue.Change_Job_State(Job, Xml_Queue.In_Progress);
-                              String'Output(S, Xml_Helper.Xml_Command(Xml_Helper.Master, "new_job", ASU.To_String(Job.Xml)));
-                            end;
-                          else
-                            -- Close client if no further jobs! TODO: client should x seconds and ask again fro a new job
---                            String'Output(S, Xml_Helper.Xml_Command(Xml_Helper.Master, "exit"));
-                            String'Output(S, Xml_Helper.Xml_Command(Xml_Helper.Master, "sleep", "<seconds>10</seconds>"));
-                            
-                          end if;
-                            
-                        elsif Utility.Is_Equal(Xml.Get_Value(Xml_Root, "command"), "change_job_state") then
-                          
-                          Ada.Text_IO.Put_Line("Entering change_job_state");
-                          
-                          declare
-                            Xml_Job_Details : Xml.Node_Access := Xml.Find_Child_With_Tag(Xml_Root, "details");
-                          begin
-                            Xml_Queue.Change_Job_State(Xml.Get_Value(Xml_Job_Details, "id"), Xml.Get_Value(Xml_Job_Details, "state"));
-                            String'Output(S, "<?xml version=""1.0"" ?><adamr-master><sysctrl><message>ok</sysctrl></adamr-master>");
-                          exception
-                            when Xml_Queue.Invalid_Job_State => 
-                              Ada.Text_IO.Put_Line("Unknow job state");
-                              String'Output(S, "Unknown job state.");
-                            when others =>
-                              Ada.Text_IO.Put_Line("Can not change job state");
-                              String'Output(S, "Can not change job state");
-                          end;
-                        
-                        elsif Utility.Is_Equal(Xml.Get_Value(Xml_Root, "command"), "job_done") then
-                        
-                          declare
-                            Xml_Job_Details : Xml.Node_Access := Xml.Find_Child_With_Tag(Xml_Root, "details");
-                          begin
-                            Xml_Queue.Change_Job_State(Xml.Get_Value(Xml_Job_Details, "job_id"), Xml_Queue.Done);
-                            String'Output(S, Xml_Helper.Create_System_Control(Xml_Helper.Master, "okay"));
-                          exception
-                            when Xml_Queue.Invalid_Job_State => 
-                              Ada.Text_IO.Put_Line("Unknow job state");
-                              String'Output(S, "Unknown job state.");
-                            when others =>
-                              Ada.Text_IO.Put_Line("Can not change job state");
-                              String'Output(S, "Can not change job state");
-                          end;
-                          
-                        else
-                          Ada.Text_IO.Put_Line("Unknown command.");
-                          String'Output(S, "Unknown command.");
-                        end if;
+                        String'Output(S, Xml_Helper.Xml_Command(
+                          Xml_Helper.Master,
+                          "new_access_token",
+                          "<access_token>" & Worker_Entry.Access_Token & "</access_token>"
+                        ));
+                      end;
                       
-                      end if;
-                    
+                    elsif Xml_Helper.Is_Command(Xml_Root, "job_request") then
+                      declare
+                        Job_Entry : Job_Entry_Record_Access;
+                      begin
+                        Job_Entry := Get_Next_Pending_Job;
+                        
+                        String'Output(S, Xml_Helper.Xml_Command(Xml_Helper.Master, "new_job", Job_To_Xml(Job_Entry)));
+                      exception
+                        when Master_Helper.No_Job_Found =>
+                          String'Output(S, Xml_Helper.Xml_Command(Xml_Helper.Master, "sleep", "<seconds>10</seconds>"));
+                        when Error : others => 
+                          Utility.Print_Exception(Error);
+                          --Change_Job_State(Job_Entry, Master_Helper.Pending);
+                      end;
+                      
+                    elsif Xml_Helper.Is_Command(Xml_Root, "job_done") then
+                      declare
+                        Details   : Xml.Node_Access := Xml.Find_Child_With_Tag(Xml_Root, "details");
+                        Job_Entry : Job_Entry_Record_Access := Get_Job_By_Id(Integer'Value(Xml.Get_Value(Details, "job_id")));
+                      begin
+                        Change_Job_State(Job_Entry, Master_Helper.Done);
+                        String'Output(S, Xml_Helper.Create_System_Control(Xml_Helper.Master, "okay"));
+                      end;
+                    else
+                      Ada.Exceptions.Raise_Exception(Master_Helper.Unknown_Command'Identity, "The command """ & Xml.Get_Value(Xml_Root, "command") & """is not supported."); 
                     end if;
-                  
-                  exception
-                    when Xml.Node_Not_Found =>
-                      Ada.Text_IO.Put_Line("Can't play with the xml request!");
-                      
-                    when Worker.Invalid_Worker =>
-                      String'Output(S, "Unknow worker type tries to register.");
-                      Ada.Text_IO.Put_Line("Unknow worker type tries to register.");
-                      exit;
-                  end;
-                  
-                else
-                  Ada.Text_IO.Put_Line("Unknown command");
-                  String'Output(S, "Unknown command: " & Str);
-                end if;
-
+                    
+                  end if;
+              exception
+                when Error : others => 
+                  Utility.Print_Exception(Error);
+                  String'Output(S, Xml_Helper.Create_System_Control(Xml_Helper.Master, Ada.Exceptions.Exception_Message(Error)));
               end;
+
             end if;
 
-            if Server.Aborted.Check_Clients then
-              String'Output(S, "Server aborted");
-              exit;
-            end if;
+--            if Master_Helper.Aborted.Check_Clients then
+--              String'Output(S, "Server aborted");
+--              exit;
+--            end if;
 
           end loop;
 

@@ -8,7 +8,7 @@ generic
   with function To_Xml(Job : in My_Job) return String;
   with function Get_Job_Id(Job : in My_Job) return Natural;
   with procedure Print_Job(Job : in My_Job; State : String);
-  with function Compute_Job(Job : in My_Job) return Boolean;
+  with procedure Compute_Job(Job : in My_Job);
   with function Job_Result_To_Xml return String;
   
 package Mapper is

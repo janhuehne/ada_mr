@@ -8,7 +8,7 @@ generic
   type My_Job is private;
   with function From_Xml(Xml_Node : Xml.Node_Access) return My_Job;
   with function To_Xml(Job : in My_Job) return String;
-  with function Compute_Job(Job : in My_Job) return Boolean;
+  with procedure Compute_Job(Job : in My_Job);
   with function Job_Result_To_Xml return String;
     
 package Runner is  

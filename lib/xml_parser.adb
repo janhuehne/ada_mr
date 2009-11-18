@@ -1,6 +1,8 @@
+with Ada.Exceptions;
 with Ada.Text_IO;
 with Simple_Xml.Xml_Io;
 with Ada.Strings.Unbounded;
+with Utility;
 
 package body Xml_Parser is
   
@@ -50,20 +52,20 @@ package body Xml_Parser is
     if File_Name /= "" then
       Parse_File(File_Name => File_Name);
     elsif Content /= "" then
-      Parse_File (Content => Content);
+      if Is_Valid_Xml_String(Content) then
+        Parse_File (Content => Content);
+      else
+        Ada.Exceptions.Raise_Exception(Xml_Parse_Error'Identity, "String does not start with <?xml");
+      end if;
     end if;
       
     return Root_Node;
   end Parse;
---  Xml.Print(Root_Node);
---  
---  declare
---    N : Xml.Node_Access := Xml.Find_Child_With_Tag(Root_Node, "client-id");
---  begin
---    if Xml."="(N, null) then
---      Ada.Text_IO.Put_Line("Null!");
---    else
---      Ada.Text_IO.Put_Line(Ada.Strings.Unbounded.To_String(N.Tag));
---    end if;
---  end;
+  
+  
+  function Is_Valid_Xml_String(Str : String) return Boolean is
+  begin
+    return Utility.Starts_With(Str, "<?xml");
+  end Is_Valid_Xml_String;
+
 end Xml_Parser;

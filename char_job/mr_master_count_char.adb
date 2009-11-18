@@ -14,8 +14,6 @@ begin
     M_C.Start(M);
     M_O_J.Start;
     
-    Char_Job.Split_Data_Into_Jobs(Master_MR.Add_New_Job'Access);
-    
   end;
 
     Ada.Text_IO.New_Line;

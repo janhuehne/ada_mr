@@ -1,5 +1,6 @@
 with Utility;
 with Ada.Strings.Unbounded;
+with Xml;
 
 package Xml_Helper is
   
@@ -9,7 +10,7 @@ package Xml_Helper is
   
   function To_String(G_T : Group_Tag) return String;
   
-  function Is_Valid_Xml_String(Str : String) return Boolean;
+  
   
   function Xml_Command(G_T : Group_Tag; Command : String; Details : String := "") return String;
   function Xml_Command(G_T : Group_Tag; Command : String; Details : Utility.String_String_Maps.Map) return String;
@@ -20,6 +21,11 @@ package Xml_Helper is
   
   function Hash_To_Xml_String(Details : Utility.String_String_Maps.Map) return String;
   
+  
+  
+  function Is_Mapper_Request(Node : Xml.Node_Access) return Boolean;
+  function Is_Reducer_Request(Node : Xml.Node_Access) return Boolean;
+  function Is_Command(Node : Xml.Node_Access; Command : String) return Boolean;
   
   
 end Xml_Helper;

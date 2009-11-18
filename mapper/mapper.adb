@@ -59,19 +59,6 @@ package body Mapper is
           Ada.Text_IO.Put_Line("    abort        Stops the Ada MR Client immediately (current job is aborted)");
           Ada.Text_IO.Put_Line("    quit / exit  Stops the Ada MR Client after processing the last job");
         
---        elsif (Is_Equal(In_String, In_Last, "verbose-on", true)) then
---          Logger.Enable_Verbose_Mode;
---          Ada.Text_IO.Put_Line("Verbose mode: On");
---        
---        elsif (Is_Equal(In_String, In_Last, "verbose-off", true)) then
---          Logger.Disable_Verbose_Mode;
---          Ada.Text_IO.Put_Line("Verbose mode: Off");
---        elsif (Is_Equal(In_String, In_Last, "idle-mappers", true)) then
---          Worker.Print_All_Idle_Mapper;
---        elsif (Is_Equal(In_String, In_Last, "jobs", true)) then
-----          Ada.Text_IO.Put_Line(Unprocessed_Jobs.Length'Img & " unprocessed jobs");
-----          Xml_Queue.Print_Jobs;
---            Print_Jobs;
         else
           Ada.Text_IO.Put_Line("Unknown command: " & In_String(1..In_Last));
         end if;
