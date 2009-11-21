@@ -66,8 +66,27 @@ package body Mapper is
       if In_Last > 0 then
         
         if (Is_Equal(In_String, In_Last, "config", true)) then
-          Ada.Text_IO.Put_Line("Show Config!");
           
+          Ada.Text_IO.New_Line;
+          Ada.Text_IO.Put_Line("-> Ada MR Mapper configuration");
+          
+          Utility.Put("Identifier:", 20, 2);
+          Utility.Put(ASU.To_String(Mapper_Helper.Identifier), 60, 2);
+          Ada.Text_IO.New_Line;
+          
+          Utility.Put("Listen on port:", 20, 2);
+          Utility.Put(Mapper_Helper.Listen_Sock_Addr.Port'Img, 60, 2);
+          Ada.Text_IO.New_Line;
+          
+          Utility.Put("Master host:", 20, 2);
+          Utility.Put(GNAT.Sockets.Image(Mapper_Helper.Master_Sock_Addr.Addr), 60, 2);
+          Ada.Text_IO.New_Line;
+          
+          Utility.Put("Master port:", 20, 2);
+          Utility.Put(Mapper_Helper.Master_Sock_Addr.Port'Img, 60, 2);
+          Ada.Text_IO.New_Line;
+          Ada.Text_IO.New_Line;
+          Ada.Text_IO.New_Line;
         elsif (Is_Equal(In_String, In_Last, "start", true)) then
           C.Start;
         
