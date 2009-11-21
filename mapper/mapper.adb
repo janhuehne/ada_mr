@@ -55,7 +55,7 @@ package body Mapper is
       Mapper_Helper.Master_Sock_Addr.Addr := GNAT.Sockets.Addresses(GNAT.Sockets.Get_Host_By_Name(Xml.Get_Value(Config, "master_host")), 1);
       Mapper_Helper.Master_Sock_Addr.Port := GNAT.Sockets.Port_Type'Value(Xml.Get_Value(Config, "master_port"));
     exception
-      when others => 
+      when Error : others => 
         Utility.Print_Exception(Error);
         Ada.Exceptions.Raise_Exception(Utility.Configuration_File_Error'Identity, "There is a problem with the configuration file.");
     end;
