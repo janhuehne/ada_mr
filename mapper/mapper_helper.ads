@@ -18,6 +18,7 @@ package Mapper_Helper is
   
   -- Mapper config variables
   Identifier       : ASU.Unbounded_String;
+  Access_Token     : String(1..32) := "no initialized yet              ";
   Listen_Sock_Addr : GNAT.Sockets.Sock_Addr_Type;
   Master_Sock_Addr : GNAT.Sockets.Sock_Addr_Type;
   

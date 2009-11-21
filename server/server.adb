@@ -36,7 +36,9 @@ package body Server is
         Initialize;
         Create_Socket(Server);
         
-        Addr.Addr := Addresses(Get_Host_By_Name ("127.0.0.1"), 1);
+--        Addr.Addr := Addresses(Get_Host_By_Name ("127.0.0.1"), 1);
+        Addr.Addr := Addresses(Get_Host_By_Name ("192.168.178.108"), 1);
+
         Addr.Port := 7000;
         
         --  allow server address to be reused for multiple connections 

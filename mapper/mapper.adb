@@ -74,6 +74,10 @@ package body Mapper is
           Utility.Put(ASU.To_String(Mapper_Helper.Identifier), 60, 2);
           Ada.Text_IO.New_Line;
           
+          Utility.Put("Access token:", 20, 2);
+          Utility.Put(Mapper_Helper.Access_Token, 60, 2);
+          Ada.Text_IO.New_Line;
+          
           Utility.Put("Listen on port:", 20, 2);
           Utility.Put(Mapper_Helper.Listen_Sock_Addr.Port'Img, 60, 2);
           Ada.Text_IO.New_Line;

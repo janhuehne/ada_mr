@@ -1,7 +1,7 @@
 with GNAT.Sockets;
 use GNAT.Sockets;
 with Xml;
---with Mapper;
+with Ada.Strings.Unbounded;
 
 
 generic
@@ -12,6 +12,8 @@ generic
   with function Job_Result_To_Xml return String;
     
 package Mapper_Runner is  
+  
+  package ASU renames Ada.Strings.Unbounded;
   
   task type Runner_Task is
     entry Start;

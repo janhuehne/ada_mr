@@ -30,7 +30,7 @@ package body Mapper_Runner is
           declare
             Response : String := Utility.Send(
               Mapper_Helper.Master_Sock_Addr,
-              Xml_Helper.Create_Initialization(Xml_Helper.Mapper, "Mapper_01", Mapper_Helper.Listen_Sock_Addr.Port)
+              Xml_Helper.Create_Initialization(Xml_Helper.Mapper, ASU.To_String(Mapper_Helper.Identifier), Mapper_Helper.Listen_Sock_Addr.Port)
             );
           begin
             Ada.Text_IO.Put_Line(Response);
@@ -38,6 +38,8 @@ package body Mapper_Runner is
             declare
               Xml_Tree : Xml.Node_Access := Xml_Parser.Parse(Content => Response);
             begin
+              Mapper_Helper.Access_Token := Xml.Get_Value(Xml_Tree, "access_token");
+              
               if Xml_Helper.Is_Command(Xml_Tree, "error") then
                 Ada.Exceptions.Raise_Exception(Utility.Initialisation_Failed'Identity, Xml.Get_Value(Xml.Find_Child_With_Tag(Xml_Tree, "details"), "message"));
               end if;
