@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<adamr-mapper-config>
+  <!-- mapper details -->
+  <identifier>Mapper_01</identifier>
+  <listen_on_port>8100</listen_on_port>
+  
+  <!-- master details -->
+  <master_host>127.0.0.1</master_host>
+  <master_port>7000</master_port>
+  
+</adamr-mapper-config>

@@ -4,7 +4,7 @@ with Xml;
 with Xml_Parser;
 with Server;
 --with Worker;
-with Xml_Queue;
+--with Xml_Queue;
 with Xml_Helper;
 with Master_Helper;
 with Ada.Exceptions;
@@ -67,8 +67,10 @@ package body Echo is
                         Details : Xml.Node_Access := Xml.Find_Child_With_Tag(Xml_Root, "details");
                         Worker_Entry : Master_Helper.Worker_Record_Access := new Master_Helper.Worker_Record;
                       begin
-                        Worker_Entry.Identifier := ASU.To_Unbounded_String(Xml.Get_Value(Details, "identifier"));
-                        Worker_Entry.W_Type     := Master_Helper.String_To_Worker_Type(Xml.Get_Value(Details, "type"));
+                        Worker_Entry.Identifier  := ASU.To_Unbounded_String(Xml.Get_Value(Details, "identifier"));
+                        Worker_Entry.W_Type      := Master_Helper.String_To_Worker_Type(Xml.Get_Value(Details, "type"));
+                        Worker_Entry.Ip          := Get_Peer_Name(Sock).Addr;
+                        Worker_Entry.Listen_Port := Port_Type'Value(Xml.Get_Value(Details, "listen_port"));
                         
                         Add_Worker(Worker_Entry);
                         
@@ -77,6 +79,13 @@ package body Echo is
                           "new_access_token",
                           "<access_token>" & Worker_Entry.Access_Token & "</access_token>"
                         ));
+                      exception
+                        when Error : others =>
+                          String'Output(S, Xml_Helper.Xml_Command(
+                            Xml_Helper.Master,
+                            "error",
+                            "<message>" & Ada.Exceptions.Exception_Name(Error) & "(" & Ada.Exceptions.Exception_Message(Error) & ")</message>"
+                          ));
                       end;
                       
                     elsif Xml_Helper.Is_Command(Xml_Root, "job_request") then
@@ -103,7 +112,7 @@ package body Echo is
                         String'Output(S, Xml_Helper.Create_System_Control(Xml_Helper.Master, "okay"));
                       end;
                     else
-                      Ada.Exceptions.Raise_Exception(Master_Helper.Unknown_Command'Identity, "The command """ & Xml.Get_Value(Xml_Root, "command") & """is not supported."); 
+                      Ada.Exceptions.Raise_Exception(Utility.Unknown_Command'Identity, "The command """ & Xml.Get_Value(Xml_Root, "command") & """is not supported."); 
                     end if;
                     
                   end if;
@@ -115,10 +124,10 @@ package body Echo is
 
             end if;
 
---            if Master_Helper.Aborted.Check_Clients then
---              String'Output(S, "Server aborted");
---              exit;
---            end if;
+            if Master_Helper.Aborted.Check_Clients then
+              String'Output(S, "Server aborted");
+              exit;
+            end if;
 
           end loop;
 

@@ -11,22 +11,9 @@ with Xml_Parser;
 with Xml_Helper;
 
 with Ada.Exceptions;
+with Mapper_Helper;
 
-package body Runner is 
-  
-  protected body Aborted is
-  
-    procedure Stop is
-    begin
-      Abort_It := true;
-    end Stop;
-    
-    function Check return Boolean is
-    begin
-      return Abort_It;
-    end Check;
-    
-  end Aborted;
+package body Mapper_Runner is 
   
   task body Runner_Task is
   begin
@@ -42,15 +29,27 @@ package body Runner is
           
           declare
             Response : String := Utility.Send(
-              "127.0.0.1",
-              7000,
-              Xml_Helper.Create_Initialization(Xml_Helper.Mapper, "Mapper_01")
+              Mapper_Helper.Master_Sock_Addr,
+              Xml_Helper.Create_Initialization(Xml_Helper.Mapper, "Mapper_01", Mapper_Helper.Listen_Sock_Addr.Port)
             );
           begin
             Ada.Text_IO.Put_Line(Response);
+            
+            declare
+              Xml_Tree : Xml.Node_Access := Xml_Parser.Parse(Content => Response);
+            begin
+              if Xml_Helper.Is_Command(Xml_Tree, "error") then
+                Ada.Exceptions.Raise_Exception(Utility.Initialisation_Failed'Identity, Xml.Get_Value(Xml.Find_Child_With_Tag(Xml_Tree, "details"), "message"));
+              end if;
+            end;
+            
           end;
           
         exception
+          when Utility.Initialisation_Failed =>
+            raise;
+          when GNAT.Sockets.Socket_Error =>
+            Ada.Exceptions.Raise_Exception(Utility.Initialisation_Failed'Identity, "Ada MR Master is unreachable");
           when Error : others =>
             Utility.Print_Exception(Error);
         end;
@@ -58,14 +57,16 @@ package body Runner is
         
         -- Ask for new jobs and work off them
         loop
+          exit when Mapper_Helper.Aborted.Get_Abort;
+          exit when Mapper_Helper.Aborted.Get_Exit; 
+          
           
           declare
           begin
             
             declare
               Response : String := Utility.Send(
-                "127.0.0.1",
-                7000,
+                Mapper_Helper.Master_Sock_Addr,
                 Xml_Helper.Create_Job_Request
               );
               
@@ -85,7 +86,7 @@ package body Runner is
                     declare
                       Response : String := Utility.Send(
                         "127.0.0.1",
-                        7100,
+                        7200,
                         Xml_Helper.Xml_Command(Xml_Helper.Mapper, "job_result", Job_Result_To_Xml)
                       );
                     begin
@@ -103,8 +104,7 @@ package body Runner is
                   begin
                     declare
                       Response : String := Utility.Send(
-                        "127.0.0.1",
-                        7000,
+                        Mapper_Helper.Master_Sock_Addr,
                         Xml_Helper.Xml_Command(Xml_Helper.Mapper, "job_done", To_Xml(Job))
                       );
                     begin
@@ -149,8 +149,10 @@ package body Runner is
           end;
           
         end loop;
-        
-        
+      
+      or
+        accept Stop;
+        exit;
       end select;
     end loop;
         
@@ -268,4 +270,4 @@ package body Runner is
 --      Finalize;
   end Runner_Task;
     
-end Runner;
+end Mapper_Runner;

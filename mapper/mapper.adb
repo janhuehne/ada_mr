@@ -4,20 +4,28 @@ with Utility;
 use Utility;
 
 with Logger;
+with Mapper_Helper;
+
+with Xml_Helper;
+with Ada.Exceptions;
 
 package body Mapper is
   
   task body Mapper_Task is
-    R : Runner_MR.Runner_Task;
+    R      : Runner.Runner_Task;
+    S      : Server.Server_Task;
+
   begin
     loop
       select
         accept Start;
-        Ada.Text_IO.Put_Line("Hier muss was gestartet werden!");
+        
         R.Start;
+        S.Start;
       or
         accept Stop;
-        Runner_MR.Aborted.Stop;
+          R.Stop;
+          S.Stop;
         exit;
       end select;
     end loop;
@@ -28,12 +36,27 @@ package body Mapper is
     In_String       : String(1..20);
     In_Last         : Natural;
     C               : Mapper_Task_Access;
+    Config          : Xml.Node_Access;
   begin
-    accept Start(C_Arg : Mapper_Task_Access) do
-      C := C_Arg;
+    accept Start(C_Arg : Mapper_Task_Access; Config_Xml : Xml.Node_Access) do
+      C      := C_Arg;
+      Config := Config_Xml;
     end Start;
     
     Ada.Text_IO.Put_Line("Client Console");
+    
+    Mapper_Helper.Identifier     := ASU.To_Unbounded_String(Xml.Get_Value(Config, "identifier"));
+    
+    declare
+    begin
+      Mapper_Helper.Listen_Sock_Addr.Addr := GNAT.Sockets.Addresses(GNAT.Sockets.Get_Host_By_Name("127.0.0.1"), 1);
+      Mapper_Helper.Listen_Sock_Addr.Port := GNAT.Sockets.Port_Type'Value(Xml.Get_Value(Config, "listen_on_port"));
+      
+      Mapper_Helper.Master_Sock_Addr.Addr := GNAT.Sockets.Addresses(GNAT.Sockets.Get_Host_By_Name(Xml.Get_Value(Config, "master_host")), 1);
+      Mapper_Helper.Master_Sock_Addr.Port := GNAT.Sockets.Port_Type'Value(Xml.Get_Value(Config, "master_port"));
+    exception
+      when others => Ada.Exceptions.Raise_Exception(Utility.Configuration_File_Error'Identity, "There is a problem with the configuration file.");
+    end;
     
     Ada.Text_IO.Put(":> ");
     
@@ -49,6 +72,12 @@ package body Mapper is
           C.Start;
         
         elsif (Is_Equal(In_String, In_Last, "quit", true)) or (Is_Equal(In_String, In_Last, "exit", true)) then
+          Mapper_Helper.Aborted.Set_Exit;
+          C.Stop;
+          exit;
+        
+        elsif (Is_Equal(In_String, In_Last, "abort", true)) then
+          Mapper_Helper.Aborted.Set_Abort;
           C.Stop;
           exit; 
         
@@ -66,7 +95,10 @@ package body Mapper is
 --        
       Ada.Text_IO.Put(":> ");
     end loop;
-    
+  exception
+    when Error : Utility.Configuration_File_Error =>
+      C.Stop;
+      Utility.Print_Exception(Error);
   end Console;
     
 end Mapper;

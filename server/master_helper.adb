@@ -1,3 +1,5 @@
+with Utility;
+
 package body Master_Helper is
 
   protected body Aborted is
@@ -28,9 +30,9 @@ package body Master_Helper is
   
   function String_To_Worker_Type(Arg : String) return Worker_Type is
   begin
-    if Arg = "Mapper" then
+    if Utility.Is_Equal(Arg, "Mapper", true) then
       return Mapper;
-    elsif Arg = "Reducer" then
+    elsif Utility.Is_Equal(Arg, "Reducer", true) then
       return Reducer;
     else
       raise Unknow_Worker_Type;

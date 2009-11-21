@@ -366,6 +366,8 @@ package body Master is
         Utility.Put(ASU.To_String(Worker_Entry.Identifier), 30, 2);
         Utility.Put(Master_Helper.To_String(Worker_Entry.W_Type), 10, 2);
         Utility.Put(Worker_Entry.Access_Token, 40, 2);
+        Utility.Put(GNAT.Sockets.Image(Worker_Entry.Ip), 20, 2);
+        Utility.Put(Worker_Entry.Listen_Port'Img, 20, 2);
       end Print;
       
     begin
@@ -375,8 +377,10 @@ package body Master is
       Utility.Put("Identifier", 30, 2);
       Utility.Put("Type", 10, 2);
       Utility.Put("Access Token", 40, 2);
+      Utility.Put("IP address", 20, 2);
+      Utility.Put("Listen on port", 20, 2);
       Ada.Text_IO.New_Line;
-      Ada.Text_IO.Put_Line("------------------------------------------------------------------------");
+      Ada.Text_IO.Put_Line("------------------------------------------------------------------------------------------------------------------");
       
       Worker.Iterate(Print'Access);
       

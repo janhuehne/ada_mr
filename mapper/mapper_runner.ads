@@ -11,20 +11,11 @@ generic
   with procedure Compute_Job(Job : in My_Job);
   with function Job_Result_To_Xml return String;
     
-package Runner is  
-  protected Aborted is
-    procedure Stop;
-    function Check return Boolean;
-  private
-    Abort_It  : Boolean := false;
-  end Aborted;
+package Mapper_Runner is  
   
   task type Runner_Task is
     entry Start;
     entry Stop;
   end Runner_Task;
-  
-  
-  
-  
-end Runner;
+
+end Mapper_Runner;

@@ -71,11 +71,13 @@ package body Utility is
 
   end Put;
   
+  
   procedure Put_Line(Str : String; Field_Length : Natural := 0; Space_Pos : Natural := 1) is
   begin
     Put(Str, Field_Length, Space_Pos);
     Ada.Text_IO.New_Line;
   end Put_Line;
+  
   
   function Does_File_Exist (Name : String) return Boolean is
     The_File : Ada.Text_IO.File_Type;
@@ -87,6 +89,7 @@ package body Utility is
     when Ada.Text_IO.Name_Error => return False;
   end Does_File_Exist;
   
+  
   procedure Print_Exception(Error : Ada.Exceptions.Exception_Occurrence; Message : String := "") is
   begin
     Ada.Text_IO.Put_Line(Ada.Exceptions.Exception_Name(Error));
@@ -95,14 +98,23 @@ package body Utility is
   end Print_Exception;
   
   
-  
-  
   function Send(Host : String; Port : GNAT.Sockets.Port_Type; Command : String) return String is
+    use GNAT.Sockets;
+    
+    Addr : Sock_Addr_Type(Family_Inet);
+  begin
+    Addr.Addr := Addresses(Get_Host_By_Name (Host), 1);
+    Addr.Port := Port;
+    
+    return Send(Addr, Command);
+  end Send;
+  
+  
+  function Send(Addr : GNAT.Sockets.Sock_Addr_Type; Command : String) return String is
     use GNAT.Sockets;
     
     Sock            : Socket_Type;
     S               : Stream_Access;
-    Addr            : Sock_Addr_Type(Family_Inet);
     B               : Boolean;
     Read_Selector   : Selector_Type;
     Read_Set, WSet  : Socket_Set_Type;
@@ -110,8 +122,6 @@ package body Utility is
   begin
     Initialize;
     Create_Socket(Sock);
-    Addr.Addr := Addresses(Get_Host_By_Name (Host), 1);
-    Addr.Port := Port;
     
     Create_Selector(Read_Selector);
     Empty(Read_Set);

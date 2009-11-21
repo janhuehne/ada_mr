@@ -1,8 +1,0 @@
-<?xml version="1.0" ?>
-
-<adamr_client_config>
-  <id>1</id>
-  <type>Mapper</type>
-  <master_address>localhost</master_address>
-  <master_port>7000</master_port>
-</adamr_client_config>
