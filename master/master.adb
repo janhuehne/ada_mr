@@ -19,7 +19,7 @@ with GNAT.MD5;
 package body Master is
   
   task body Master_Task is
-    Master_Server_Task : Master_Server.Server_Task;
+    Master_Server_Task : Server.Server.Server_Task;
     Me                 : Master_Task_Access;
   begin
     loop
@@ -44,7 +44,7 @@ package body Master is
         
         Ada.Text_IO.Put_Line("   .. Done! " & Jobs.Count'Img & " jobs imported");
         
-        Master_Server_Task.Start;
+        Master_Server_Task.Start("127.0.0.1", 7000);
       or
         accept Stop_Master;
         Ada.Text_IO.Put_Line("Please wait, while closing the client connections.");

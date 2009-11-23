@@ -2,7 +2,7 @@ with Ada.Containers.Vectors;
 with Echo;
 with Xml;
 with Master_Helper;
-with Server;
+with Master_Server;
 with Ada.Strings.Unbounded;
 
 generic
@@ -94,7 +94,7 @@ package Master is
 --  procedure Change_Job_State(Job : Job_Entry_Record_Access; State : Master_Helper.Job_State) is
 
   
-  package Master_Server is new Server(
+  package Server is new Master_Server(
     My_Job,
     Job_Entry_Record_Access,
     Worker.Add,

@@ -1,7 +1,4 @@
--------------------------------------------------------------- 
--- 
---  Pool_Server 
--- 
+
 with Ada.Text_IO;
 with Ada.Strings.Unbounded;
 with Ada.IO_Exceptions;
@@ -15,12 +12,12 @@ with Xml_Parser;
 
 with Master_Helper;
 
-package body Server is 
+package body Generic_Server is
+  use GNAT.Sockets;
   
   task body Server_Task is
     Server          : Socket_Type;
     New_Sock        : Socket_Type;
-    Slave           : Echo_MR.Echo_Access;
     Addr            : Sock_Addr_Type;
     Peer_Addr       : Sock_Addr_Type;
     Avail           : Boolean := False;
@@ -32,14 +29,13 @@ package body Server is
   begin
     loop
       select
-        accept Start;
+        accept Start(Host : String; Port : GNAT.Sockets.Port_Type) do
+          Addr.Addr := Inet_Addr(Host);
+          Addr.Port := Port;
+        end Start;
+        
         Initialize;
         Create_Socket(Server);
-        
---        Addr.Addr := Addresses(Get_Host_By_Name ("127.0.0.1"), 1);
-        Addr.Addr := Addresses(Get_Host_By_Name ("192.168.178.108"), 1);
-
-        Addr.Port := 7000;
         
         --  allow server address to be reused for multiple connections 
         Set_Socket_Option(Server, Socket_Level, (Reuse_Address, True));
@@ -57,10 +53,10 @@ package body Server is
         Empty(WSet);
         
         Ada.Text_IO.New_Line;
-        Ada.Text_IO.Put_Line("-> Ada MR Master is ready to accept connections on port " & Addr.Port'Img & ".");
+        Ada.Text_IO.Put_Line("-> Ready to accept connections on port " & Addr.Port'Img & ".");
         
         loop
-          exit when Master_Helper.Aborted.Check_Master = true;
+          exit when Exit_Server;
           
           --  check for input (connection requests) on Server socket 
           Set(Accept_Set, Server);
@@ -74,30 +70,23 @@ package body Server is
             --  Hence the Accept_Socket call should not block. 
             Accept_Socket(Server, New_Sock, Peer_Addr);
             
-            Ada.Text_IO.New_Line;
-            
-            Slave := new Echo_MR.Echo;
-            
-            Ada.Text_IO.Put_Line ( "-> New incomming task" );
-            
-            Slave.Start(New_Sock, Slave);
+            Process_Incomming_Connection(New_Sock);
           end if;
         end loop;
         
       or
         accept Stop;
-        Master_Helper.Aborted.Stop_Clients;
         
-        --  tidy up 
+        --  tidy up
         Close_Selector(Accept_Selector);
         Empty(Accept_Set);
         Close_Socket(Server);
         Ada.Text_IO.New_Line;
-        Ada.Text_IO.Put_Line("-> Ada MR Master server task stopped.");
+        Ada.Text_IO.Put_Line("-> Server task stopped.");
         Finalize;
         exit;
       end select;
     end loop;
   end Server_Task;
-    
-end Server;
+
+end Generic_Server;

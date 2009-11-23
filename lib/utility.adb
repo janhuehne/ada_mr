@@ -149,7 +149,8 @@ package body Utility is
     declare
       Str : String := String'Input(S);
     begin
-      ShutDown_Socket(Sock);
+      Ada.Text_IO.Put_Line("Response: " & Str);
+--      ShutDown_Socket(Sock);
       Close_Selector(Read_Selector);
       Finalize;
       
@@ -157,8 +158,9 @@ package body Utility is
     end;
   exception
     when Error : others =>
-      ShutDown_Socket(Sock);
+--      ShutDown_Socket(Sock);
       Close_Selector(Read_Selector);
+      Print_Exception(Error);
       Finalize;
       
       raise;

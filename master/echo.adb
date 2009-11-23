@@ -2,7 +2,7 @@ with Ada.Text_IO;
 with Utility;
 with Xml;
 with Xml_Parser;
-with Server;
+
 --with Worker;
 --with Xml_Queue;
 with Xml_Helper;
@@ -14,7 +14,7 @@ package body Echo is
     task body Echo is 
       Sock : Socket_Type;
       S : Stream_Access;
-      Me : Echo_Access;
+--      Me : Echo_Access;
       Input_Selector : Selector_Type;
       Input_Set : Socket_Set_Type;
       WSet : Socket_Set_Type;
@@ -29,9 +29,9 @@ package body Echo is
       Empty(Input_Set);
       Empty(WSet);
       
-      ACCEPT Start(N_Sock : IN Socket_Type; Self : IN Echo_Access) DO
+      ACCEPT Start(N_Sock : IN Socket_Type) DO
         Sock := N_Sock;
-        Me := Self;
+--        Me := Self;
       end Start;
       
       loop
