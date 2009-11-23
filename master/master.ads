@@ -1,5 +1,4 @@
 with Ada.Containers.Vectors;
-with Echo;
 with Xml;
 with Master_Helper;
 with Master_Server;
