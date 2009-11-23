@@ -1,0 +1,24 @@
+VER=1.0.0
+
+PROJECT=count_char
+
+DEL=rm -f
+DELDIR= rm -rf
+
+CC=gnatmake
+CFLAGS=-largs -L/Developer/SDKs/MacOSX10.5.sdk/usr/lib -mmacosx-version-min=10.5.0 -shared-libgcc
+
+master:
+	$(CC) -I../master -I../lib mr_master_$(PROJECT).adb $(CFLAGS)
+	$(DEL) *.o *.ali
+
+mapper:
+	$(CC) -I../mapper -I../lib mr_mapper_$(PROJECT).adb $(CFLAGS)
+	$(DEL) *.o *.ali
+	
+reducer:
+	$(CC) -I../reducer -I../lib mr_reducer_$(PROJECT).adb $(CFLAGS)
+	$(DEL) *.o *.ali
+
+clean:
+	$(DEL) *.o *.ali mr_master_$(PROJECT) mr_mapper_$(PROJECT) mr_reducer_$(PROJECT)
