@@ -29,8 +29,9 @@ package body Mapper_Runner is
           
           declare
             Response : String := Utility.Send(
-              Mapper_Helper.Master_Sock_Addr,
-              Xml_Helper.Create_Initialization(Xml_Helper.Mapper, ASU.To_String(Mapper_Helper.Identifier), Mapper_Helper.Listen_Sock_Addr.Port)
+              Mapper_Helper.Master_Ip,
+              Mapper_Helper.Master_Port,
+              Xml_Helper.Create_Initialization(Xml_Helper.Mapper, ASU.To_String(Mapper_Helper.Identifier), Mapper_Helper.Server_Bind_Ip, Mapper_Helper.Server_Bind_Port)
             );
           begin
             Ada.Text_IO.Put_Line(Response);
@@ -68,7 +69,8 @@ package body Mapper_Runner is
             
             declare
               Response : String := Utility.Send(
-                Mapper_Helper.Master_Sock_Addr,
+                Mapper_Helper.Master_Ip,
+                Mapper_Helper.Master_Port,
                 Xml_Helper.Create_Job_Request
               );
               
@@ -106,7 +108,8 @@ package body Mapper_Runner is
                   begin
                     declare
                       Response : String := Utility.Send(
-                        Mapper_Helper.Master_Sock_Addr,
+                        Mapper_Helper.Master_Ip,
+                        Mapper_Helper.Master_Port,
                         Xml_Helper.Xml_Command(Xml_Helper.Mapper, "job_done", To_Xml(Job))
                       );
                     begin

@@ -4,6 +4,7 @@ with Xml;
 with GNAT.Sockets;
 with Mapper_Server;
 with Ada.Strings.Unbounded;
+with Generic_Console;
 
 generic
   type My_Job is private;
@@ -15,11 +16,30 @@ generic
   with function Job_Result_To_Xml return String;
   
 package Mapper is
-  
+
+----------------------------------------------------
+-- PACKAGE RENAMES                                 -
+----------------------------------------------------
   package ASU renames Ada.Strings.Unbounded;
-    
-  package Runner is new Mapper_Runner(My_Job, From_Xml, To_Xml, Compute_Job, Job_Result_To_Xml);
-  
+
+
+
+----------------------------------------------------
+-- RUNNER PACKAGE                                 --
+----------------------------------------------------
+  package Runner is new Mapper_Runner(
+    My_Job, 
+    From_Xml, 
+    To_Xml, 
+    Compute_Job, 
+    Job_Result_To_Xml
+  );
+
+
+
+----------------------------------------------------
+-- MAPPER TASK                                    --
+----------------------------------------------------
   type Mapper_Task;
   type Mapper_Task_Access is access Mapper_Task;
   
@@ -27,29 +47,35 @@ package Mapper is
     entry Start;
     entry Stop;
   end Mapper_Task;
-  
-  task type Console is
-    entry Start(C_Arg : Mapper_Task_Access; Config_Xml : Xml.Node_Access);
-  end Console;
-  
-  
+
+
+
+----------------------------------------------------
+-- SERVER PACKAGE                                 --
+----------------------------------------------------
   package Server renames Mapper_Server;
-  --  package Mapper_Server is new Server(
-  --    My_Job,
-  --    Job_Entry_Record_Access,
-  --    Worker.Add,
-  --    Jobs.Get_By_Id,
-  --    Jobs.Get_Next_Pending,
-  --    Change_Job_State,
-  --    Job_To_Xml
-  --  );
-  
-  
-  
-  -- global configs
+
+
+
+----------------------------------------------------
+-- Global configuration variables                 --
+----------------------------------------------------
   Listen_On_Port : GNAT.Sockets.Port_Type := 7100;
+
+
+
+----------------------------------------------------
+-- GENERIC CONSOLE METHODS                        --
+----------------------------------------------------
+  function Banner return String;
+  procedure Parse_Configuration(Config_Xml : Xml.Node_Access);
+  procedure Process_User_Input(User_Input : String; To_Controll : Mapper_Task_Access);
   
-  
-  
+  package Console is new Generic_Console(
+    Mapper_Task_Access,
+    Banner,
+    Parse_Configuration,
+    Process_User_Input
+  );
   
 end Mapper;

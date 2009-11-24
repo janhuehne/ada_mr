@@ -42,6 +42,7 @@ package Utility is
   
   
   function Send(Host : String; Port : GNAT.Sockets.Port_Type; Command : String) return String;
+  function Send(Host : GNAT.Sockets.Inet_Addr_Type; Port : GNAT.Sockets.Port_Type; Command : String) return String;
   function Send(Addr : GNAT.Sockets.Sock_Addr_Type; Command : String) return String;
   
   

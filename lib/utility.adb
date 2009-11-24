@@ -110,6 +110,18 @@ package body Utility is
   end Send;
   
   
+  function Send(Host : GNAT.Sockets.Inet_Addr_Type; Port : GNAT.Sockets.Port_Type; Command : String) return String is
+    use GNAT.Sockets;
+  
+    Addr : Sock_Addr_Type(Family_Inet);
+  begin
+    Addr.Addr := Host;
+    Addr.Port := Port;
+    
+    return Send(Addr, Command);
+  end Send;
+  
+  
   function Send(Addr : GNAT.Sockets.Sock_Addr_Type; Command : String) return String is
     use GNAT.Sockets;
     

@@ -24,9 +24,9 @@ package body Master is
   begin
     loop
       select
-        accept Start_Master(M : Master_Task_Access) do
+        accept Start(M : Master_Task_Access) do
           Me := M;
-        end Start_Master;
+        end Start;
         
         Split_Raw_Data;
         
@@ -44,9 +44,9 @@ package body Master is
         
         Ada.Text_IO.Put_Line("   .. Done! " & Jobs.Count'Img & " jobs imported");
         
-        Master_Server_Task.Start("127.0.0.1", 7000);
+        Master_Server_Task.Start(Master_Helper.Server_Bind_Ip, Master_Helper.Server_Bind_Port);
       or
-        accept Stop_Master;
+        accept Stop;
         Ada.Text_IO.Put_Line("Please wait, while closing the client connections.");
         Master_Helper.Aborted.Stop_Master;
         Master_Server_Task.Stop;
@@ -129,68 +129,42 @@ package body Master is
   end Observe_Jobs;
   
   
-  task body Master_Console is
-    In_String       : String(1..20);
-    In_Last         : Natural;
-    M               : Master_Task_Access;
-  begin
-    accept Start(M_Arg : Master_Task_Access) do
-      M := M_Arg;
-    end Start;
-    
-    Ada.Text_IO.Put_Line("Master Console");
-    
-    Ada.Text_IO.Put(":> ");
-    
-    loop
-      Ada.Text_IO.Get_Line(In_String, In_Last);
-      
-      if In_Last > 0 then
-        if (Is_Equal(In_String, In_Last, "start", true)) then
-          M.Start_Master(M);
-          
-        elsif (Is_Equal(In_String, In_Last, "quit", true)) then
-          M.Stop_Master;
-          exit; 
-          
-        elsif (Is_Equal(In_String, In_Last, "help", true)) then
-          Ada.Text_IO.Put_Line("");
-          Ada.Text_IO.Put_Line("  Commands:");
-          Ada.Text_IO.Put_Line("    start        Starts the Ada MR Master Server");
-          Ada.Text_IO.Put_Line("    worker       Prints all connected worker");
-          Ada.Text_IO.Put_Line("    quit         Exit Ada MR Server Server");
-          Ada.Text_IO.Put_Line("    verbose-on   Enable verbose mode to display log entries");
-          Ada.Text_IO.Put_Line("    verbose-off  Disable verbose mode");
-          Ada.Text_IO.Put_Line("    jobs         Number of unprocessed jobs");
-          Ada.Text_IO.Put_Line("    help         Displays this message");
-          Ada.Text_IO.New_Line;
-          Ada.Text_IO.New_Line;
-          Ada.Text_IO.New_Line;
-          
-        elsif (Is_Equal(In_String, In_Last, "verbose-on", true)) then
-          Logger.Enable_Verbose_Mode;
-          Ada.Text_IO.Put_Line("Verbose mode: On");
-        
-        elsif (Is_Equal(In_String, In_Last, "verbose-off", true)) then
-          Logger.Disable_Verbose_Mode;
-          Ada.Text_IO.Put_Line("Verbose mode: Off");
-        elsif (Is_Equal(In_String, In_Last, "worker", true)) then
-          Worker.Print;
---          Worker.Print_All_Idle_Mapper;
-        elsif (Is_Equal(In_String, In_Last, "jobs", true)) then
-          Jobs.Print;
---          Ada.Text_IO.Put_Line(Unprocessed_Jobs.Length'Img & " unprocessed jobs");
---          Xml_Queue.Print_Jobs;
-            Print_Jobs;
-        else
-          Ada.Text_IO.Put_Line("Unknown command: " & In_String(1..In_Last));
-        end if;
-      end if;
-        
-      Ada.Text_IO.Put(":> ");
-    end loop;
-    
-  end Master_Console;
+--  task body Master_Console is
+--    In_String       : String(1..20);
+--    In_Last         : Natural;
+--    M               : Master_Task_Access;
+--    Config          : Xml.Node_Access;
+--  begin
+--    accept Start(M_Arg : Master_Task_Access; Config_Xml : Xml.Node_Access) do
+--      M      := M_Arg;
+--      Config := Config_Xml;
+--    end Start;
+--    
+--    Ada.Text_IO.Put_Line("Ada MR Master Console");
+--    
+--    declare
+--    begin
+--      Master_Helper.Server_Bind_Ip   := ASU.To_Unbounded_String(Xml.Get_Value(Config, "bind_ip"));
+--      Master_Helper.Server_Bind_Port := ASU.To_Unbounded_String(Xml.Get_Value(Config, "bind_port"));
+--    exception
+--      when Error : others => 
+--        Utility.Print_Exception(Error);
+--        Ada.Exceptions.Raise_Exception(Utility.Configuration_File_Error'Identity, "There is a problem with the configuration file.");
+--    end;
+--    
+--    Ada.Text_IO.Put(":> ");
+--    
+--    loop
+--      Ada.Text_IO.Get_Line(In_String, In_Last);
+--      
+--      if In_Last > 0 then
+--        
+--      end if;
+--        
+--      Ada.Text_IO.Put(":> ");
+--    end loop;
+--    
+--  end Master_Console;
   
   
 --  function Get_Next_Job(Remove_From_Vector : Boolean := true) return My_Job is
@@ -204,21 +178,6 @@ package body Master is
 --    return Job;
 --  end Get_Next_Job;
   
-  procedure Print_Jobs is
-    
---    procedure Print(Position : Job_Vector.Cursor) is
---      Job : My_Job := Unprocessed_Jobs.Element(Job_Vector.To_Index(Position));
---    begin
---      Print_Job(
---        Job,
---        Xml_Queue.Get_Job_State(Get_Job_Id(Job))
---      );
---    end Print;
-    
-  begin
---    Unprocessed_Jobs.Iterate(Print'Access);
-    null;
-  end Print_Jobs;
 
 
   function "="(Left, Right : Job_Entry_Record_Access) return Boolean is
@@ -331,10 +290,10 @@ package body Master is
   end Change_Job_State;
   
   
-  function Job_To_Xml(Job_Entry : Job_Entry_Record_Access) return String is
+  function Job_Entry_To_Xml(Job_Entry : Job_Entry_Record_Access) return String is
   begin
     return To_Xml(Job_Entry.Job);
-  end Job_To_Xml;
+  end Job_Entry_To_Xml;
   
   function Job_Is_Null(Job_Entry : Job_Entry_Record_Access) return Boolean is
   begin
@@ -389,5 +348,81 @@ package body Master is
     end Print;
   
   end Worker;
+  
+  
+  
+  ----------------------------------------------------
+  -- GENERIC CONSOLE METHODS                        --
+  ----------------------------------------------------
+  function Banner return String is
+  begin
+    return "ADA MR Master";
+  end Banner;
+  
+  procedure Parse_Configuration(Config_Xml : Xml.Node_Access) is
+  begin
+    Master_Helper.Server_Bind_Ip   := GNAT.Sockets.Inet_Addr(Xml.Get_Value(Config_Xml, "bind_ip"));
+    Master_Helper.Server_Bind_Port := GNAT.Sockets.Port_Type'Value(Xml.Get_Value(Config_Xml, "bind_port"));
+  end Parse_Configuration;
+  
+  procedure Process_User_Input(User_Input : String; To_Controll : Master_Task_Access) is
+  begin
+    if (Is_Equal(User_Input, "start", true)) then
+      To_Controll.Start(To_Controll);
+    
+    elsif (Is_Equal(User_Input, "help", true)) then
+      Ada.Text_IO.Put_Line("");
+      Ada.Text_IO.Put_Line("  Commands:");
+      Ada.Text_IO.Put_Line("    start        Starts the Ada MR Master Server");
+      Ada.Text_IO.Put_Line("    worker       Prints all connected worker");
+      Ada.Text_IO.Put_Line("    quit         Exit Ada MR Server Server");
+      Ada.Text_IO.Put_Line("    verbose-on   Enable verbose mode to display log entries");
+      Ada.Text_IO.Put_Line("    verbose-off  Disable verbose mode");
+      Ada.Text_IO.Put_Line("    jobs         Number of unprocessed jobs");
+      Ada.Text_IO.Put_Line("    help         Displays this message");
+      Ada.Text_IO.New_Line;
+      Ada.Text_IO.New_Line;
+      Ada.Text_IO.New_Line;
+    
+    elsif (Utility.Is_Equal(User_Input, "config", true)) then
+      Ada.Text_IO.New_Line;
+      Ada.Text_IO.Put_Line("-> " & Banner & " configuration");
+            
+      Utility.Put("IP address:", 20, 2);
+      Utility.Put(GNAT.Sockets.Image(Master_Helper.Server_Bind_Ip), 60, 2);
+      Ada.Text_IO.New_Line;
+      
+      Utility.Put("Port:", 20, 2);
+      Utility.Put(Master_Helper.Server_Bind_Port'Img, 60, 2);
+      Ada.Text_IO.New_Line;
+      Ada.Text_IO.New_Line;
+      Ada.Text_IO.New_Line;
+    
+    elsif (Utility.Is_Equal(User_Input, "quit", true)) then
+      To_Controll.Stop;
+    
+    elsif (Is_Equal(User_Input, "verbose-on", true)) then
+      Logger.Enable_Verbose_Mode;
+      Ada.Text_IO.Put_Line("Verbose mode: On");
+    
+    elsif (Is_Equal(User_Input, "verbose-off", true)) then
+      Logger.Disable_Verbose_Mode;
+      Ada.Text_IO.Put_Line("Verbose mode: Off");
+    
+    elsif (Is_Equal(User_Input, "worker", true)) then
+      Worker.Print;
+    
+    elsif (Is_Equal(User_Input, "jobs", true)) then
+      Jobs.Print;
+    
+    else
+      Ada.Text_IO.Put_Line("Unknown command: " & User_Input);
+    end if;
+  end Process_User_Input;
+  
+  
+  
+  
+  
   
 end Master;

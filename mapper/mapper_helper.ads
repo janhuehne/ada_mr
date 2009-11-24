@@ -16,13 +16,16 @@ package Mapper_Helper is
   end Aborted;
   
   
-  -- Mapper config variables
+  ----------------------------------------------------
+  -- GLOBAL VARIABLES                                -
+  ----------------------------------------------------
   Identifier       : ASU.Unbounded_String;
   Access_Token     : String(1..32) := "no initialized yet              ";
-  Listen_Sock_Addr : GNAT.Sockets.Sock_Addr_Type;
-  Master_Sock_Addr : GNAT.Sockets.Sock_Addr_Type;
   
+  Server_Bind_Ip   : GNAT.Sockets.Inet_Addr_Type;
+  Server_Bind_Port : GNAT.Sockets.Port_Type;
   
-  
+  Master_Ip   : GNAT.Sockets.Inet_Addr_Type;
+  Master_Port : GNAT.Sockets.Port_Type;
   
 end Mapper_Helper;

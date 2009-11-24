@@ -11,17 +11,18 @@ with Ada.Exceptions;
 
 package body Mapper is
   
+----------------------------------------------------
+-- MAPPER TASK                                    --
+----------------------------------------------------
   task body Mapper_Task is
     R      : Runner.Runner_Task;
-    S      : Server.Server_Task;
-
+    S      : Server.Server.Server_Task;
   begin
     loop
       select
         accept Start;
-        
         R.Start;
-        S.Start;
+        S.Start(Mapper_Helper.Server_Bind_Ip, Mapper_Helper.Server_Bind_Port);
       or
         accept Stop;
           R.Stop;
@@ -32,98 +33,90 @@ package body Mapper is
   end Mapper_Task;
   
   
-  task body Console is
-    In_String       : String(1..20);
-    In_Last         : Natural;
-    C               : Mapper_Task_Access;
-    Config          : Xml.Node_Access;
+  
+  
+----------------------------------------------------
+-- GENERIC CONSOLE METHODS                        --
+----------------------------------------------------
+  function Banner return String is
   begin
-    accept Start(C_Arg : Mapper_Task_Access; Config_Xml : Xml.Node_Access) do
-      C      := C_Arg;
-      Config := Config_Xml;
-    end Start;
-    
-    Ada.Text_IO.Put_Line("Client Console");
-    
-    Mapper_Helper.Identifier     := ASU.To_Unbounded_String(Xml.Get_Value(Config, "identifier"));
+    return "ADA MR Mapper";
+  end Banner;
+  
+  
+  procedure Parse_Configuration(Config_Xml : Xml.Node_Access) is
+  begin
+    Mapper_Helper.Identifier            := ASU.To_Unbounded_String(Xml.Get_Value(Config_Xml, "identifier"));
     
     declare
+      Local_Server_Details : Xml.Node_Access := Xml.Find_Child_With_Tag(Config_Xml, "local_server");
     begin
-      Mapper_Helper.Listen_Sock_Addr.Addr := GNAT.Sockets.Addresses(GNAT.Sockets.Get_Host_By_Name("127.0.0.1"), 1);
-      Mapper_Helper.Listen_Sock_Addr.Port := GNAT.Sockets.Port_Type'Value(Xml.Get_Value(Config, "listen_on_port"));
-      
-      Mapper_Helper.Master_Sock_Addr.Addr := GNAT.Sockets.Addresses(GNAT.Sockets.Get_Host_By_Name(Xml.Get_Value(Config, "master_host")), 1);
-      Mapper_Helper.Master_Sock_Addr.Port := GNAT.Sockets.Port_Type'Value(Xml.Get_Value(Config, "master_port"));
-    exception
-      when Error : others => 
-        Utility.Print_Exception(Error);
-        Ada.Exceptions.Raise_Exception(Utility.Configuration_File_Error'Identity, "There is a problem with the configuration file.");
+      Mapper_Helper.Server_Bind_Ip   := GNAT.Sockets.Inet_Addr(Xml.Get_Value(Local_Server_Details, "bind_ip"));
+      Mapper_Helper.Server_Bind_Port := GNAT.Sockets.Port_Type'Value(Xml.Get_Value(Local_Server_Details, "bind_port"));
     end;
     
-    Ada.Text_IO.Put(":> ");
+    declare
+      Master_Details : Xml.Node_Access := Xml.Find_Child_With_Tag(Config_Xml, "master");
+    begin
+      Mapper_Helper.Master_Ip   := GNAT.Sockets.Inet_Addr(Xml.Get_Value(Master_Details, "ip"));
+      Mapper_Helper.Master_Port := GNAT.Sockets.Port_Type'Value(Xml.Get_Value(Master_Details, "port"));
+    end;
     
-    loop
-      Ada.Text_IO.Get_Line(In_String, In_Last);
+  end Parse_Configuration;
+  
+  
+  procedure Process_User_Input(User_Input : String; To_Controll : Mapper_Task_Access) is
+  begin
+    if (Is_Equal(User_Input, "config", true)) then
       
-      if In_Last > 0 then
-        
-        if (Is_Equal(In_String, In_Last, "config", true)) then
-          
-          Ada.Text_IO.New_Line;
-          Ada.Text_IO.Put_Line("-> Ada MR Mapper configuration");
-          
-          Utility.Put("Identifier:", 20, 2);
-          Utility.Put(ASU.To_String(Mapper_Helper.Identifier), 60, 2);
-          Ada.Text_IO.New_Line;
-          
-          Utility.Put("Access token:", 20, 2);
-          Utility.Put(Mapper_Helper.Access_Token, 60, 2);
-          Ada.Text_IO.New_Line;
-          
-          Utility.Put("Listen on port:", 20, 2);
-          Utility.Put(Mapper_Helper.Listen_Sock_Addr.Port'Img, 60, 2);
-          Ada.Text_IO.New_Line;
-          
-          Utility.Put("Master host:", 20, 2);
-          Utility.Put(GNAT.Sockets.Image(Mapper_Helper.Master_Sock_Addr.Addr), 60, 2);
-          Ada.Text_IO.New_Line;
-          
-          Utility.Put("Master port:", 20, 2);
-          Utility.Put(Mapper_Helper.Master_Sock_Addr.Port'Img, 60, 2);
-          Ada.Text_IO.New_Line;
-          Ada.Text_IO.New_Line;
-          Ada.Text_IO.New_Line;
-        elsif (Is_Equal(In_String, In_Last, "start", true)) then
-          C.Start;
-        
-        elsif (Is_Equal(In_String, In_Last, "quit", true)) or (Is_Equal(In_String, In_Last, "exit", true)) then
-          Mapper_Helper.Aborted.Set_Exit;
-          C.Stop;
-          exit;
-        
-        elsif (Is_Equal(In_String, In_Last, "abort", true)) then
-          Mapper_Helper.Aborted.Set_Abort;
-          C.Stop;
-          exit; 
-        
-        elsif (Is_Equal(In_String, In_Last, "help", true)) then
-          Ada.Text_IO.Put_Line("");
-          Ada.Text_IO.Put_Line("  Commands:");
-          Ada.Text_IO.Put_Line("    start        Starts the Ada MR Client");
-          Ada.Text_IO.Put_Line("    abort        Stops the Ada MR Client immediately (current job is aborted)");
-          Ada.Text_IO.Put_Line("    quit / exit  Stops the Ada MR Client after processing the last job");
-        
-        else
-          Ada.Text_IO.Put_Line("Unknown command: " & In_String(1..In_Last));
-        end if;
-      end if;
---        
-      Ada.Text_IO.Put(":> ");
-    end loop;
-  exception
-    when Error : Utility.Configuration_File_Error =>
-      C.Stop;
-      Utility.Print_Exception(Error);
-  end Console;
+      Ada.Text_IO.New_Line;
+      Ada.Text_IO.Put_Line("-> Ada MR Mapper configuration");
+      
+      Utility.Put("Identifier:", 20, 2);
+      Utility.Put(ASU.To_String(Mapper_Helper.Identifier), 60, 2);
+      Ada.Text_IO.New_Line;
+      
+      Utility.Put("Access token:", 20, 2);
+      Utility.Put(Mapper_Helper.Access_Token, 60, 2);
+      Ada.Text_IO.New_Line;
+      
+      Utility.Put("Listen on ip:", 20, 2);
+      Utility.Put(GNAT.Sockets.Image(Mapper_Helper.Server_Bind_Ip), 60, 2);
+      Ada.Text_IO.New_Line;
+      
+      Utility.Put("Listen on port:", 20, 2);
+      Utility.Put(Mapper_Helper.Server_Bind_Port'Img, 60, 2);
+      Ada.Text_IO.New_Line;
+      
+      Utility.Put("Master host:", 20, 2);
+      Utility.Put(GNAT.Sockets.Image(Mapper_Helper.Master_Ip), 60, 2);
+      Ada.Text_IO.New_Line;
+      
+      Utility.Put("Master port:", 20, 2);
+      Utility.Put(Mapper_Helper.Master_Port'Img, 60, 2);
+      Ada.Text_IO.New_Line;
+      Ada.Text_IO.New_Line;
+      Ada.Text_IO.New_Line;
+    elsif (Is_Equal(User_Input, "start", true)) then
+      To_Controll.Start;
     
+    elsif (Is_Equal(User_Input, "quit", true)) or (Is_Equal(User_Input, "exit", true)) then
+      Mapper_Helper.Aborted.Set_Exit;
+      To_Controll.Stop;
+    
+    elsif (Is_Equal(User_Input, "abort", true)) then
+      Mapper_Helper.Aborted.Set_Abort;
+      To_Controll.Stop;
+    
+    elsif (Is_Equal(User_Input, "help", true)) then
+      Ada.Text_IO.Put_Line("");
+      Ada.Text_IO.Put_Line("  Commands:");
+      Ada.Text_IO.Put_Line("    start        Starts the Ada MR Client");
+      Ada.Text_IO.Put_Line("    abort        Stops the Ada MR Client immediately (current job is aborted)");
+      Ada.Text_IO.Put_Line("    quit / exit  Stops the Ada MR Client after processing the last job");
+    
+    else
+      Ada.Text_IO.Put_Line("Unknown command: " & User_Input);
+    end if;
+  end Process_User_Input;
 end Mapper;

@@ -1,0 +1,6 @@
+<?xml version="1.0" ?>
+<adamr-master-config>
+  <!-- master details -->
+  <bind_ip>192.168.178.108</bind_ip>
+  <bind_port>7000</bind_port>
+</adamr-master-config>

@@ -69,7 +69,7 @@ package body Master_Server is
           begin
             Job_Entry := Get_Next_Pending_Job;
             
-            String'Output(S, Xml_Helper.Xml_Command(Xml_Helper.Master, "new_job", Job_To_Xml(Job_Entry)));
+            String'Output(S, Xml_Helper.Xml_Command(Xml_Helper.Master, "new_job", Job_Entry_To_Xml(Job_Entry)));
           exception
             when Master_Helper.No_Job_Found =>
               String'Output(S, Xml_Helper.Xml_Command(Xml_Helper.Master, "sleep", "<seconds>10</seconds>"));

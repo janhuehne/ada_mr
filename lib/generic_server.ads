@@ -7,7 +7,7 @@ generic
 package Generic_Server is
   
   task type Server_Task is
-    entry Start(Host : String; Port : GNAT.Sockets.Port_Type);
+    entry Start(Host : GNAT.Sockets.Inet_Addr_Type; Port : GNAT.Sockets.Port_Type);
     entry Stop;
   end Server_Task;
   

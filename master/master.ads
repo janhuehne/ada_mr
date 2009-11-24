@@ -1,8 +1,11 @@
 with Ada.Containers.Vectors;
+with Ada.Strings.Unbounded;
+
 with Xml;
 with Master_Helper;
 with Master_Server;
-with Ada.Strings.Unbounded;
+with Generic_Console;
+
 
 generic
   type My_Job is private;
@@ -15,41 +18,51 @@ generic
   
 package Master is
   
+----------------------------------------------------
+-- PACKAGE RENAMES                                 -
+----------------------------------------------------
   package ASU renames Ada.Strings.Unbounded;
-  
+
+
+
+----------------------------------------------------
+-- PACKAGE INSTANCES                               -
+----------------------------------------------------
   package Job_Vector is new Ada.Containers.Vectors(
     Element_Type => My_Job, 
     Index_Type => Positive
   );
   
   
+  
+----------------------------------------------------
+-- MASTER TASK                                     -
+----------------------------------------------------
   type Master_Task;
   type Master_Task_Access is access Master_Task;
   
-  
   task type Master_Task is
-    entry Start_Master(M : Master_Task_Access);
-    entry Stop_Master;
+    entry Start(M : Master_Task_Access);
+    entry Stop;
   end Master_Task;
   
   
-  task type Master_Console is
-    entry Start(M_Arg : Master_Task_Access);
-  end Master_Console;
   
-  
+----------------------------------------------------
+-- OBSERVER TASK                                   -
+----------------------------------------------------
   task type Observe_Jobs is
     entry Start;
   end Observe_Jobs;
   
-
---  function Get_Next_Job(Remove_From_Vector : Boolean := true) return My_Job;
-  
-  procedure Print_Jobs;
   
   type My_Job_Access is access My_Job;
   
-  -- #### New Stuff. Server rewrite!
+  
+  
+----------------------------------------------------
+-- JOB ENTRY RECORD DEFINITIONS AND METHODS        -
+----------------------------------------------------
   type Job_Entry_Record is record
     Job   : My_Job;
     State : Master_Helper.Job_State := Master_Helper.Pending;
@@ -66,10 +79,14 @@ package Master is
   );
   
   
+  function Job_Entry_To_Xml(Job_Entry : Job_Entry_Record_Access) return String;
   procedure Change_Job_State(Job_Entry : in out Job_Entry_Record_Access; State : Master_Helper.Job_State);
   
-  function Job_To_Xml(Job_Entry : Job_Entry_Record_Access) return String;
   
+  
+----------------------------------------------------
+-- PROTECTED TYPE TO HANDLE JOBS                   -
+----------------------------------------------------
   protected Jobs is
     procedure Add(Job : My_Job);
     function Get_By_Id(Id : Natural) return Job_Entry_Record_Access;
@@ -82,6 +99,10 @@ package Master is
   end Jobs;
   
   
+  
+----------------------------------------------------
+-- PROTECTED TYPE TO HANDLE JOBS                   -
+----------------------------------------------------
   protected Worker is
     procedure Add(New_Worker : Master_Helper.Worker_Record_Access);
     procedure Print;
@@ -90,9 +111,10 @@ package Master is
   end Worker;
   
   
---  procedure Change_Job_State(Job : Job_Entry_Record_Access; State : Master_Helper.Job_State) is
-
   
+----------------------------------------------------
+-- GENERIC SERVER INSTANCE                         -
+----------------------------------------------------
   package Server is new Master_Server(
     My_Job,
     Job_Entry_Record_Access,
@@ -100,8 +122,23 @@ package Master is
     Jobs.Get_By_Id,
     Jobs.Get_Next_Pending,
     Change_Job_State,
-    Job_To_Xml
+    Job_Entry_To_Xml
   );
   
+  
+  
+----------------------------------------------------
+-- GENERIC CONSOLE INSTANCE                       --
+----------------------------------------------------
+  function Banner return String;
+  procedure Parse_Configuration(Config_Xml : Xml.Node_Access);
+  procedure Process_User_Input(User_Input : String; To_Controll : Master_Task_Access);
+  
+  package Console is new Generic_Console(
+    Master_Task_Access,
+    Banner,
+    Parse_Configuration,
+    Process_User_Input
+  );
   
 end Master;

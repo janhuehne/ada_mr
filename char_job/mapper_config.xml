@@ -2,10 +2,15 @@
 <adamr-mapper-config>
   <!-- mapper details -->
   <identifier>Mapper_01</identifier>
-  <listen_on_port>8100</listen_on_port>
   
-  <!-- master details -->
-  <master_host>127.0.0.1</master_host>
-  <master_port>7000</master_port>
+  <local_server>
+    <bind_ip>192.168.178.108</bind_ip>
+    <bind_port>8100</bind_port>
+  </local_server>
+  
+  <master>
+    <ip>192.168.178.108</ip>
+    <port>7000</port>
+  </master>
   
 </adamr-mapper-config>

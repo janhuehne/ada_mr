@@ -10,7 +10,6 @@ use Ada.Characters.Handling;
 with Xml;
 with Xml_Parser;
 
-with Master_Helper;
 
 package body Generic_Server is
   use GNAT.Sockets;
@@ -29,8 +28,8 @@ package body Generic_Server is
   begin
     loop
       select
-        accept Start(Host : String; Port : GNAT.Sockets.Port_Type) do
-          Addr.Addr := Inet_Addr(Host);
+        accept Start(Host : GNAT.Sockets.Inet_Addr_Type; Port : GNAT.Sockets.Port_Type) do
+          Addr.Addr := Host;
           Addr.Port := Port;
         end Start;
         
@@ -53,7 +52,7 @@ package body Generic_Server is
         Empty(WSet);
         
         Ada.Text_IO.New_Line;
-        Ada.Text_IO.Put_Line("-> Ready to accept connections on port " & Addr.Port'Img & ".");
+        Ada.Text_IO.Put_Line("-> Ready to accept connections on " & Image(Addr.Addr) & " with port " & Addr.Port'Img & ".");
         
         loop
           exit when Exit_Server;
