@@ -23,7 +23,7 @@ package Xml_Helper is
   function Hash_To_Xml_String(Details : Utility.String_String_Maps.Map) return String;
   
   
-  
+  function Is_Master_Request(Node : Xml.Node_Access) return Boolean;
   function Is_Mapper_Request(Node : Xml.Node_Access) return Boolean;
   function Is_Reducer_Request(Node : Xml.Node_Access) return Boolean;
   function Is_Command(Node : Xml.Node_Access; Command : String) return Boolean;

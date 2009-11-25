@@ -6,72 +6,96 @@ use Utility;
 with Logger;
 with Reducer_Helper;
 
+with GNAT.Sockets;
+
 package body Reducer is
   
   task body Reducer_Task is
-    R     : Runner_MR.Runner_Task;
-    R_M_T : Runner_MR.Result_Merge_Task;
+    Server_Task : Server.Server.Server_Task;
+--    R_M_T : Runner_MR.Result_Merge_Task;
   begin
     loop
       select
         accept Start;
-        Ada.Text_IO.Put_Line("Hier muss was gestartet werden!");
-        R.Start;
-        R_M_T.Start;
+        Server_Task.Start(Reducer_Helper.Server_Bind_Ip, Reducer_Helper.Server_Bind_Port);
+--        R_M_T.Start;
       or
         accept Stop;
-        Reducer_Helper.Aborted.Stop;
-        R.Stop;
+        Server_Task.Stop;
+--        Reducer_Helper.Aborted.Stop;
         exit;
       end select;
     end loop;
     null;
   end Reducer_Task;
   
-  
-  task body Console is
-    In_String       : String(1..20);
-    In_Last         : Natural;
-    C               : Reducer_Task_Access;
+  function Banner return String is
   begin
-    accept Start(C_Arg : Reducer_Task_Access) do
-      C := C_Arg;
-    end Start;
+    return "ADA MR Reducer";
+  end Banner;
+  
+  
+  procedure Parse_Configuration(Config_Xml : Xml.Node_Access) is
+  begin
     
-    Ada.Text_IO.Put_Line("Reducer Console");
+    Reducer_Helper.Identifier := ASU.To_Unbounded_String(Xml.Get_Value(Config_Xml, "identifier"));
     
-    Ada.Text_IO.Put(":> ");
+    declare
+      Local_Server_Details : Xml.Node_Access := Xml.Find_Child_With_Tag(Config_Xml, "local_server");
+    begin
+      Reducer_Helper.Server_Bind_Ip   := GNAT.Sockets.Inet_Addr(Xml.Get_Value(Local_Server_Details, "bind_ip"));
+      Reducer_Helper.Server_Bind_Port := GNAT.Sockets.Port_Type'Value(Xml.Get_Value(Local_Server_Details, "bind_port"));
+    end;
     
-    loop
-      Ada.Text_IO.Get_Line(In_String, In_Last);
+--    declare
+--      Master_Details : Xml.Node_Access := Xml.Find_Child_With_Tag(Config_Xml, "master");
+--    begin
+--      Reducer_Helper.Master_Ip   := GNAT.Sockets.Inet_Addr(Xml.Get_Value(Master_Details, "ip"));
+--      Reducer_Helper.Master_Port := GNAT.Sockets.Port_Type'Value(Xml.Get_Value(Master_Details, "port"));
+--    end;
+    
+  end Parse_Configuration;
+  
+  
+  procedure Process_User_Input(User_Input : String; To_Controll : Reducer_Task_Access) is
+  begin
+    if (Is_Equal(User_Input, "config", true)) then
+      Ada.Text_IO.New_Line;
+      Ada.Text_IO.Put_Line("-> " & Banner & " configuration");
       
-      if In_Last > 0 then
-        
-        if (Is_Equal(In_String, In_Last, "config", true)) then
-          Ada.Text_IO.Put_Line("Show Config!");
-          
-        elsif (Is_Equal(In_String, In_Last, "start", true)) then
-          C.Start;
-        
-        elsif (Is_Equal(In_String, In_Last, "quit", true)) or (Is_Equal(In_String, In_Last, "exit", true)) then
-          C.Stop;
-          exit; 
-        
-        elsif (Is_Equal(In_String, In_Last, "help", true)) then
-          Ada.Text_IO.Put_Line("");
-          Ada.Text_IO.Put_Line("  Commands:");
-          Ada.Text_IO.Put_Line("    start        Starts the Ada MR Reducer");
-          Ada.Text_IO.Put_Line("    abort        Stops the Ada MR Reducer immediately (current job is aborted)");
-          Ada.Text_IO.Put_Line("    quit / exit  Stops the Ada MR Reducer after processing the last job");
-        
-        else
-          Ada.Text_IO.Put_Line("Unknown command: " & In_String(1..In_Last));
-        end if;
-      end if;
---        
-      Ada.Text_IO.Put(":> ");
-    end loop;
+      Utility.Put("Identifier:", 20, 2);
+      Utility.Put(ASU.To_String(Reducer_Helper.Identifier), 60, 2);
+      Ada.Text_IO.New_Line;
+      
+      Utility.Put("Access token:", 20, 2);
+      Utility.Put(Reducer_Helper.Access_Token, 60, 2);
+      Ada.Text_IO.New_Line;
+      
+      Utility.Put("Listen on ip:", 20, 2);
+      Utility.Put(GNAT.Sockets.Image(Reducer_Helper.Server_Bind_Ip), 60, 2);
+      Ada.Text_IO.New_Line;
+      
+      Utility.Put("Listen on port:", 20, 2);
+      Utility.Put(Reducer_Helper.Server_Bind_Port'Img, 60, 2);
+      Ada.Text_IO.New_Line;
+      
+    elsif (Is_Equal(User_Input, "start", true)) then
+      To_Controll.Start;
     
-  end Console;
+    elsif (Is_Equal(User_Input, "quit", true)) or (Is_Equal(User_Input, "exit", true)) then
+      To_Controll.Stop;
     
+    elsif (Is_Equal(User_Input, "help", true)) then
+      Ada.Text_IO.Put_Line("");
+      Ada.Text_IO.Put_Line("  Commands:");
+      Ada.Text_IO.Put_Line("    start        Starts the Ada MR Reducer");
+      Ada.Text_IO.Put_Line("    abort        Stops the Ada MR Reducer immediately (current job is aborted)");
+      Ada.Text_IO.Put_Line("    quit / exit  Stops the Ada MR Reducer after processing the last job");
+    
+    else
+      Ada.Text_IO.Put_Line("Unknown command: " & User_Input);
+    end if;
+    
+  end Process_User_Input;
+  
 end Reducer;

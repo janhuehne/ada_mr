@@ -48,7 +48,7 @@ package Char_Job is
   
   function Merge_Jobs(Xml_Node : Xml.Node_Access) return Boolean;
   
-  function Finalize return Boolean;
+  procedure Finalize;
   
   Result_Hash : Utility.String_Integer_Maps.Map;
   

@@ -51,9 +51,9 @@ package Master is
 ----------------------------------------------------
 -- OBSERVER TASK                                   -
 ----------------------------------------------------
-  task type Observe_Jobs is
+  task type Observer_Task is
     entry Start;
-  end Observe_Jobs;
+  end Observer_Task;
   
   
   type My_Job_Access is access My_Job;

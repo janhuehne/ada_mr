@@ -153,7 +153,7 @@ package body Char_Job is
     return true;
   end Merge_Jobs;
   
-  function Finalize return Boolean is
+  procedure Finalize is
     Cursor : Utility.String_Integer_Maps.Cursor := Result_Hash.First;
   begin
     
@@ -170,8 +170,7 @@ package body Char_Job is
       
       Utility.String_Integer_Maps.Next(Cursor);
     end loop;
-      
-    return true;
+    
   end Finalize;
   
   procedure Split_Raw_Data is

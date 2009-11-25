@@ -5,7 +5,7 @@
   
   <local_server>
     <bind_ip>192.168.178.108</bind_ip>
-    <bind_port>8100</bind_port>
+    <bind_port>8000</bind_port>
   </local_server>
   
   <master>

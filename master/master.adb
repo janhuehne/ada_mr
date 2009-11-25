@@ -21,6 +21,7 @@ package body Master is
   task body Master_Task is
     Master_Server_Task : Server.Server.Server_Task;
     Me                 : Master_Task_Access;
+    Observer           : Observer_Task;
   begin
     loop
       select
@@ -45,6 +46,7 @@ package body Master is
         Ada.Text_IO.Put_Line("   .. Done! " & Jobs.Count'Img & " jobs imported");
         
         Master_Server_Task.Start(Master_Helper.Server_Bind_Ip, Master_Helper.Server_Bind_Port);
+        Observer.Start;
       or
         accept Stop;
         Ada.Text_IO.Put_Line("Please wait, while closing the client connections.");
@@ -55,10 +57,10 @@ package body Master is
     end loop;
   end Master_Task;
   
-  task body Observe_Jobs is
+  task body Observer_Task is
     use GNAT.Sockets;
-    Reducer_IP : String := "127.0.0.1";
-    Reducer_Port : String := "7100";
+    Reducer_IP : String := "192.168.178.108";
+    Reducer_Port : GNAT.Sockets.Port_Type := 9000;
   begin
     accept Start;
     
@@ -66,124 +68,35 @@ package body Master is
     
     loop
      exit when Master_Helper.Aborted.Check_Clients = true;
-      
---       if Xml_Queue.Jobs.Is_Empty = false and Xml_Queue.All_Jobs_Done = true then
---         
---         Ada.Text_IO.Put_Line("All jobs done. Sending message to the reducer!!!!");
---         
---         -- Send all jobs done message to the reducers!
---         declare
---           Sock            : Socket_Type;
---           S               : Stream_Access;
---           Addr            : Sock_Addr_Type (Family_Inet);
--- --          Msg             : String (1 .. 2000);
--- --          Last            : Natural;
---           B               : Boolean;
---           Read_Selector   : Selector_Type;
---           Read_Set, WSet  : Socket_Set_Type;
---           Read_Status     : Selector_Status;
---         begin
---           Create_Socket(Sock);
---           Addr.Addr := Addresses(Get_Host_By_Name (Reducer_IP), 1);
---           Addr.Port := Port_Type'Value(Reducer_Port);
---           
---           Create_Selector(Read_Selector);
---           Empty(Read_Set);
---           Empty(WSet);
---           
---           Connect_Socket(Sock, Addr);
---           S := Stream (Sock);
---           Boolean'Read (S, B);
---           
---           Set(Read_Set, Sock);
---           
---           -- check for input on socket (server may be aborting)
---           -- time-out immediately if no input pending
---           -- We seem to need a small delay here (using zero seems to block
---           -- forever)
---           -- Is this a GNAT bug or AB misreading Check_Selector docs?
---           Check_Selector(Read_Selector, Read_Set, WSet, Read_Status, 0.005);
---           
---           String'Output(
---             S,
---             Xml_Helper.Xml_Command(Xml_Helper.Master, "finalize")
---           );
---           
---           declare
---             Str : String := String'Input(S);
---           begin
---             Ada.Text_IO.Put_Line(Str);
---           end;
---           
---           ShutDown_Socket(Sock);
---           Close_Selector(Read_Selector);
---           
---           exit;
---         exception 
---           when others => exit;
---         end;
---       end if;
+      if Jobs.Count_By_State(Master_Helper.Done) = Jobs.Count then
+        
+        Ada.Text_IO.Put_Line("All jobs done!");
+        
+        declare
+          Response : String := Utility.Send(
+            Reducer_Ip,
+            Reducer_Port,
+            Xml_Helper.Xml_Command(Xml_Helper.Master, "finalize")
+          );
+        begin
+          Ada.Text_IO.Put_Line(Response);
+        end;
+        
+        exit;
+        
+      end if;
       
     end loop;
     
-  end Observe_Jobs;
-  
-  
---  task body Master_Console is
---    In_String       : String(1..20);
---    In_Last         : Natural;
---    M               : Master_Task_Access;
---    Config          : Xml.Node_Access;
---  begin
---    accept Start(M_Arg : Master_Task_Access; Config_Xml : Xml.Node_Access) do
---      M      := M_Arg;
---      Config := Config_Xml;
---    end Start;
---    
---    Ada.Text_IO.Put_Line("Ada MR Master Console");
---    
---    declare
---    begin
---      Master_Helper.Server_Bind_Ip   := ASU.To_Unbounded_String(Xml.Get_Value(Config, "bind_ip"));
---      Master_Helper.Server_Bind_Port := ASU.To_Unbounded_String(Xml.Get_Value(Config, "bind_port"));
---    exception
---      when Error : others => 
---        Utility.Print_Exception(Error);
---        Ada.Exceptions.Raise_Exception(Utility.Configuration_File_Error'Identity, "There is a problem with the configuration file.");
---    end;
---    
---    Ada.Text_IO.Put(":> ");
---    
---    loop
---      Ada.Text_IO.Get_Line(In_String, In_Last);
---      
---      if In_Last > 0 then
---        
---      end if;
---        
---      Ada.Text_IO.Put(":> ");
---    end loop;
---    
---  end Master_Console;
-  
-  
---  function Get_Next_Job(Remove_From_Vector : Boolean := true) return My_Job is
---    Job_Cursor : Job_Vector.Cursor := Unprocessed_Jobs.First;
---    Job        : My_Job            := Unprocessed_Jobs.Element(Job_Vector.To_Index(Job_Cursor));
---  begin
---    if Remove_From_Vector = true then
---      Unprocessed_Jobs.Delete(Job_Vector.To_Index(Job_Cursor));
---    end if;
---    
---    return Job;
---  end Get_Next_Job;
-  
+  end Observer_Task;
+
 
 
   function "="(Left, Right : Job_Entry_Record_Access) return Boolean is
   begin
     return true;
   end "=";
+  
   
   
   protected body Jobs is
@@ -327,6 +240,7 @@ package body Master is
         Utility.Put(Worker_Entry.Access_Token, 40, 2);
         Utility.Put(GNAT.Sockets.Image(Worker_Entry.Ip), 20, 2);
         Utility.Put(Worker_Entry.Listen_Port'Img, 20, 2);
+        Ada.Text_IO.New_Line;
       end Print;
       
     begin

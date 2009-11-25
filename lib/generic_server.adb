@@ -32,13 +32,14 @@ package body Generic_Server is
           Addr.Addr := Host;
           Addr.Port := Port;
         end Start;
-        
         Initialize;
         Create_Socket(Server);
         
         --  allow server address to be reused for multiple connections 
         Set_Socket_Option(Server, Socket_Level, (Reuse_Address, True));
+        
         Bind_Socket(Server, Addr);
+        
         Listen_Socket(Server, 4);
         
         --  set up selector 
@@ -86,6 +87,13 @@ package body Generic_Server is
         exit;
       end select;
     end loop;
+  exception
+    when Error : others => 
+      Close_Selector(Accept_Selector);
+      Empty(Accept_Set);
+      Close_Socket(Server);
+      Finalize;
+      Utility.Print_Exception(Error);
   end Server_Task;
 
 end Generic_Server;

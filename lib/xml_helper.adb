@@ -100,6 +100,12 @@ package body Xml_Helper is
   end Hash_To_Xml_String;
   
   
+  function Is_Master_Request(Node : Xml.Node_Access) return Boolean is
+  begin
+    return Utility.Is_Equal(Xml.Get_Tag(Node), "adamr-master");
+  end Is_Master_Request;
+  
+  
   function Is_Mapper_Request(Node : Xml.Node_Access) return Boolean is
   begin
     return Utility.Is_Equal(Xml.Get_Tag(Node), "adamr-mapper");

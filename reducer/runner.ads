@@ -1,7 +1,7 @@
 with GNAT.Sockets;
 use GNAT.Sockets;
 with Xml;
-with Echo;
+--with Echo;
 
 
 generic
