@@ -1,0 +1,16 @@
+<?xml version="1.0" ?>
+<adamr-reducer-config>
+  <!-- mapper details -->
+  <identifier>Reducer_01</identifier>
+  
+  <local_server>
+    <bind_ip>192.168.178.108</bind_ip>
+    <bind_port>9000</bind_port>
+  </local_server>
+  
+  <master>
+    <ip>192.168.178.108</ip>
+    <port>7000</port>
+  </master>
+  
+</adamr-reducer-config>
