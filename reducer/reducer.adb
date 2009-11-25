@@ -9,16 +9,20 @@ with Reducer_Helper;
 with GNAT.Sockets;
 
 package body Reducer is
-  
+
+
+----------------------------------------------------
+-- REDUCER TASK                                   -
+----------------------------------------------------
   task body Reducer_Task is
-    Server_Task : Server.Server.Server_Task;
---    R_M_T : Runner_MR.Result_Merge_Task;
+    Server_Task       : Server.Server.Server_Task;
+    Result_Merge      : Result_Merge_Task;
   begin
     loop
       select
         accept Start;
         Server_Task.Start(Reducer_Helper.Server_Bind_Ip, Reducer_Helper.Server_Bind_Port);
---        R_M_T.Start;
+        Result_Merge.Start;
       or
         accept Stop;
         Server_Task.Stop;
@@ -29,6 +33,43 @@ package body Reducer is
     null;
   end Reducer_Task;
   
+  
+  
+----------------------------------------------------
+-- RESULT MERGE TASK                               -
+----------------------------------------------------
+  task body Result_Merge_Task is
+  begin
+    accept Start;
+    Ada.Text_IO.Put_Line("Result Merge Task started!");
+    loop
+      exit when Reducer_Helper.Aborted.Check = true;
+      
+      declare
+        Cursor : Reducer_Helper.Xml_Node_Access_Vectors.Cursor := Reducer_Helper.Finished_Jobs_Queue.First;
+      begin
+        loop
+          exit when Reducer_Helper.Xml_Node_Access_Vectors."="(Cursor, Reducer_Helper.Xml_Node_Access_Vectors.No_Element);
+          
+          declare
+          begin
+            Merge_Jobs(Reducer_Helper.Xml_Node_Access_Vectors.Element(Cursor));
+            Reducer_Helper.Finished_Jobs_Queue.Delete(Cursor);
+          exception
+            when Error : others => Utility.Print_Exception(Error);
+          end;
+          
+          Reducer_Helper.Xml_Node_Access_Vectors.Next(Cursor);
+        end loop;
+      end;
+    end loop;
+  end Result_Merge_Task;
+  
+  
+  
+----------------------------------------------------
+-- GENERIC CONSOLE INSTANCE                       --
+----------------------------------------------------
   function Banner return String is
   begin
     return "ADA MR Reducer";

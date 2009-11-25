@@ -6,7 +6,7 @@ with Reducer_Server;
 with Generic_Console;
 
 generic
-  with function Merge_Jobs(Xml_Node : Xml.Node_Access) return Boolean;
+  with procedure Merge_Jobs(Xml_Node : Xml.Node_Access);
   with procedure Finalize_Jobs;
   
 package Reducer is
@@ -26,12 +26,23 @@ package Reducer is
   end Reducer_Task;
 
 
+
+----------------------------------------------------
+-- RESULT MERGE TASK                               -
+----------------------------------------------------
+  task type Result_Merge_Task is
+    entry Start;
+  end Result_Merge_Task;
+
+
+
 ----------------------------------------------------
 -- GENERIC SERVER INSTANCE                        --
 ----------------------------------------------------
   package Server is new Reducer_Server(
     Finalize_Jobs
   );
+
 
 
 ----------------------------------------------------

@@ -120,7 +120,7 @@ package body Char_Job is
     return ASU.To_String(Result_String);
   end Job_Result_To_Xml;
   
-  function Merge_Jobs(Xml_Node : Xml.Node_Access) return Boolean is
+  procedure Merge_Jobs(Xml_Node : Xml.Node_Access) is
     Cursor : Xml.Node_Access_Vector.Cursor := Xml_Node.Children.First;
   begin
     loop
@@ -149,8 +149,6 @@ package body Char_Job is
       Xml.Node_Access_Vector.Next(Cursor);
     end loop;
     
-    
-    return true;
   end Merge_Jobs;
   
   procedure Finalize is
