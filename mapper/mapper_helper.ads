@@ -28,4 +28,6 @@ package Mapper_Helper is
   Master_Ip   : GNAT.Sockets.Inet_Addr_Type;
   Master_Port : GNAT.Sockets.Port_Type;
   
+  Reducer_Ip   : GNAT.Sockets.Inet_Addr_Type;
+  Reducer_Port : GNAT.Sockets.Port_Type;
 end Mapper_Helper;

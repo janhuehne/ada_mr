@@ -89,8 +89,8 @@ package body Mapper_Runner is
                   begin
                     declare
                       Response : String := Utility.Send(
-                        "192.168.178.108",
-                        9000,
+                        Mapper_Helper.Reducer_Ip,
+                        Mapper_Helper.Reducer_Port,
                         Xml_Helper.Xml_Command(Xml_Helper.Mapper, "job_result", Job_Result_To_Xml)
                       );
                     begin

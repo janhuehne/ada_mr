@@ -62,6 +62,13 @@ package body Mapper is
       Mapper_Helper.Master_Port := GNAT.Sockets.Port_Type'Value(Xml.Get_Value(Master_Details, "port"));
     end;
     
+    declare
+      Reducer_Details : Xml.Node_Access := Xml.Find_Child_With_Tag(Config_Xml, "reducer");
+    begin
+      Mapper_Helper.Reducer_Ip   := GNAT.Sockets.Inet_Addr(Xml.Get_Value(Reducer_Details, "ip"));
+      Mapper_Helper.Reducer_Port := GNAT.Sockets.Port_Type'Value(Xml.Get_Value(Reducer_Details, "port"));
+    end;
+    
   end Parse_Configuration;
   
   

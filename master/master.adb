@@ -59,8 +59,7 @@ package body Master is
   
   task body Observer_Task is
     use GNAT.Sockets;
-    Reducer_IP : String := "192.168.178.108";
-    Reducer_Port : GNAT.Sockets.Port_Type := 9000;
+  
   begin
     accept Start;
     
@@ -74,8 +73,8 @@ package body Master is
         
         declare
           Response : String := Utility.Send(
-            Reducer_Ip,
-            Reducer_Port,
+            Master_Helper.Reducer_Ip,
+            Master_Helper.Reducer_Port,
             Xml_Helper.Xml_Command(Xml_Helper.Master, "finalize")
           );
         begin
@@ -277,6 +276,13 @@ package body Master is
   begin
     Master_Helper.Server_Bind_Ip   := GNAT.Sockets.Inet_Addr(Xml.Get_Value(Config_Xml, "bind_ip"));
     Master_Helper.Server_Bind_Port := GNAT.Sockets.Port_Type'Value(Xml.Get_Value(Config_Xml, "bind_port"));
+    
+    declare
+      Reducer_Details : Xml.Node_Access := Xml.Find_Child_With_Tag(Config_Xml, "reducer");
+    begin
+      Master_Helper.Reducer_Ip   := GNAT.Sockets.Inet_Addr(Xml.Get_Value(Reducer_Details, "ip"));
+      Master_Helper.Reducer_Port := GNAT.Sockets.Port_Type'Value(Xml.Get_Value(Reducer_Details, "port"));
+    end;
   end Parse_Configuration;
   
   procedure Process_User_Input(User_Input : String; To_Controll : Master_Task_Access) is

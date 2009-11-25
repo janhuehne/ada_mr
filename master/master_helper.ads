@@ -85,4 +85,7 @@ package Master_Helper is
   Server_Bind_Ip   : GNAT.Sockets.Inet_Addr_Type;
   Server_Bind_Port : GNAT.Sockets.Port_Type;
   
+  Reducer_Ip   : GNAT.Sockets.Inet_Addr_Type;
+  Reducer_Port : GNAT.Sockets.Port_Type;
+  
 end Master_Helper;
