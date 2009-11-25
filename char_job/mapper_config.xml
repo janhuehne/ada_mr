@@ -4,17 +4,17 @@
   <identifier>Mapper_01</identifier>
   
   <local_server>
-    <bind_ip>192.168.178.108</bind_ip>
+    <bind_ip>127.0.0.1</bind_ip>
     <bind_port>8000</bind_port>
   </local_server>
   
   <master>
-    <ip>192.168.178.108</ip>
+    <ip>127.0.0.1</ip>
     <port>7000</port>
   </master>
   
   <reducer>
-    <ip>192.168.178.108</ip>
+    <ip>127.0.0.1</ip>
     <port>9000</port>
   </reducer>
   
