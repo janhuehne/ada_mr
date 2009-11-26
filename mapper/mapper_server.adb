@@ -6,7 +6,7 @@ with Ada.Text_IO;
 with Xml;
 with Xml_Parser;
 with Xml_Helper;
-
+with Mapper_Helper;
 with Utility;
 
 package body Mapper_Server is 
