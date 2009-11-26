@@ -42,7 +42,7 @@ package Master_Helper is
     Identifier   : ASU.Unbounded_String;
     W_Type       : Worker_Type;
     Ip           : GNAT.Sockets.Inet_Addr_Type;
-    Listen_Port  : GNAT.Sockets.Port_Type;
+    Port         : GNAT.Sockets.Port_Type;
     Access_Token : String(1..32);
   end record;
   

@@ -238,7 +238,7 @@ package body Master is
         Utility.Put(Master_Helper.To_String(Worker_Entry.W_Type), 10, 2);
         Utility.Put(Worker_Entry.Access_Token, 40, 2);
         Utility.Put(GNAT.Sockets.Image(Worker_Entry.Ip), 20, 2);
-        Utility.Put(Worker_Entry.Listen_Port'Img, 20, 2);
+        Utility.Put(Worker_Entry.Port'Img, 20, 2);
         Ada.Text_IO.New_Line;
       end Print;
       
