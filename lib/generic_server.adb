@@ -33,8 +33,8 @@ package body Generic_Server is
           Addr.Port := Port;
         end Start;
         
-        declare
-        begin
+--        declare
+--        begin
           Initialize;
           Create_Socket(Server);
           
@@ -76,14 +76,14 @@ package body Generic_Server is
               Process_Incomming_Connection(New_Sock);
             end if;
           end loop;
-        exception
-          when Error : others => 
-            Close_Selector(Accept_Selector);
-            Empty(Accept_Set);
-            Close_Socket(Server);
-            Finalize;
-            Utility.Print_Exception(Error);
-        end;
+--        exception
+--          when Error : others => 
+--            Close_Selector(Accept_Selector);
+--            Empty(Accept_Set);
+--            Close_Socket(Server);
+--            Finalize;
+--            Utility.Print_Exception(Error, "Generic Server:");
+--        end;
       or
         accept Stop;
         

@@ -92,6 +92,11 @@ package body Utility is
   
   procedure Print_Exception(Error : Ada.Exceptions.Exception_Occurrence; Message : String := "") is
   begin
+    if Message /= "" then
+      Ada.Text_IO.Put_Line(Message);
+      Ada.Text_IO.Put_Line("-----------------------------------------------");
+    end if;
+    
     Ada.Text_IO.Put_Line(Ada.Exceptions.Exception_Name(Error));
     Ada.Text_IO.Put_Line(Ada.Exceptions.Exception_Message(Error));
     Ada.Text_IO.Put_Line(Ada.Exceptions.Exception_Information(Error));
