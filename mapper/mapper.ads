@@ -5,6 +5,7 @@ with GNAT.Sockets;
 with Mapper_Server;
 with Ada.Strings.Unbounded;
 with Generic_Console;
+with Generic_Observer;
 
 generic
   type My_Job is private;
@@ -44,9 +45,23 @@ package Mapper is
   type Mapper_Task_Access is access Mapper_Task;
   
   task type Mapper_Task is
-    entry Start;
+    entry Start(Arg: Mapper_Task_Access);
     entry Stop;
   end Mapper_Task;
+
+
+
+----------------------------------------------------
+-- GENERIC OBSERVER TASK                          --
+----------------------------------------------------
+  function Exit_Observer return Boolean;
+  function Observe(To_Controll : Mapper_Task_Access) return Boolean;
+  
+  package Observer is new Generic_Observer(
+    Mapper_Task_Access,
+    Exit_Observer,
+    Observe
+  );
 
 
 

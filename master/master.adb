@@ -21,7 +21,7 @@ package body Master is
   task body Master_Task is
     Master_Server_Task : Server.Server.Server_Task;
     Me                 : Master_Task_Access;
-    Observer_Task           : Observer.Observer_Task;
+    Observer_Task      : Observer.Observer_Task;
   begin
     loop
       select
@@ -45,8 +45,12 @@ package body Master is
         
         Ada.Text_IO.Put_Line("   .. Done! " & Jobs.Count'Img & " jobs imported");
         
-        Master_Server_Task.Start(Master_Helper.Server_Bind_Ip, Master_Helper.Server_Bind_Port);
-        Observer_Task.Start;
+        Master_Server_Task.Start(
+          Master_Helper.Server_Bind_Ip, 
+          Master_Helper.Server_Bind_Port
+        );
+        
+        Observer_Task.Start(Me);
       or
         accept Stop;
         Ada.Text_IO.Put_Line(" -> Please wait, while closing the client connections.");
@@ -57,6 +61,7 @@ package body Master is
       end select;
     end loop;
   end Master_Task;
+  
   
   
   ----------------------------------------------------
@@ -72,7 +77,7 @@ package body Master is
   end Exit_Observer;
   
   
-  function Observe return Boolean is
+  function Observe(To_Controll : Master_Task_Access) return Boolean is
     use GNAT.Sockets;
   begin
     if Jobs.Count_By_State(Master_Helper.Done) = Jobs.Count then

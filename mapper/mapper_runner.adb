@@ -158,7 +158,7 @@ package body Mapper_Runner is
           end loop;
         exception
           when Error : others =>
-            Ada.Text_IO.Put_Line ("FATAL ERROR: Aborting! Please close the program and check your configuration." ) ;
+            Ada.Text_IO.Put_Line ("FATAL ERROR: Aborting! Please close the program and check your configuration." );
             Mapper_Helper.Aborted.Set_Abort;
             Utility.Print_Exception(Error);
         end; 

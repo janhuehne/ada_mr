@@ -52,9 +52,10 @@ package Master is
 -- GENERIC OBSERVER TASK                           -
 ----------------------------------------------------
   function Exit_Observer return Boolean;
-  function Observe return Boolean;
+  function Observe(To_Controll : Master_Task_Access) return Boolean;
   
   package Observer is new Generic_Observer(
+    Master_Task_Access,
     Exit_Observer,
     Observe
   );

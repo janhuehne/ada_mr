@@ -17,16 +17,23 @@ package body Mapper is
   task body Mapper_Task is
     R      : Runner.Runner_Task;
     S      : Server.Server.Server_Task;
+    Me     : Mapper_Task_Access;
+    O      : Observer.Observer_Task;
   begin
     loop
       select
-        accept Start;
+        accept Start(Arg: Mapper_Task_Access) do
+          Me := Arg;
+        end Start;
+        
         R.Start;
         S.Start(Mapper_Helper.Server_Bind_Ip, Mapper_Helper.Server_Bind_Port);
+        O.Start(Me);
       or
         accept Stop;
           R.Stop;
           S.Stop;
+          O.Stop;
         exit;
       end select;
     end loop;
@@ -105,7 +112,7 @@ package body Mapper is
       Ada.Text_IO.New_Line;
       Ada.Text_IO.New_Line;
     elsif (Is_Equal(User_Input, "start", true)) then
-      To_Controll.Start;
+      To_Controll.Start(To_Controll);
     
     elsif (Is_Equal(User_Input, "quit", true)) or (Is_Equal(User_Input, "exit", true)) then
       Mapper_Helper.Aborted.Set_Exit;
@@ -126,4 +133,30 @@ package body Mapper is
       Ada.Text_IO.Put_Line("Unknown command: " & User_Input);
     end if;
   end Process_User_Input;
+  
+  
+  
+----------------------------------------------------
+-- GENERIC OBSERVER TASK                          --
+----------------------------------------------------
+  function Exit_Observer return Boolean is
+  begin
+    if Mapper_Helper.Aborted.Get_Exit = true OR Mapper_Helper.Aborted.Get_Abort = true then
+      return true;
+    end if;
+      
+    return false;
+  end Exit_Observer;
+  
+  
+  function Observe(To_Controll : Mapper_Task_Access) return Boolean is
+  begin
+    
+    if Mapper_Helper.Aborted.Get_Exit = true OR Mapper_Helper.Aborted.Get_Abort = true then
+      To_Controll.Stop;
+      return true;
+    end if;
+    
+    return false;
+  end Observe;
 end Mapper;

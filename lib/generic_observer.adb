@@ -4,10 +4,13 @@ with Utility;
 package body Generic_Observer is
   
   task body Observer_Task is
+    To_Controll : To_Controll_Task_Access;
   begin
     loop
       select
-        accept Start;
+        accept Start(Arg : To_Controll_Task_Access) do
+          To_Controll := Arg;
+        end;
         
         declare
         begin
@@ -15,7 +18,7 @@ package body Generic_Observer is
           
           loop
             exit when Exit_Observer = true;
-            exit when Observe = true;
+            exit when Observe(To_Controll) = true;
           end loop;
           
         exception
