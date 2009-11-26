@@ -13,6 +13,10 @@ package body Mapper_Server is
   
   function Exit_Server return Boolean is
   begin
+    if Mapper_Helper.Aborted.Get_Exit = true OR Mapper_Helper.Aborted.Get_Abort = true then
+      return true;
+    end if;
+      
     return false;
   end Exit_Server;
   
