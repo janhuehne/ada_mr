@@ -21,7 +21,7 @@ package body Master is
   task body Master_Task is
     Master_Server_Task : Server.Server.Server_Task;
     Me                 : Master_Task_Access;
-    Observer           : Observer_Task;
+    Observer_Task           : Observer.Observer_Task;
   begin
     loop
       select
@@ -46,57 +46,55 @@ package body Master is
         Ada.Text_IO.Put_Line("   .. Done! " & Jobs.Count'Img & " jobs imported");
         
         Master_Server_Task.Start(Master_Helper.Server_Bind_Ip, Master_Helper.Server_Bind_Port);
-        Observer.Start;
+        Observer_Task.Start;
       or
         accept Stop;
-        Ada.Text_IO.Put_Line("Please wait, while closing the client connections.");
+        Ada.Text_IO.Put_Line(" -> Please wait, while closing the client connections.");
         Master_Helper.Aborted.Set_Exit;
         Master_Server_Task.Stop;
-        Observer.Stop;
+        Observer_Task.Stop;
         exit;
       end select;
     end loop;
   end Master_Task;
   
-  task body Observer_Task is
-    use GNAT.Sockets;
   
+  ----------------------------------------------------
+  -- GENERIC OBSERVER TASK                           -
+  ----------------------------------------------------
+  function Exit_Observer return Boolean is
   begin
-    loop
-      select
-        accept Start;
+    if Master_Helper.Aborted.Get_Exit = true OR Master_Helper.Aborted.Get_Abort = true then
+      return true;
+    end if;
+      
+    return false;
+  end Exit_Observer;
+  
+  
+  function Observe return Boolean is
+    use GNAT.Sockets;
+  begin
+    if Jobs.Count_By_State(Master_Helper.Done) = Jobs.Count then
     
-        Ada.Text_IO.Put_Line("Observing jobs ...");
+      Ada.Text_IO.Put_Line("All jobs done!");
+      
+      declare
+        Response : String := Utility.Send(
+          Master_Helper.Reducer_Ip,
+          Master_Helper.Reducer_Port,
+          Xml_Helper.Xml_Command(Xml_Helper.Master, "finalize")
+        );
+      begin
+        Ada.Text_IO.Put_Line(Response);
+      end;
     
-        loop
-          exit when Master_Helper.Aborted.Get_Abort;
-          exit when Master_Helper.Aborted.Get_Exit;
-          
-          if Jobs.Count_By_State(Master_Helper.Done) = Jobs.Count then
-          
-            Ada.Text_IO.Put_Line("All jobs done!");
-            
-            declare
-              Response : String := Utility.Send(
-                Master_Helper.Reducer_Ip,
-                Master_Helper.Reducer_Port,
-                Xml_Helper.Xml_Command(Xml_Helper.Master, "finalize")
-              );
-            begin
-              Ada.Text_IO.Put_Line(Response);
-            end;
-          
-            exit;
-          
-          end if;
-        end loop;
-      or
-        accept Stop;
-        exit;
-      end select;
-    end loop;
+      return true;
     
-  end Observer_Task;
+    end if;
+      
+    return false;
+  end Observe;
 
 
 

@@ -5,7 +5,7 @@ with Xml;
 with Master_Helper;
 with Master_Server;
 with Generic_Console;
-
+with Generic_Observer;
 
 generic
   type My_Job is private;
@@ -49,13 +49,15 @@ package Master is
   
   
 ----------------------------------------------------
--- OBSERVER TASK                                   -
+-- GENERIC OBSERVER TASK                           -
 ----------------------------------------------------
-  task type Observer_Task is
-    entry Start;
-    entry Stop;
-  end Observer_Task;
+  function Exit_Observer return Boolean;
+  function Observe return Boolean;
   
+  package Observer is new Generic_Observer(
+    Exit_Observer,
+    Observe
+  );
   
   type My_Job_Access is access My_Job;
   

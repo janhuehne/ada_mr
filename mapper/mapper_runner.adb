@@ -135,7 +135,7 @@ package body Mapper_Runner is
                   end;
                 
                 elsif Xml_Helper.Is_Command(Xml_Tree, "exit") then
-                  exit;
+                  Mapper_Helper.Aborted.Set_Exit;
                 
                 else
                   Ada.Exceptions.Raise_Exception(Utility.Unknown_Command'Identity, "Unsupported command: """ & Xml.Get_Value(Xml_Tree, "command"));
