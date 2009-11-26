@@ -13,6 +13,10 @@ package body Master_Server is
   
   function Exit_Server return Boolean is
   begin
+    if Master_Helper.Aborted.Get_Exit = true OR Master_Helper.Aborted.Get_Abort = true then
+      return true;
+    end if;
+      
     return false;
   end Exit_Server;
   

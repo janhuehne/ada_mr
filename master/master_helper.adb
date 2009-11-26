@@ -3,27 +3,26 @@ with Utility;
 package body Master_Helper is
 
   protected body Aborted is
-  
-    procedure Stop_Master is
+    
+    procedure Set_Abort is
     begin
       Abort_Master := true;
-    end Stop_Master;
+    end Set_Abort;
     
-    
-    procedure Stop_Clients is
+    procedure Set_Exit is
     begin
-      Abort_Clients := true;
-    end Stop_Clients;
+      Exit_Master := true;
+    end Set_Exit;
     
-    function Check_Master return Boolean is
+    function Get_Abort return Boolean is
     begin
       return Abort_Master;
-    end Check_Master;
+    end Get_Abort;
     
-    function Check_Clients return Boolean is
+    function Get_Exit return Boolean is
     begin
-      return Abort_Clients;
-    end Check_Clients;
+      return Exit_Master;
+    end Get_Exit;
     
   end Aborted;
   

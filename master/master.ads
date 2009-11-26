@@ -53,6 +53,7 @@ package Master is
 ----------------------------------------------------
   task type Observer_Task is
     entry Start;
+    entry Stop;
   end Observer_Task;
   
   

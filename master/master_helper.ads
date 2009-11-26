@@ -59,13 +59,13 @@ package Master_Helper is
 -- PROTECTED TYPE TO HANDLE ABORT  MESSAGES        -
 ----------------------------------------------------
   protected Aborted is
-    procedure Stop_Master;
-    procedure Stop_Clients;
-    function Check_Master return Boolean;
-    function Check_Clients return Boolean;
+    procedure Set_Abort;
+    procedure Set_Exit;
+    function Get_Abort return Boolean;
+    function Get_Exit return Boolean;
   private
     Abort_Master  : Boolean := false;
-    Abort_Clients : Boolean := false;
+    Exit_Master   : Boolean := false;
   end Aborted;
   
   

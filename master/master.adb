@@ -50,8 +50,9 @@ package body Master is
       or
         accept Stop;
         Ada.Text_IO.Put_Line("Please wait, while closing the client connections.");
-        Master_Helper.Aborted.Stop_Master;
+        Master_Helper.Aborted.Set_Exit;
         Master_Server_Task.Stop;
+        Observer.Stop;
         exit;
       end select;
     end loop;
@@ -61,30 +62,38 @@ package body Master is
     use GNAT.Sockets;
   
   begin
-    accept Start;
-    
-    Ada.Text_IO.Put_Line("Observing jobs ...");
-    
     loop
-     exit when Master_Helper.Aborted.Check_Clients = true;
-      if Jobs.Count_By_State(Master_Helper.Done) = Jobs.Count then
-        
-        Ada.Text_IO.Put_Line("All jobs done!");
-        
-        declare
-          Response : String := Utility.Send(
-            Master_Helper.Reducer_Ip,
-            Master_Helper.Reducer_Port,
-            Xml_Helper.Xml_Command(Xml_Helper.Master, "finalize")
-          );
-        begin
-          Ada.Text_IO.Put_Line(Response);
-        end;
-        
+      select
+        accept Start;
+    
+        Ada.Text_IO.Put_Line("Observing jobs ...");
+    
+        loop
+          exit when Master_Helper.Aborted.Get_Abort;
+          exit when Master_Helper.Aborted.Get_Exit;
+          
+          if Jobs.Count_By_State(Master_Helper.Done) = Jobs.Count then
+          
+            Ada.Text_IO.Put_Line("All jobs done!");
+            
+            declare
+              Response : String := Utility.Send(
+                Master_Helper.Reducer_Ip,
+                Master_Helper.Reducer_Port,
+                Xml_Helper.Xml_Command(Xml_Helper.Master, "finalize")
+              );
+            begin
+              Ada.Text_IO.Put_Line(Response);
+            end;
+          
+            exit;
+          
+          end if;
+        end loop;
+      or
+        accept Stop;
         exit;
-        
-      end if;
-      
+      end select;
     end loop;
     
   end Observer_Task;
@@ -295,7 +304,7 @@ package body Master is
       Ada.Text_IO.Put_Line("  Commands:");
       Ada.Text_IO.Put_Line("    start        Starts the Ada MR Master Server");
       Ada.Text_IO.Put_Line("    worker       Prints all connected worker");
-      Ada.Text_IO.Put_Line("    quit         Exit Ada MR Server Server");
+      Ada.Text_IO.Put_Line("    quit         Exit Ada MR Master and stop all mapper and reducer");
       Ada.Text_IO.Put_Line("    verbose-on   Enable verbose mode to display log entries");
       Ada.Text_IO.Put_Line("    verbose-off  Disable verbose mode");
       Ada.Text_IO.Put_Line("    jobs         Number of unprocessed jobs");
@@ -318,7 +327,7 @@ package body Master is
       Ada.Text_IO.New_Line;
       Ada.Text_IO.New_Line;
     
-    elsif (Utility.Is_Equal(User_Input, "quit", true)) then
+    elsif Utility.Is_Equal(User_Input, "quit", true) OR Is_Equal(User_Input, "exit", true) then
       To_Controll.Stop;
     
     elsif (Is_Equal(User_Input, "verbose-on", true)) then
