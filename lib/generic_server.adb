@@ -32,48 +32,58 @@ package body Generic_Server is
           Addr.Addr := Host;
           Addr.Port := Port;
         end Start;
-        Initialize;
-        Create_Socket(Server);
         
-        --  allow server address to be reused for multiple connections 
-        Set_Socket_Option(Server, Socket_Level, (Reuse_Address, True));
-        
-        Bind_Socket(Server, Addr);
-        
-        Listen_Socket(Server, 4);
-        
-        --  set up selector 
-        Create_Selector(Accept_Selector);
-        
-        --  Initialise socket sets 
-        --  WSet is always empty as we are not interested in output 
-        --  events Accept_Set only ever contains one socket namely 
-        --  Server 
-        Empty(Accept_Set);
-        Empty(WSet);
-        
-        Ada.Text_IO.New_Line;
-        Ada.Text_IO.Put_Line("-> Ready to accept connections on " & Image(Addr.Addr) & " with port " & Addr.Port'Img & ".");
-        
-        loop
-          exit when Exit_Server;
+        declare
+        begin
+          Initialize;
+          Create_Socket(Server);
           
-          --  check for input (connection requests) on Server socket 
-          Set(Accept_Set, Server);
+          --  allow server address to be reused for multiple connections 
+          Set_Socket_Option(Server, Socket_Level, (Reuse_Address, True));
           
-          --  time-out on check if no request within 1 second 
-          Check_Selector(Accept_Selector, Accept_Set, WSet, Accept_Status, 1.0);
+          Bind_Socket(Server, Addr);
           
-          if Accept_Status = Completed then 
-            --  must be an event on Server socket as it is the only 
-            --  one that we are checking. 
-            --  Hence the Accept_Socket call should not block. 
-            Accept_Socket(Server, New_Sock, Peer_Addr);
+          Listen_Socket(Server, 4);
+          
+          --  set up selector 
+          Create_Selector(Accept_Selector);
+          
+          --  Initialise socket sets 
+          --  WSet is always empty as we are not interested in output 
+          --  events Accept_Set only ever contains one socket namely 
+          --  Server 
+          Empty(Accept_Set);
+          Empty(WSet);
+          
+          Ada.Text_IO.New_Line;
+          Ada.Text_IO.Put_Line("-> Ready to accept connections on " & Image(Addr.Addr) & " with port " & Addr.Port'Img & ".");
+          
+          loop
+            exit when Exit_Server;
             
-            Process_Incomming_Connection(New_Sock);
-          end if;
-        end loop;
-        
+            --  check for input (connection requests) on Server socket 
+            Set(Accept_Set, Server);
+            
+            --  time-out on check if no request within 1 second 
+            Check_Selector(Accept_Selector, Accept_Set, WSet, Accept_Status, 1.0);
+            
+            if Accept_Status = Completed then 
+              --  must be an event on Server socket as it is the only 
+              --  one that we are checking. 
+              --  Hence the Accept_Socket call should not block. 
+              Accept_Socket(Server, New_Sock, Peer_Addr);
+              
+              Process_Incomming_Connection(New_Sock);
+            end if;
+          end loop;
+        exception
+          when Error : others => 
+            Close_Selector(Accept_Selector);
+            Empty(Accept_Set);
+            Close_Socket(Server);
+            Finalize;
+            Utility.Print_Exception(Error);
+        end;
       or
         accept Stop;
         
