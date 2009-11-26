@@ -37,7 +37,10 @@ package body Generic_Console is
         begin
           Process_User_Input(User_Input, To_Controll);
           
-          if (Utility.Is_Equal(User_Input, "quit", true)) or (Utility.Is_Equal(User_Input, "abort", true)) then
+          if Utility.Is_Equal(User_Input, "quit", true) OR 
+             Utility.Is_Equal(User_Input, "exit", true) OR 
+             Utility.Is_Equal(User_Input, "abort", true) 
+          then
             exit;
           end if;
           
