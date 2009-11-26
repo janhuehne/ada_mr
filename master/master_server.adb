@@ -44,8 +44,8 @@ package body Master_Server is
           begin
             Worker_Entry.Identifier  := ASU.To_Unbounded_String(Xml.Get_Value(Details, "identifier"));
             Worker_Entry.W_Type      := Master_Helper.String_To_Worker_Type(Xml.Get_Value(Details, "type"));
---            Worker_Entry.Ip          := Get_Peer_Name(Sock).Addr;
-            Worker_Entry.Listen_Port := Port_Type'Value(Xml.Get_Value(Details, "listen_port"));
+            Worker_Entry.Ip          := Port_Type'Value(Xml.Get_Value(Details, "ip"));
+            Worker_Entry.Port        := Port_Type'Value(Xml.Get_Value(Details, "port"));
             
             Add_Worker(Worker_Entry);
             

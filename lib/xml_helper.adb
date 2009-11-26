@@ -46,13 +46,13 @@ package body Xml_Helper is
   end Xml_Command;
   
   
-  function Create_Initialization(G_T : Group_Tag; Identifier : String; Listen_Ip : GNAT.Sockets.Inet_Addr_Type; Listen_Port : GNAT.Sockets.Port_Type) return String is
+  function Create_Initialization(G_T : Group_Tag; Identifier : String; Ip : GNAT.Sockets.Inet_Addr_Type; Port : GNAT.Sockets.Port_Type) return String is
     Details : Utility.String_String_Maps.Map;
   begin
     Details.Insert("type", Xml_Helper.To_String(G_T));
     Details.Insert("identifier", Identifier);
-    Details.Insert("listen_ip", GNAT.Sockets.Image(Listen_Ip));
-    Details.Insert("listen_port", Listen_Port'Img);
+    Details.Insert("ip", GNAT.Sockets.Image(Ip));
+    Details.Insert("port", Port'Img);
     
     return Xml_Command(G_T, "initialization", Details);
   end Create_Initialization;

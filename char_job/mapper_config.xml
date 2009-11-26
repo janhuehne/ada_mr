@@ -9,7 +9,7 @@
   </local_server>
   
   <master>
-    <ip>127.0.0.1</ip>
+    <ip>141.54.159.220</ip>
     <port>7000</port>
   </master>
   
