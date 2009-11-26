@@ -6,3 +6,4 @@ mr_mapper_count_char
 mr_master_count_char
 mr_reducer_count_char
 *.xml
+*.xml~
