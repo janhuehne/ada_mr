@@ -172,7 +172,6 @@ package body Utility is
     when Error : others =>
 --      ShutDown_Socket(Sock);
       Close_Selector(Read_Selector);
-      Print_Exception(Error);
       Finalize;
       
       raise;
