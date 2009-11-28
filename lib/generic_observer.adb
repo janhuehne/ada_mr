@@ -26,7 +26,7 @@ package body Generic_Observer is
         end;
       or
         accept Stop;
-        Ada.Text_IO.Put_Line("-> Stopping server task");
+        Ada.Text_IO.Put_Line("-> Terminating observer task");
         exit;
       end select;
     end loop;

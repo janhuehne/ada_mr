@@ -1,4 +1,5 @@
 with Ada.Text_IO;
+with Ada.Exceptions;
 
 package body Xml is
   
@@ -57,7 +58,7 @@ package body Xml is
   begin
     return ASU.To_String(Found_Node.Value);
   exception
-    when CONSTRAINT_ERROR => raise Node_Not_Found;
+    when CONSTRAINT_ERROR => Ada.Exceptions.Raise_Exception(Node_Not_Found'Identity, "Tag """ & Tag & """ not found.");
   end Get_Value;
   
   function Get_Tag(Root : Node_Access) return String is

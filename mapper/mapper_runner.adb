@@ -41,7 +41,13 @@ package body Mapper_Runner is
               declare
                 Xml_Tree : Xml.Node_Access := Xml_Parser.Parse(Content => Response);
               begin
-                Mapper_Helper.Access_Token := Xml.Get_Value(Xml_Tree, "access_token");
+                
+                if Xml_Helper.Is_Command(Xml_Tree, "new_access_token") then
+                  Mapper_Helper.Access_Token := Xml.Get_Value(
+                    Xml.Find_Child_With_Tag(Xml_Tree, "details"),
+                    "access_token"
+                  );
+                end if;
                 
                 if Xml_Helper.Is_Command(Xml_Tree, "error") then
                   Ada.Exceptions.Raise_Exception(Utility.Initialisation_Failed'Identity, Xml.Get_Value(Xml.Find_Child_With_Tag(Xml_Tree, "details"), "message"));

@@ -86,13 +86,13 @@ package body Generic_Server is
 --        end;
       or
         accept Stop;
-        
+        Ada.Text_IO.Put_Line("-> Terminating server task");
         --  tidy up
         Close_Selector(Accept_Selector);
         Empty(Accept_Set);
         Close_Socket(Server);
         Ada.Text_IO.New_Line;
-        Ada.Text_IO.Put_Line("-> Server task stopped.");
+        Ada.Text_IO.Put_Line("-> Server task terminated");
         Finalize;
         exit;
       end select;
