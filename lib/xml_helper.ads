@@ -2,6 +2,7 @@ with Utility;
 with Ada.Strings.Unbounded;
 with Xml;
 with GNAT.Sockets;
+with Ada.Exceptions;
 
 package Xml_Helper is
   
@@ -29,5 +30,5 @@ package Xml_Helper is
   function Is_Reducer_Request(Node : Xml.Node_Access) return Boolean;
   function Is_Command(Node : Xml.Node_Access; Command : String) return Boolean;
   
-  
+  procedure Send_Error(S : GNAT.Sockets.Stream_Access; G_T : Group_Tag; Error : Ada.Exceptions.Exception_Occurrence);
 end Xml_Helper;

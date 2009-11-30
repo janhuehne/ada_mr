@@ -82,7 +82,7 @@ package body Master is
   begin
     if Jobs.Count_By_State(Master_Helper.Done) = Jobs.Count then
     
-      Ada.Text_IO.Put_Line("All jobs done!");
+      Ada.Text_IO.Put_Line("[MASTER OBSERVER] All jobs done!");
       
       declare
         Response : String := Utility.Send(
@@ -240,6 +240,29 @@ package body Master is
       
       Worker.Append(New_Worker);
     end Add;
+    
+    function Find_By_Access_Token_And_Type(Access_Token : String; W_Type : Master_Helper.Worker_Type) return Master_Helper.Worker_Record_Access is
+      Cursor : Master_Helper.Worker_Entry_Vectors.Cursor := Worker.First;
+    begin
+      loop
+        exit when Master_Helper.Worker_Entry_Vectors."="(Cursor, Master_Helper.Worker_Entry_Vectors.No_Element);
+        
+        declare
+          Worker : Master_Helper.Worker_Record_Access := Master_Helper.Worker_Entry_Vectors.Element(Cursor);
+        begin
+          
+          if Master_Helper."="(Worker.W_Type, W_Type) and Worker.Access_Token = Access_Token then
+            return Worker;
+          end if;
+        end;
+        
+        Master_Helper.Worker_Entry_Vectors.Next(Cursor);
+        
+      end loop;
+      
+      Ada.Exceptions.Raise_Exception(Master_Helper.No_Worker_Found'Identity, "No worker found");
+      
+    end Find_By_Access_Token_And_Type;
     
     procedure Print is
       

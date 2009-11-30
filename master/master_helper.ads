@@ -76,7 +76,7 @@ package Master_Helper is
   Unknow_Worker_Type : Exception;
   No_Job_Found : Exception;
   Initialization_Required : Exception;
-  
+  No_Worker_Found : Exception;
   
   
 ----------------------------------------------------

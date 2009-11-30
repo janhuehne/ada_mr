@@ -109,6 +109,7 @@ package Master is
 ----------------------------------------------------
   protected Worker is
     procedure Add(New_Worker : Master_Helper.Worker_Record_Access);
+    function Find_By_Access_Token_And_Type(Access_Token : String; W_Type : Master_Helper.Worker_Type) return Master_Helper.Worker_Record_Access;
     procedure Print;
   private
     Worker : Master_Helper.Worker_Entry_Vectors.Vector;
@@ -123,6 +124,7 @@ package Master is
     My_Job,
     Job_Entry_Record_Access,
     Worker.Add,
+    Worker.Find_By_Access_Token_And_Type,
     Jobs.Get_By_Id,
     Jobs.Get_Next_Pending,
     Change_Job_State,

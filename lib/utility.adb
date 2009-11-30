@@ -92,6 +92,9 @@ package body Utility is
   
   procedure Print_Exception(Error : Ada.Exceptions.Exception_Occurrence; Message : String := "") is
   begin
+    Ada.Text_IO.New_Line;
+    Ada.Text_IO.New_Line;
+    
     if Message /= "" then
       Ada.Text_IO.Put_Line(Message);
       Ada.Text_IO.Put_Line("-----------------------------------------------");
@@ -100,6 +103,9 @@ package body Utility is
     Ada.Text_IO.Put_Line(Ada.Exceptions.Exception_Name(Error));
     Ada.Text_IO.Put_Line(Ada.Exceptions.Exception_Message(Error));
     Ada.Text_IO.Put_Line(Ada.Exceptions.Exception_Information(Error));
+    
+    Ada.Text_IO.New_Line;
+    Ada.Text_IO.New_Line;
   end Print_Exception;
   
   
@@ -181,4 +187,5 @@ package body Utility is
       
       raise;
   end Send;
+  
 end Utility;

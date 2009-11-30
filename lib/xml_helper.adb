@@ -145,4 +145,13 @@ package body Xml_Helper is
   end Is_Command;
   
   
+  procedure Send_Error(S : GNAT.Sockets.Stream_Access; G_T : Group_Tag; Error : Ada.Exceptions.Exception_Occurrence) is
+  begin
+    String'Output(S, Xml_Helper.Xml_Command(
+      G_T     => G_T,
+      Command => "error",
+      Details => "<message>" & Ada.Exceptions.Exception_Name(Error) & "(" & Ada.Exceptions.Exception_Message(Error) & ")</message>"
+    ));
+  end;
+  
 end Xml_Helper;
