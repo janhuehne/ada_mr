@@ -11,8 +11,14 @@ package body Xml_Helper is
       when Master => return "master";
     end case;
   end To_String;
-
+  
   function Xml_Command(G_T : Group_Tag; Command : String; Details : String := "") return String is
+  begin
+    return Xml_Command(G_T, Command, "", Details);
+  end Xml_Command;
+  
+  
+  function Xml_Command(G_T : Group_Tag; Command : String; Access_Token : String; Details : String := "") return String is
     Xml_String : Ada.Strings.Unbounded.Unbounded_String;
   begin
     Ada.Strings.Unbounded.Append(Xml_String, "<?xml version=""1.0"" ?>");
@@ -21,6 +27,12 @@ package body Xml_Helper is
     Ada.Strings.Unbounded.Append(Xml_String, To_String(G_T));
     Ada.Strings.Unbounded.Append(Xml_String, ">");
     
+    if Access_Token /= "" then
+      Ada.Strings.Unbounded.Append(Xml_String, "<access_token>");
+      Ada.Strings.Unbounded.Append(Xml_String, Access_Token);
+      Ada.Strings.Unbounded.Append(Xml_String, "</access_token>");
+      
+    end if;
     
     Ada.Strings.Unbounded.Append(Xml_String, "<command>");
     Ada.Strings.Unbounded.Append(Xml_String, Command);
@@ -39,10 +51,19 @@ package body Xml_Helper is
   end Xml_Command;
   
   function Xml_Command(G_T : Group_Tag; Command : String; Details : Utility.String_String_Maps.Map) return String is
+  begin
+    return Xml_Command(G_T, Command, "", Details);
+  end Xml_Command;
+  
+  function Xml_Command(G_T : Group_Tag; Command : String; Access_Token : String; Details : Utility.String_String_Maps.Map) return String is
     Detail_Cursor : Utility.String_String_Maps.Cursor := Utility.String_String_Maps.First(Details);
     Detail_String : Ada.Strings.Unbounded.Unbounded_String;
   begin    
-    return Xml_Command(G_T, Command, Hash_To_Xml_String(Details));
+    return Xml_Command(
+      G_T     =>  G_T, 
+      Command => Command, 
+      Details => Hash_To_Xml_String(Details)
+    );
   end Xml_Command;
   
   

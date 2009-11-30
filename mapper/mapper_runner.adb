@@ -79,7 +79,11 @@ package body Mapper_Runner is
                 Response : String := Utility.Send(
                   Mapper_Helper.Master_Ip,
                   Mapper_Helper.Master_Port,
-                  Xml_Helper.Create_Job_Request
+                  Xml_Helper.Xml_Command(
+                    G_T          => Xml_Helper.Mapper,
+                    Command      => "job_request",
+                    Access_Token => Mapper_Helper.Access_Token
+                  )
                 );
                 
                 Xml_Tree : Xml.Node_Access := Xml_Parser.Parse(Content => Response);
@@ -99,7 +103,11 @@ package body Mapper_Runner is
                         Response : String := Utility.Send(
                           Mapper_Helper.Reducer_Ip,
                           Mapper_Helper.Reducer_Port,
-                          Xml_Helper.Xml_Command(Xml_Helper.Mapper, "job_result", Job_Result_To_Xml)
+                          Xml_Helper.Xml_Command(
+                            G_T     => Xml_Helper.Mapper, 
+                            Command => "job_result",
+                            Details => Job_Result_To_Xml
+                          )
                         );
                       begin
                         Ada.Text_IO.Put_Line(Response);
@@ -118,7 +126,12 @@ package body Mapper_Runner is
                         Response : String := Utility.Send(
                           Mapper_Helper.Master_Ip,
                           Mapper_Helper.Master_Port,
-                          Xml_Helper.Xml_Command(Xml_Helper.Mapper, "job_done", To_Xml(Job))
+                          Xml_Helper.Xml_Command(
+                            G_T     => Xml_Helper.Mapper,
+                            Command => "job_done",
+                            Access_Token => Mapper_Helper.Access_Token,
+                            Details => To_Xml(Job)
+                          )
                         );
                       begin
                         Ada.Text_IO.Put_Line(Response);

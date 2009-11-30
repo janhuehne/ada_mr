@@ -52,18 +52,17 @@ package body Master_Server is
             Worker_Entry.Port        := Port_Type'Value(Xml.Get_Value(Details, "port"));
             
             Add_Worker(Worker_Entry);
-            
             String'Output(S, Xml_Helper.Xml_Command(
-              Xml_Helper.Master,
-              "new_access_token",
-              "<access_token>" & Worker_Entry.Access_Token & "</access_token>"
+              G_T     => Xml_Helper.Master,
+              Command => "new_access_token",
+              Details => "<access_token>" & Worker_Entry.Access_Token & "</access_token>"
             ));
           exception
             when Error : others =>
               String'Output(S, Xml_Helper.Xml_Command(
-                Xml_Helper.Master,
-                "error",
-                "<message>" & Ada.Exceptions.Exception_Name(Error) & "(" & Ada.Exceptions.Exception_Message(Error) & ")</message>"
+                G_T     => Xml_Helper.Master,
+                Command => "error",
+                Details => "<message>" & Ada.Exceptions.Exception_Name(Error) & "(" & Ada.Exceptions.Exception_Message(Error) & ")</message>"
               ));
           end;
           
@@ -73,10 +72,18 @@ package body Master_Server is
           begin
             Job_Entry := Get_Next_Pending_Job;
             
-            String'Output(S, Xml_Helper.Xml_Command(Xml_Helper.Master, "new_job", Job_Entry_To_Xml(Job_Entry)));
+            String'Output(S, Xml_Helper.Xml_Command(
+              G_T     => Xml_Helper.Master, 
+              Command => "new_job", 
+              Details => Job_Entry_To_Xml(Job_Entry)
+            ));
           exception
             when Master_Helper.No_Job_Found =>
-              String'Output(S, Xml_Helper.Xml_Command(Xml_Helper.Master, "sleep", "<seconds>10</seconds>"));
+              String'Output(S, Xml_Helper.Xml_Command(
+                G_T     => Xml_Helper.Master, 
+                Command => "sleep", 
+                Details => "<seconds>10</seconds>"
+              ));
             when Error : others => 
               Utility.Print_Exception(Error);
               --Change_Job_State(Job_Entry, Master_Helper.Pending);

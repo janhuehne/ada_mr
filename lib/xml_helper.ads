@@ -12,9 +12,10 @@ package Xml_Helper is
   function To_String(G_T : Group_Tag) return String;
   
   
-  
   function Xml_Command(G_T : Group_Tag; Command : String; Details : String := "") return String;
+  function Xml_Command(G_T : Group_Tag; Command : String; Access_Token : String; Details : String := "") return String;
   function Xml_Command(G_T : Group_Tag; Command : String; Details : Utility.String_String_Maps.Map) return String;
+  function Xml_Command(G_T : Group_Tag; Command : String; Access_Token : String; Details : Utility.String_String_Maps.Map) return String;
   
   function Create_Initialization(G_T : Group_Tag; Identifier : String; Ip : GNAT.Sockets.Inet_Addr_Type; Port : GNAT.Sockets.Port_Type) return String;
   function Create_Job_Request return String;
