@@ -234,6 +234,9 @@ package body Master is
     begin
       Rand.Reset(Gen);
       
+      --TODO: HashFunktion in Paket auslagern.
+      --TODO: Salt für Hashfunktion in Xml_Datei
+      --TODO: Method Authentification Code (HMAC)
       New_Worker.Access_Token := GNAT.MD5.Digest(
         ASU.To_String(New_Worker.Identifier) & "-" & Master_Helper.To_String(New_Worker.W_Type) & "-" & Rand.Random(Gen)'Img
       );
