@@ -31,7 +31,8 @@ package Mapper is
   package Runner is new Mapper_Runner(
     My_Job, 
     From_Xml, 
-    To_Xml, 
+    To_Xml,
+    Get_Job_Id,
     Compute_Job, 
     Job_Result_To_Xml
   );
@@ -45,10 +46,11 @@ package Mapper is
   type Mapper_Task_Access is access Mapper_Task;
   
   task type Mapper_Task is
-    entry Start(Arg: Mapper_Task_Access);
+    entry Start(Self : Mapper_Task_Access; Config_File : String);
     entry Stop;
   end Mapper_Task;
-
+  
+  procedure Stop_Mapper_Task;
 
 
 ----------------------------------------------------
@@ -68,7 +70,9 @@ package Mapper is
 ----------------------------------------------------
 -- SERVER PACKAGE                                 --
 ----------------------------------------------------
-  package Server renames Mapper_Server;
+  package Server is new Mapper_Server(
+    Stop_Mapper_Task
+  );
 
 
 
@@ -84,13 +88,13 @@ package Mapper is
 ----------------------------------------------------
   function Banner return String;
   procedure Parse_Configuration(Config_Xml : Xml.Node_Access);
-  procedure Process_User_Input(User_Input : String; To_Controll : Mapper_Task_Access);
   
-  package Console is new Generic_Console(
-    Mapper_Task_Access,
-    Banner,
-    Parse_Configuration,
-    Process_User_Input
-  );
-  
+--  package Console is new Generic_Console(
+--    Mapper_Task_Access,
+--    Banner,
+--    Parse_Configuration,
+--    Process_User_Input
+--  );
+private
+  Main_Task : Mapper_Task_Access;
 end Mapper;

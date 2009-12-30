@@ -11,7 +11,7 @@ package Generic_Console is
   package ASU renames Ada.Strings.Unbounded;
   
   task type Console is
-    entry Start(M_Arg : To_Controll_Task_Access; Config_File : String);
+    entry Start(M_Arg : To_Controll_Task_Access);
   end Console;
   
 end Generic_Console;

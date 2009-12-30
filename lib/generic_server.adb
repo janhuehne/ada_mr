@@ -10,6 +10,7 @@ use Ada.Characters.Handling;
 with Xml;
 with Xml_Parser;
 
+with Logger;
 
 package body Generic_Server is
   use GNAT.Sockets;
@@ -33,66 +34,57 @@ package body Generic_Server is
           Addr.Port := Port;
         end Start;
         
---        declare
---        begin
-          Initialize;
-          Create_Socket(Server);
+        Logger.Put_Line("Server task started", Logger.Info);
+        
+        Initialize;
+        Create_Socket(Server);
+        
+        --  allow server address to be reused for multiple connections 
+        Set_Socket_Option(Server, Socket_Level, (Reuse_Address, True));
+        
+        Bind_Socket(Server, Addr);
+        
+        Listen_Socket(Server, 4);
+        
+        --  set up selector 
+        Create_Selector(Accept_Selector);
+        
+        --  Initialise socket sets 
+        --  WSet is always empty as we are not interested in output 
+        --  events Accept_Set only ever contains one socket namely 
+        --  Server 
+        Empty(Accept_Set);
+        Empty(WSet);
+        
+        Logger.Put_Line("Ready to accept connections on " & Image(Addr.Addr) & " with port " & Addr.Port'Img & ".", Logger.Info);
+        
+        loop
+          exit when Exit_Server;
           
-          --  allow server address to be reused for multiple connections 
-          Set_Socket_Option(Server, Socket_Level, (Reuse_Address, True));
+          --  check for input (connection requests) on Server socket 
+          Set(Accept_Set, Server);
           
-          Bind_Socket(Server, Addr);
+          --  time-out on check if no request within 1 second 
+          Check_Selector(Accept_Selector, Accept_Set, WSet, Accept_Status, 1.0);
           
-          Listen_Socket(Server, 4);
-          
-          --  set up selector 
-          Create_Selector(Accept_Selector);
-          
-          --  Initialise socket sets 
-          --  WSet is always empty as we are not interested in output 
-          --  events Accept_Set only ever contains one socket namely 
-          --  Server 
-          Empty(Accept_Set);
-          Empty(WSet);
-          
-          Ada.Text_IO.New_Line;
-          Ada.Text_IO.Put_Line("-> Ready to accept connections on " & Image(Addr.Addr) & " with port " & Addr.Port'Img & ".");
-          
-          loop
-            exit when Exit_Server;
+          if Accept_Status = Completed then 
+            --  must be an event on Server socket as it is the only 
+            --  one that we are checking. 
+            --  Hence the Accept_Socket call should not block. 
+            Accept_Socket(Server, New_Sock, Peer_Addr);
             
-            --  check for input (connection requests) on Server socket 
-            Set(Accept_Set, Server);
-            
-            --  time-out on check if no request within 1 second 
-            Check_Selector(Accept_Selector, Accept_Set, WSet, Accept_Status, 1.0);
-            
-            if Accept_Status = Completed then 
-              --  must be an event on Server socket as it is the only 
-              --  one that we are checking. 
-              --  Hence the Accept_Socket call should not block. 
-              Accept_Socket(Server, New_Sock, Peer_Addr);
-              
-              Process_Incomming_Connection(New_Sock);
-            end if;
-          end loop;
---        exception
---          when Error : others => 
---            Close_Selector(Accept_Selector);
---            Empty(Accept_Set);
---            Close_Socket(Server);
---            Finalize;
---            Utility.Print_Exception(Error, "Generic Server:");
---        end;
+            Process_Incomming_Connection(New_Sock);
+          end if;
+        end loop;
+          
       or
         accept Stop;
-        Ada.Text_IO.Put_Line("-> Terminating server task");
+        Logger.Put_Line("Terminating server task", Logger.Info);
         --  tidy up
         Close_Selector(Accept_Selector);
         Empty(Accept_Set);
         Close_Socket(Server);
-        Ada.Text_IO.New_Line;
-        Ada.Text_IO.Put_Line("-> Server task terminated");
+        Logger.Put_Line("Server task terminated", Logger.Info);
         Finalize;
         exit;
       end select;

@@ -4,6 +4,7 @@ with Ada.Strings.Unbounded;
 with Xml;
 with Reducer_Server;
 with Generic_Console;
+with Reducer_Runner;
 
 generic
   with procedure Merge_Jobs(Xml_Node : Xml.Node_Access);
@@ -21,11 +22,11 @@ package Reducer is
   type Reducer_Task_Access is access Reducer_Task;
   
   task type Reducer_Task is
-    entry Start;
+    entry Start(Self : Reducer_Task_Access; Config_File : String);
     entry Stop;
   end Reducer_Task;
 
-
+  procedure Stop_Reducer_Task;
 
 ----------------------------------------------------
 -- RESULT MERGE TASK                               -
@@ -40,8 +41,16 @@ package Reducer is
 -- GENERIC SERVER INSTANCE                        --
 ----------------------------------------------------
   package Server is new Reducer_Server(
-    Finalize_Jobs
+    Finalize_Jobs,
+    Stop_Reducer_Task
   );
+
+
+
+----------------------------------------------------
+-- RUNNER INSTANCE                                --
+----------------------------------------------------
+  package Runner renames Reducer_Runner;
 
 
 
@@ -50,16 +59,12 @@ package Reducer is
 ----------------------------------------------------
   function Banner return String;
   procedure Parse_Configuration(Config_Xml : Xml.Node_Access);
-  procedure Process_User_Input(User_Input : String; To_Controll : Reducer_Task_Access);
-
-  package Console is new Generic_Console(
-    Reducer_Task_Access,
-    Banner,
-    Parse_Configuration,
-    Process_User_Input
-  );
-
-
-
+  
+  
+  
+    
+  Main_Task : Reducer_Task_Access;
+  
+  
 
 end Reducer;

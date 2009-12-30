@@ -26,6 +26,7 @@ package Xml is
     
   function Find_Child_With_Tag(Root_Node : in Node_Access; Tag : in String) return Node_Access;
   function Get_Value(Root : Node_Access; Tag : String) return String;
+  function Get_Value_Or_Empty(Root : Node_Access; Tag : String) return String;
   function Get_Tag(Root : Node_Access) return String;
   
   function "="(Left, Right : Xml.Node_Access) return Boolean;

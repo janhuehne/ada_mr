@@ -22,7 +22,7 @@ package Master_Helper is
   );
   
   function To_String(Arg : Job_State) return String;
-  
+  function From_String(Arg : String) return Job_State;
   
   type Worker_Type is (
     Mapper,
@@ -77,15 +77,12 @@ package Master_Helper is
   No_Job_Found : Exception;
   Initialization_Required : Exception;
   No_Worker_Found : Exception;
-  
+  Unknown_Job_State : Exception;
   
 ----------------------------------------------------
 -- GLOBAL VARIABLES                                -
 ----------------------------------------------------
   Server_Bind_Ip   : GNAT.Sockets.Inet_Addr_Type;
   Server_Bind_Port : GNAT.Sockets.Port_Type;
-  
-  Reducer_Ip   : GNAT.Sockets.Inet_Addr_Type;
-  Reducer_Port : GNAT.Sockets.Port_Type;
   
 end Master_Helper;

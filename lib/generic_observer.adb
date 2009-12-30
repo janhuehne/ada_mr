@@ -1,5 +1,6 @@
 with Ada.Text_IO;
 with Utility;
+with Logger;
 
 package body Generic_Observer is
   
@@ -14,7 +15,7 @@ package body Generic_Observer is
         
         declare
         begin
-          Ada.Text_IO.Put_Line("-> Observer task started");
+          Logger.Put_Line("Observer task started", Logger.Info);
           
           loop
             exit when Exit_Observer = true;
@@ -26,12 +27,12 @@ package body Generic_Observer is
         end;
       or
         accept Stop;
-        Ada.Text_IO.Put_Line("-> Terminating observer task");
+        Logger.Put_Line("Terminating observer task", Logger.Info);
         exit;
       end select;
     end loop;
     
-    Ada.Text_IO.Put_Line("-> Observer task terminated");
+    Logger.Put_Line("Observer task terminated", Logger.Info);
     
   end Observer_Task;
   

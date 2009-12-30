@@ -61,6 +61,14 @@ package body Xml is
     when CONSTRAINT_ERROR => Ada.Exceptions.Raise_Exception(Node_Not_Found'Identity, "Tag """ & Tag & """ not found.");
   end Get_Value;
   
+  function Get_Value_Or_Empty(Root : Node_Access; Tag : String) return String is
+  begin
+    return Get_Value(Root, Tag);
+  exception
+    when others => return "";
+  end Get_Value_Or_Empty;
+  
+  
   function Get_Tag(Root : Node_Access) return String is
   begin
     return ASU.To_String(Root.Tag);

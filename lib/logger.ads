@@ -1,14 +1,18 @@
 package Logger is
   
-  procedure Enable_Verbose_Mode;
-  procedure Disable_Verbose_Mode;
-    
-  procedure Put(Item : String);
-  procedure Put_Line(Item : String);
-  procedure New_Line(Item : String);
-
+  type Log_Level is (Info, Warn, Err);
+  
+  procedure Set_Output_Level(Level : Log_Level);
+  
+  procedure Put(Item : String; Level : Log_Level; Prefix : String := "");
+  procedure Put_Line(Item : String; Level : Log_Level; Prefix : String := "");
+  procedure New_Line(Item : String; Level : Log_Level);
+  
+  function Image(Level : Log_Level) return String;
+  
 private
+  function Now return String;
+  function Has_Correct_Level(Level : Log_Level) return Boolean;
   
-  Verbose_Mode : Boolean := false;
-  
+  Output_Level : Log_Level := Info;
 end Logger;

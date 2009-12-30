@@ -1,30 +1,79 @@
 with Ada.Text_IO;
 
+with Ada.Calendar;
+with GNAT.Calendar.Time_IO;
+
 package body Logger is
   
-  procedure Enable_Verbose_Mode is
+  procedure Set_Output_Level(Level : Log_Level) is
   begin
-    Verbose_Mode := true;
-  end Enable_Verbose_Mode;
+    Output_Level := Level;
+  end Set_Output_Level;
   
-  procedure Disable_Verbose_Mode is
-  begin
-    Verbose_Mode := false;
-  end Disable_Verbose_Mode;
   
-  procedure Put(Item : String) is
+  procedure Put(Item : String; Level : Log_Level; Prefix : String := "") is
   begin
-    Ada.Text_IO.Put(Item);
+    if Has_Correct_Level(Level) then
+      if Prefix /= "" then
+        Ada.Text_IO.Put("[" & Now & "][" & Level'Img & "][" & Prefix & "] " & Item);
+      else
+        Ada.Text_IO.Put("[" & Now & "][" & Level'Img & "] " & Item);
+      end if;
+    end if;
   end Put;
   
-  procedure Put_Line(Item : String) is
+  
+  procedure Put_Line(Item : String; Level : Log_Level; Prefix : String := "") is
   begin
-    Ada.Text_IO.Put_Line(Item);
+    if Has_Correct_Level(Level) then
+      if Prefix /= "" then
+        Ada.Text_IO.Put_Line("[" & Now & "][" & Level'Img & "][" & Prefix & "] " & Item);
+      else
+        Ada.Text_IO.Put_Line("[" & Now & "][" & Level'Img & "] " & Item);
+      end if;
+    end if;
   end Put_Line;
   
-  procedure New_Line(Item : String) is
+  
+  procedure New_Line(Item : String; Level : Log_Level) is
   begin
-    Ada.Text_IO.New_Line;
+    if Has_Correct_Level(Level) then
+      Ada.Text_IO.New_Line;
+    end if;
   end New_Line;
+  
+  
+  function Now return String is
+  begin
+    return GNAT.Calendar.Time_IO.Image(Ada.Calendar.Clock, "%Y-%m-%d %H:%M:%S");
+  end Now;
+  
+  
+  function Has_Correct_Level(Level : Log_Level) return Boolean is
+  begin
+    case Output_Level is
+      when Info =>
+        return true;
+      when Warn =>
+        if Level = Warn OR Level = Err then
+          return true;
+        end if;
+      when Err =>
+        if Level = Err then
+          return true;
+        end if;
+    end case;
+    
+    return false;
+  end Has_Correct_Level;
+  
+  function Image(Level : Log_Level) return String is
+  begin
+    case Level is
+      when Info => return "INFO";
+      when Warn => return "WARN";
+      when Err => return "ERROR";
+    end case;
+  end Image;
   
 end Logger;

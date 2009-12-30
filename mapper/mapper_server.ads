@@ -5,6 +5,9 @@ with Ada.Strings.Unbounded;
 
 with Generic_Server;
 
+generic
+  with procedure Stop_Mapper;
+
 package Mapper_Server is
   
   package ASU renames Ada.Strings.Unbounded;
@@ -15,7 +18,8 @@ package Mapper_Server is
   
   package Server is new Generic_Server(
     Exit_Server,
-    Process_Incomming_Connection
+    Process_Incomming_Connection,
+    Stop_Mapper
   );
   
 --  package Echo_MR is new Generic_Echo(

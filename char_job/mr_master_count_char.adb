@@ -1,36 +1,28 @@
 with Ada.Text_IO;
-with Master_Count_Char; use Master_Count_Char;
 with Char_Job;
 with Xml;
 with Xml_Parser;
 with Utility;
+with Master;
 
 procedure MR_Master_Count_Char is
-begin
-  Ada.Text_IO.New_Line;
-  Ada.Text_IO.New_Line;
+  package Job renames Char_Job;
   
-  Ada.Text_IO.Put_Line("          _____               __  __ _____      __  __           _            ");
-  Ada.Text_IO.Put_Line("    /\   |  __ \   /\        |  \/  |  __ \    |  \/  |         | |           ");
-  Ada.Text_IO.Put_Line("   /  \  | |  | | /  \ ______| \  / | |__) |   | \  / | __ _ ___| |_ ___ _ __ ");
-  Ada.Text_IO.Put_Line("  / /\ \ | |  | |/ /\ \______| |\/| |  _  /    | |\/| |/ _` / __| __/ _ \ '__|");
-  Ada.Text_IO.Put_Line(" / ____ \| |__| / ____ \     | |  | | | \ \    | |  | | (_| \__ \ |_  __/ |   ");
-  Ada.Text_IO.Put_Line("/_/    \_\_____/_/    \_\    |_|  |_|_|  \_\   |_|  |_|\__,_|___/\__\___|_|   ");
-    
-  Ada.Text_IO.New_Line;
-  Ada.Text_IO.New_Line;
-  Ada.Text_IO.New_Line;
+  package Master_MR is new Master(
+    Job.My_Job,
+    Job.From_Xml,
+    Job.To_Xml,
+    Job.Get_Job_Id,
+    Job.Print_Job,
+    Job.Split_Raw_Data,
+    Job.Get_Next_Raw_Job
+  );
+begin
   
   declare
-    M   : Master_MR.Master_Task_Access := new Master_MR.Master_Task;
-    M_C : Master_MR.Console.Console;
+    M : Master_MR.Master_Task_Access := new Master_MR.Master_Task;
   begin
-    null;
-    M_C.Start(M, "master_config.xml");
+    M.Start(M, "master_config.xml");
   end;
 
-    Ada.Text_IO.New_Line;
-    Ada.Text_IO.Put_Line("Main-Procedure is terminated.");
-
 end MR_Master_Count_Char;
-

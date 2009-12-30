@@ -31,4 +31,7 @@ package Reducer_Helper is
   Server_Bind_Ip   : GNAT.Sockets.Inet_Addr_Type;
   Server_Bind_Port : GNAT.Sockets.Port_Type;
   
+  Master_Ip : GNAT.Sockets.Inet_Addr_Type;
+  Master_Port : GNAT.Sockets.Port_Type;
+  
 end Reducer_Helper;

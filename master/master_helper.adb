@@ -56,5 +56,18 @@ package body Master_Helper is
       when Done => return "Done";
     end case;
   end To_String;
+  
+  function From_String(Arg : String) return Job_State is
+  begin
+    if Utility.Is_Equal(Arg, "Pending", true) then
+      return Pending;
+    elsif Utility.Is_Equal(Arg, "In_Progress", true) then
+      return In_Progress;
+    elsif Utility.Is_Equal(Arg, "Done", true) then
+      return Done;
+    else
+      raise Unknown_Job_State;
+    end if;
+  end From_String;
 
 end Master_Helper;

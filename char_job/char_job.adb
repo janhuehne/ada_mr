@@ -1,7 +1,7 @@
 with Ada.Text_IO;
 with Utility;
 with Xml_Helper;
-
+with Logger;
 package body Char_Job is
   
   function To_Xml(Job : in My_Job) return String is
@@ -176,7 +176,7 @@ package body Char_Job is
     Last  : Natural;
     Step  : Natural := 10;
   begin
-    Ada.Text_IO.Put_Line("-> Splitting raw data into jobs");
+    Logger.Put_Line("Splitting raw data into jobs", Logger.Info);
     
     loop
       Last := First + Step - 1;
@@ -200,7 +200,7 @@ package body Char_Job is
       exit when Last = Complete_String'Last;
     end loop;
     
-    Ada.Text_IO.Put_Line("   .. Done");
+    Logger.Put_Line("--> Done", Logger.Info);
   end Split_Raw_Data;
   
   

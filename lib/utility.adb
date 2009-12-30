@@ -1,3 +1,5 @@
+with Logger;
+
 package body Utility is
   
   function Starts_With(Item : String; Pattern : String; Ignore_Case : Boolean := false) return Boolean is
@@ -92,24 +94,16 @@ package body Utility is
   
   procedure Print_Exception(Error : Ada.Exceptions.Exception_Occurrence; Message : String := "") is
   begin
-    Ada.Text_IO.New_Line;
-    Ada.Text_IO.New_Line;
-    
     if Message /= "" then
-      Ada.Text_IO.Put_Line(Message);
-      Ada.Text_IO.Put_Line("-----------------------------------------------");
+      Logger.Put_Line(Message, Logger.Info);
+      Logger.Put_Line("-----------------------------------------------", Logger.Info);
     end if;
     
-    Ada.Text_IO.Put_Line(Ada.Exceptions.Exception_Name(Error));
-    Ada.Text_IO.Put_Line(Ada.Exceptions.Exception_Message(Error));
-    Ada.Text_IO.Put_Line(Ada.Exceptions.Exception_Information(Error));
-    
-    Ada.Text_IO.New_Line;
-    Ada.Text_IO.New_Line;
+    Logger.Put_Line(Ada.Exceptions.Exception_Message(Error) & " (" & Ada.Exceptions.Exception_Name(Error) & ")", Logger.Err);
   end Print_Exception;
   
   
-  function Send(Host : String; Port : GNAT.Sockets.Port_Type; Command : String) return String is
+  function Send(Host : String; Port : GNAT.Sockets.Port_Type; Command : String; Tries : Natural := 1) return String is
     use GNAT.Sockets;
     
     Addr : Sock_Addr_Type(Family_Inet);
@@ -117,11 +111,15 @@ package body Utility is
     Addr.Addr := Addresses(Get_Host_By_Name (Host), 1);
     Addr.Port := Port;
     
-    return Send(Addr, Command);
+    if Tries = 1 then
+      return Send(Addr, Command);
+    else
+      return Send(Addr, Command, Tries);
+    end if;
   end Send;
   
   
-  function Send(Host : GNAT.Sockets.Inet_Addr_Type; Port : GNAT.Sockets.Port_Type; Command : String) return String is
+  function Send(Host : GNAT.Sockets.Inet_Addr_Type; Port : GNAT.Sockets.Port_Type; Command : String; Tries : Natural := 1) return String is
     use GNAT.Sockets;
   
     Addr : Sock_Addr_Type(Family_Inet);
@@ -129,9 +127,34 @@ package body Utility is
     Addr.Addr := Host;
     Addr.Port := Port;
     
-    return Send(Addr, Command);
+    if Tries = 1 then
+      return Send(Addr, Command);
+    else
+      return Send(Addr, Command, Tries);
+    end if;
   end Send;
   
+  function Send(Addr : GNAT.Sockets.Sock_Addr_Type; Command : String; Tries : Natural) return String is
+    Response : ASU.Unbounded_String;
+  begin
+    for I in 1 .. Tries loop
+      declare
+      begin
+        Response := ASU.To_Unbounded_String(Send(Addr, Command));
+        exit;
+      exception
+        when GNAT.Sockets.Socket_Error =>
+          Logger.Put_Line("Attempt " & I'Img & ": Server is unreachable. Trying again.", Logger.Warn);
+          
+          if I = Tries then
+            raise;
+          end if;
+        when others => raise;
+      end;
+    end loop;
+    
+    return ASU.To_String(Response);
+  end Send;
   
   function Send(Addr : GNAT.Sockets.Sock_Addr_Type; Command : String) return String is
     use GNAT.Sockets;
@@ -164,6 +187,8 @@ package body Utility is
     -- Is this a GNAT bug or AB misreading Check_Selector docs?
     Check_Selector(Read_Selector, Read_Set, WSet, Read_Status, 0.005);
     
+    Logger.Put_Line("--> " & Command, Logger.Info);
+    
     String'Output(
       S, 
       Command
@@ -172,8 +197,7 @@ package body Utility is
     declare
       Str : String := String'Input(S);
     begin
-      Ada.Text_IO.Put_Line("Response: " & Str);
---      ShutDown_Socket(Sock);
+      Logger.Put_Line("<-- " & Str, Logger.Info);
       Close_Selector(Read_Selector);
       Finalize;
       

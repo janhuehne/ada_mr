@@ -61,7 +61,8 @@ package body Xml_Helper is
   begin    
     return Xml_Command(
       G_T     =>  G_T, 
-      Command => Command, 
+      Command => Command,
+      Access_Token => Access_Token,
       Details => Hash_To_Xml_String(Details)
     );
   end Xml_Command;

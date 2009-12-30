@@ -42,11 +42,11 @@ package Master is
   type Master_Task_Access is access Master_Task;
   
   task type Master_Task is
-    entry Start(M : Master_Task_Access);
+    entry Start(Self : Master_Task_Access; Config_File : String);
     entry Stop;
   end Master_Task;
   
-  
+  procedure Stop_Master_Task;
   
 ----------------------------------------------------
 -- GENERIC OBSERVER TASK                           -
@@ -68,8 +68,9 @@ package Master is
 -- JOB ENTRY RECORD DEFINITIONS AND METHODS        -
 ----------------------------------------------------
   type Job_Entry_Record is record
-    Job   : My_Job;
-    State : Master_Helper.Job_State := Master_Helper.Pending;
+    Job     : My_Job;
+    State   : Master_Helper.Job_State := Master_Helper.Pending;
+    Message : ASU.Unbounded_String;
   end record;
   
   type Job_Entry_Record_Access is access Job_Entry_Record;
@@ -84,7 +85,7 @@ package Master is
   
   
   function Job_Entry_To_Xml(Job_Entry : Job_Entry_Record_Access) return String;
-  procedure Change_Job_State(Job_Entry : in out Job_Entry_Record_Access; State : Master_Helper.Job_State);
+  procedure Change_Job_State(Job_Entry : in out Job_Entry_Record_Access; State : Master_Helper.Job_State; Message : String := "");
   
   
   
@@ -110,6 +111,7 @@ package Master is
   protected Worker is
     procedure Add(New_Worker : Master_Helper.Worker_Record_Access);
     function Find_By_Access_Token_And_Type(Access_Token : String; W_Type : Master_Helper.Worker_Type) return Master_Helper.Worker_Record_Access;
+    function Find_All_By_Type(W_Type : Master_Helper.Worker_Type) return Master_Helper.Worker_Entry_Vectors.Vector;
     procedure Print;
   private
     Worker : Master_Helper.Worker_Entry_Vectors.Vector;
@@ -128,7 +130,8 @@ package Master is
     Jobs.Get_By_Id,
     Jobs.Get_Next_Pending,
     Change_Job_State,
-    Job_Entry_To_Xml
+    Job_Entry_To_Xml,
+    Stop_Master_Task
   );
   
   
@@ -146,5 +149,9 @@ package Master is
     Parse_Configuration,
     Process_User_Input
   );
+  
+  
+private
+  Main_Task : Master_Task_Access;
   
 end Master;

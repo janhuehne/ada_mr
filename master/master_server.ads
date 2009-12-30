@@ -14,8 +14,9 @@ generic
   with function Find_Worker_By_Access_Token_And_Type(Access_Token : String; W_Type : Master_Helper.Worker_Type) return Master_Helper.Worker_Record_Access;
   with function Get_Job_By_Id(Id : Natural) return Job_Entry_Record_Access;
   with function Get_Next_Pending_Job return Job_Entry_Record_Access;
-  with procedure Change_Job_State(Job_Entry : in out Job_Entry_Record_Access; State : Master_Helper.Job_State);
+  with procedure Change_Job_State(Job_Entry : in out Job_Entry_Record_Access; State : Master_Helper.Job_State; Message : String := "");
   with function Job_Entry_To_Xml(Job_Entry : Job_Entry_Record_Access) return String;
+  with procedure Stop_Master;
     
 package Master_Server is
   
@@ -27,7 +28,8 @@ package Master_Server is
   
   package Server is new Generic_Server(
     Exit_Server,
-    Process_Incomming_Connection
+    Process_Incomming_Connection,
+    Stop_Master
   );
   
   package Echo_MR is new Generic_Echo(

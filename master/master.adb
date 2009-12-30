@@ -15,24 +15,60 @@ with GNAT.Sockets;
 with Ada.Exceptions;
 with Ada.Numerics.Discrete_Random;
 with GNAT.MD5;
+with Xml_Parser;
 
 package body Master is
   
   task body Master_Task is
     Master_Server_Task : Server.Server.Server_Task;
-    Me                 : Master_Task_Access;
     Observer_Task      : Observer.Observer_Task;
+    Console_Task       : Console.Console;
+    
+    procedure Read_and_Parse_Config_File(Config_File : String) is
+    begin
+      if Utility.Does_File_Exist(Config_File) then
+        Ada.Text_IO.Put_Line("Parsing config file");
+        Parse_Configuration(
+          Xml_Parser.Parse(File_Name => Config_File)
+        );
+        Ada.Text_IO.Put_Line("--> Done");
+      else
+        Ada.Text_IO.Put_Line("No config file found!");
+      end if;
+    exception
+      when Error : others => 
+        Utility.Print_Exception(Error);
+        Ada.Exceptions.Raise_Exception(Utility.Configuration_File_Error'Identity, "There is a problem with the configuration file.");
+    end Read_and_Parse_Config_File;
+    
   begin
+    Ada.Text_IO.New_Line;
+    Ada.Text_IO.New_Line;
+
+    Ada.Text_IO.Put_Line("          _____               __  __ _____      __  __           _            ");
+    Ada.Text_IO.Put_Line("    /\   |  __ \   /\        |  \/  |  __ \    |  \/  |         | |           ");
+    Ada.Text_IO.Put_Line("   /  \  | |  | | /  \ ______| \  / | |__) |   | \  / | __ _ ___| |_ ___ _ __ ");
+    Ada.Text_IO.Put_Line("  / /\ \ | |  | |/ /\ \______| |\/| |  _  /    | |\/| |/ _` / __| __/ _ \ '__|");
+    Ada.Text_IO.Put_Line(" / ____ \| |__| / ____ \     | |  | | | \ \    | |  | | (_| \__ \ |_  __/ |   ");
+    Ada.Text_IO.Put_Line("/_/    \_\_____/_/    \_\    |_|  |_|_|  \_\   |_|  |_|\__,_|___/\__\___|_|   ");
+
+    Ada.Text_IO.New_Line;
+    Ada.Text_IO.New_Line;
+    Ada.Text_IO.New_Line;
+    
     loop
       select
-        accept Start(M : Master_Task_Access) do
-          Me := M;
+        accept Start(Self : Master_Task_Access; Config_File : String) do
+          Main_Task := Self;
+          
+          -- parse configuration
+          Read_and_Parse_Config_File(Config_File);
         end Start;
         
         Split_Raw_Data;
         
-        Ada.Text_IO.New_Line;
-        Ada.Text_IO.Put_Line("-> Importing jobs ...");
+        
+        Logger.Put_Line("Importing jobs ...", Logger.Info);
         
         loop
           declare
@@ -43,17 +79,21 @@ package body Master is
           end;
         end loop;
         
-        Ada.Text_IO.Put_Line("   .. Done! " & Jobs.Count'Img & " jobs imported");
+        Logger.Put_Line(Jobs.Count'Img & " jobs imported", Logger.Info);
+        
+        Console_Task.Start(
+          Main_Task
+        );
         
         Master_Server_Task.Start(
           Master_Helper.Server_Bind_Ip, 
           Master_Helper.Server_Bind_Port
         );
         
-        Observer_Task.Start(Me);
+        Observer_Task.Start(Main_Task);
       or
         accept Stop;
-        Ada.Text_IO.Put_Line(" -> Please wait, while closing the client connections.");
+        Logger.Put_Line(" -> Please wait, while closing the client connections.", Logger.Info);
         Master_Helper.Aborted.Set_Exit;
         Master_Server_Task.Stop;
         Observer_Task.Stop;
@@ -62,7 +102,10 @@ package body Master is
     end loop;
   end Master_Task;
   
-  
+  procedure Stop_Master_Task is
+  begin
+    Main_Task.Stop;
+  end Stop_Master_Task;
   
   ----------------------------------------------------
   -- GENERIC OBSERVER TASK                           -
@@ -82,20 +125,31 @@ package body Master is
   begin
     if Jobs.Count_By_State(Master_Helper.Done) = Jobs.Count then
     
-      Ada.Text_IO.Put_Line("[MASTER OBSERVER] All jobs done!");
+      Logger.Put_Line("All jobs done", Logger.Info);
       
+      -- TODO: send this to all connected reducers!
       declare
-        Response : String := Utility.Send(
-          Master_Helper.Reducer_Ip,
-          Master_Helper.Reducer_Port,
-          Xml_Helper.Xml_Command(Xml_Helper.Master, "finalize")
-        );
+        Reducer_Vector : Master_Helper.Worker_Entry_Vectors.Vector := Worker.Find_All_By_Type(Master_Helper.Reducer);
+        
+        procedure Send_Finalize(C : Master_Helper.Worker_Entry_Vectors.Cursor) is
+          Reducer : Master_Helper.Worker_Record_Access := Master_Helper.Worker_Entry_Vectors.Element(C);
+        begin
+          declare
+            Response : String := Utility.Send(
+              Reducer.Ip,
+              Reducer.Port,
+              Xml_Helper.Xml_Command(Xml_Helper.Master, "finalize"),
+              5
+            );
+          begin
+            null;
+          end;
+        end Send_Finalize;
       begin
-        Ada.Text_IO.Put_Line(Response);
+        Reducer_Vector.Iterate(Send_Finalize'Access);
       end;
     
       return true;
-    
     end if;
       
     return false;
@@ -119,7 +173,7 @@ package body Master is
       Job_Entry.State := Master_Helper.Pending;
         
       Jobs.Append(Job_Entry);
-      Ada.Text_IO.Put_Line("     Job successfully imported.");
+      Logger.Put_Line("--> Job successfully imported.", Logger.Info);
     end Add;
     
     function Get_By_Id(Id : Natural) return Job_Entry_Record_Access is
@@ -208,9 +262,14 @@ package body Master is
   end Jobs;
   
   
-  procedure Change_Job_State(Job_Entry : in out Job_Entry_Record_Access; State : Master_Helper.Job_State) is
+  procedure Change_Job_State(Job_Entry : in out Job_Entry_Record_Access; State : Master_Helper.Job_State; Message : String := "") is
   begin
     Job_Entry.State := State;
+    
+    if Message /= "" then
+      Job_Entry.Message := ASU.To_Unbounded_String(Message);
+    end if;
+    
   end Change_Job_State;
   
   
@@ -267,6 +326,23 @@ package body Master is
       
     end Find_By_Access_Token_And_Type;
     
+    
+    function Find_All_By_Type(W_Type : Master_Helper.Worker_Type) return Master_Helper.Worker_Entry_Vectors.Vector is
+      Type_Vector : Master_Helper.Worker_Entry_Vectors.Vector;
+      
+      procedure Find(C : Master_Helper.Worker_Entry_Vectors.Cursor) is
+        Worker : Master_Helper.Worker_Record_Access := Master_Helper.Worker_Entry_Vectors.Element(C);
+      begin
+        if Master_Helper."="(Worker.W_Type, W_Type) then
+          Type_Vector.Append(Worker);
+        end if;
+      end Find;
+    begin
+      Worker.Iterate(Find'Access);
+      
+      return Type_Vector;
+    end Find_All_By_Type;
+    
     procedure Print is
       
       procedure Print(Cursor : Master_Helper.Worker_Entry_Vectors.Cursor) is
@@ -314,19 +390,13 @@ package body Master is
   begin
     Master_Helper.Server_Bind_Ip   := GNAT.Sockets.Inet_Addr(Xml.Get_Value(Config_Xml, "bind_ip"));
     Master_Helper.Server_Bind_Port := GNAT.Sockets.Port_Type'Value(Xml.Get_Value(Config_Xml, "bind_port"));
-    
-    declare
-      Reducer_Details : Xml.Node_Access := Xml.Find_Child_With_Tag(Config_Xml, "reducer");
-    begin
-      Master_Helper.Reducer_Ip   := GNAT.Sockets.Inet_Addr(Xml.Get_Value(Reducer_Details, "ip"));
-      Master_Helper.Reducer_Port := GNAT.Sockets.Port_Type'Value(Xml.Get_Value(Reducer_Details, "port"));
-    end;
   end Parse_Configuration;
   
   procedure Process_User_Input(User_Input : String; To_Controll : Master_Task_Access) is
   begin
     if (Is_Equal(User_Input, "start", true)) then
-      To_Controll.Start(To_Controll);
+--      To_Controll.Start(To_Controll);
+      null;
     
     elsif (Is_Equal(User_Input, "help", true)) then
       Ada.Text_IO.Put_Line("");
@@ -334,8 +404,6 @@ package body Master is
       Ada.Text_IO.Put_Line("    start        Starts the Ada MR Master Server");
       Ada.Text_IO.Put_Line("    worker       Prints all connected worker");
       Ada.Text_IO.Put_Line("    quit         Exit Ada MR Master and stop all mapper and reducer");
-      Ada.Text_IO.Put_Line("    verbose-on   Enable verbose mode to display log entries");
-      Ada.Text_IO.Put_Line("    verbose-off  Disable verbose mode");
       Ada.Text_IO.Put_Line("    jobs         Number of unprocessed jobs");
       Ada.Text_IO.Put_Line("    help         Displays this message");
       Ada.Text_IO.New_Line;
@@ -358,14 +426,6 @@ package body Master is
     
     elsif Utility.Is_Equal(User_Input, "quit", true) OR Is_Equal(User_Input, "exit", true) then
       To_Controll.Stop;
-    
-    elsif (Is_Equal(User_Input, "verbose-on", true)) then
-      Logger.Enable_Verbose_Mode;
-      Ada.Text_IO.Put_Line("Verbose mode: On");
-    
-    elsif (Is_Equal(User_Input, "verbose-off", true)) then
-      Logger.Disable_Verbose_Mode;
-      Ada.Text_IO.Put_Line("Verbose mode: Off");
     
     elsif (Is_Equal(User_Input, "worker", true)) then
       Worker.Print;

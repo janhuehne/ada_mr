@@ -14,6 +14,8 @@ with GNAT.Sockets;
 
 
 package Utility is
+  package ASU renames Ada.Strings.Unbounded;
+  
   function Starts_With(Item : String; Pattern : String; Ignore_Case : Boolean := false) return Boolean;
   function Is_Equal(Arg_1 : String; Arg_2 : String; Ignore_Case : Boolean := false) return Boolean;
   function Is_Equal(Item : String; Input_Length : Natural; Pattern : String; Ignore_Case : Boolean := false) return Boolean;
@@ -42,8 +44,9 @@ package Utility is
   );
   
   
-  function Send(Host : String; Port : GNAT.Sockets.Port_Type; Command : String) return String;
-  function Send(Host : GNAT.Sockets.Inet_Addr_Type; Port : GNAT.Sockets.Port_Type; Command : String) return String;
+  function Send(Host : String; Port : GNAT.Sockets.Port_Type; Command : String; Tries : Natural := 1) return String;
+  function Send(Host : GNAT.Sockets.Inet_Addr_Type; Port : GNAT.Sockets.Port_Type; Command : String; Tries : Natural := 1) return String;
+  function Send(Addr : GNAT.Sockets.Sock_Addr_Type; Command : String; Tries : Natural) return String;
   function Send(Addr : GNAT.Sockets.Sock_Addr_Type; Command : String) return String;
   
   Compute_Job_Error : Exception;

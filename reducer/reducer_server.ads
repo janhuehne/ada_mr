@@ -9,6 +9,7 @@ with Generic_Echo;
 
 generic
   with procedure Finalize_Jobs;
+  with procedure Stop_Reducer;
 
 package Reducer_Server is
   
@@ -20,7 +21,8 @@ package Reducer_Server is
   
   package Server is new Generic_Server(
     Exit_Server,
-    Process_Incomming_Connection
+    Process_Incomming_Connection,
+    Stop_Reducer
   );
   
   package Echo_MR is new Generic_Echo(
