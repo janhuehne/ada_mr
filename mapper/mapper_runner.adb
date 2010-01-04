@@ -90,12 +90,14 @@ package body Mapper_Runner is
             begin
               Compute_Job(Job);
               
-              -- Send result to reducer
+              -- --> Send result to reducer
               declare
+                Job_Result : String := Job_Result_To_Xml;
+                
                 Xml_Command : String := Xml_Helper.Xml_Command(
                   G_T     => Xml_Helper.Mapper, 
                   Command => "job_result",
-                  Details => Job_Result_To_Xml
+                  Details => Job_Result
                 );
               begin
                 Logger.Put_Line("Delivering job result to reducer", Logger.Info);
@@ -107,17 +109,39 @@ package body Mapper_Runner is
                     5
                   );
                 begin
-                  -- if successful, send new job status to master
                   null;
                 end;
+              
               exception
                 when Error : others =>
-                  Logger.Put_Line("Reducer unreachable! Job failed!", Logger.Err);
+                  Logger.Put_Line("Reducer unreachable! Sending job result to the master!", Logger.Err);
                   Details_For_Master_Notification.Insert("message", "Reducer (" & GNAT.Sockets.Image(Mapper_Helper.Reducer_Ip) & ":" & Mapper_Helper.Reducer_Port'Img & ") unreachable");
                   
-                  --TODO: Send failed query to master!
+                  declare
+                  begin
+                    declare
+                      Response : String := Utility.Send(
+                        Mapper_Helper.Master_Ip,
+                        Mapper_Helper.Master_Port,
+                        Xml_Helper.Xml_Command(
+                          G_T     => Xml_Helper.Mapper,
+                          Command => "not_delivered_map_result",
+                          Access_Token => Mapper_Helper.Access_Token,
+                          Details => "<result>" & Job_Result & "</result>"
+                        ),
+                        5
+                      );
+                    begin
+                      null;
+                    end;
+                  exception
+                    when Error : others =>
+                      Logger.Put_Line("Master unreachable! Job failed!", Logger.Err);
+                  end;
               end;
+              -- <-- Send result to reducer
               
+              -- send new job status to master
               Details_For_Master_Notification.Insert("job_id", Get_Job_Id(Job)'Img);
               Details_For_Master_Notification.Insert("job_state", "done");
               
@@ -148,9 +172,9 @@ package body Mapper_Runner is
           elsif Xml_Helper.Is_Command(Xml_Tree, "sleep") then
             
             declare
-              Time : Float := Float'Value(Xml.Get_Value(Xml.Find_Child_With_Tag(Xml_Tree, "details"), "seconds"));
+              Time : Integer := Integer'Value(Xml.Get_Value(Xml.Find_Child_With_Tag(Xml_Tree, "details"), "seconds"));
             begin
-              Logger.Put_Line("No further job found. Waiting " & Float'Image(Time) & " seconds until next job request!", Logger.Info);
+              Logger.Put_Line("No further job found. Waiting " & Integer'Image(Time) & " seconds until next job request!", Logger.Info);
               delay Duration(Time);
             end;
           

@@ -103,7 +103,7 @@ package body Utility is
   end Print_Exception;
   
   
-  function Send(Host : String; Port : GNAT.Sockets.Port_Type; Command : String; Tries : Natural := 1) return String is
+  function Send(Host : String; Port : GNAT.Sockets.Port_Type; Command : String; Tries : Natural := 1; Wait_Between_Tries : Natural := 5) return String is
     use GNAT.Sockets;
     
     Addr : Sock_Addr_Type(Family_Inet);
@@ -114,12 +114,12 @@ package body Utility is
     if Tries = 1 then
       return Send(Addr, Command);
     else
-      return Send(Addr, Command, Tries);
+      return Send(Addr, Command, Tries, Wait_Between_Tries);
     end if;
   end Send;
   
   
-  function Send(Host : GNAT.Sockets.Inet_Addr_Type; Port : GNAT.Sockets.Port_Type; Command : String; Tries : Natural := 1) return String is
+  function Send(Host : GNAT.Sockets.Inet_Addr_Type; Port : GNAT.Sockets.Port_Type; Command : String; Tries : Natural := 1; Wait_Between_Tries : Natural := 5) return String is
     use GNAT.Sockets;
   
     Addr : Sock_Addr_Type(Family_Inet);
@@ -130,11 +130,11 @@ package body Utility is
     if Tries = 1 then
       return Send(Addr, Command);
     else
-      return Send(Addr, Command, Tries);
+      return Send(Addr, Command, Tries, Wait_Between_Tries);
     end if;
   end Send;
   
-  function Send(Addr : GNAT.Sockets.Sock_Addr_Type; Command : String; Tries : Natural) return String is
+  function Send(Addr : GNAT.Sockets.Sock_Addr_Type; Command : String; Tries : Natural; Wait_Between_Tries : Natural := 5) return String is
     Response : ASU.Unbounded_String;
   begin
     for I in 1 .. Tries loop
@@ -145,6 +145,8 @@ package body Utility is
       exception
         when GNAT.Sockets.Socket_Error =>
           Logger.Put_Line("Attempt " & I'Img & ": Server is unreachable. Trying again.", Logger.Warn);
+          
+          delay Duration(Wait_Between_Tries);
           
           if I = Tries then
             raise;

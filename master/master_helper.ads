@@ -56,6 +56,25 @@ package Master_Helper is
   
   
 ----------------------------------------------------
+-- NOT DELIVERED MAP RESULT                         -
+----------------------------------------------------
+  type Not_Delivered_Map_Result is record
+    Reducer : Worker_Record_Access;
+    Result  : ASU.Unbounded_String;
+  end record;
+  
+  type Not_Delivered_Map_Result_Access is access Not_Delivered_Map_Result;
+  
+  package Not_Delivered_Map_Result_Vectors is new Ada.Containers.Vectors(
+    Element_Type => Not_Delivered_Map_Result_Access,
+    Index_Type => Positive
+  );
+  
+  Undelivered_Job_Results : Not_Delivered_Map_Result_Vectors.Vector;
+  
+  
+  
+----------------------------------------------------
 -- PROTECTED TYPE TO HANDLE ABORT  MESSAGES        -
 ----------------------------------------------------
   protected Aborted is
