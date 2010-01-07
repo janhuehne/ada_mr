@@ -12,8 +12,7 @@ package Char_Job is
   type My_Job is record
     Job_Id            : Positive;
     Computable_String : ASU.Unbounded_String;
-    Responsible_Reducer : String(1..15) := "127.000.000.001";
-    Length : Natural;
+    Length            : Natural;
   end record;
   
   

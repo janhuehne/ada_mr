@@ -10,7 +10,6 @@ package body Char_Job is
   begin
     Details.Insert("job_id", Utility.Trim(Job.Job_Id'Img));
     Details.Insert("computable_string", ASU.To_String(Job.Computable_String));
-    Details.Insert("responsible_reducer", Job.Responsible_Reducer);
     
     return Xml_Helper.Hash_To_Xml_String(Details);
   end To_Xml;
@@ -20,7 +19,6 @@ package body Char_Job is
   begin
     J.Job_Id              := Integer'Value(Xml.Get_Value(Xml_Node, "job_id"));
     J.Computable_String   := ASU.To_Unbounded_String(Xml.Get_Value(Xml_Node, "computable_string"));
-    J.Responsible_Reducer := Xml.Get_Value(Xml_Node, "responsible_reducer");
     
     return J;
   end From_Xml;
@@ -74,7 +72,6 @@ package body Char_Job is
   begin
     Utility.Put(Job.Job_Id'Img, 10, 1);
     Utility.Put(ASU.To_String(Job.Computable_String), 30, 1);
-    Utility.Put(Job.Responsible_Reducer, 20, 1);
     Utility.Put(State, 20);
     Ada.Text_IO.New_Line;
   end Print_Job;
