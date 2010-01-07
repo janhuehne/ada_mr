@@ -7,6 +7,8 @@ with Master_Server;
 with Generic_Console;
 with Generic_Observer;
 
+with Utility;
+
 generic
   type My_Job is private;
   with function From_Xml(Xml_Node : Xml.Node_Access) return My_Job;
@@ -110,8 +112,8 @@ package Master is
 ----------------------------------------------------
   protected Worker is
     procedure Add(New_Worker : Master_Helper.Worker_Record_Access);
-    function Find_By_Access_Token_And_Type(Access_Token : String; W_Type : Master_Helper.Worker_Type) return Master_Helper.Worker_Record_Access;
-    function Find_All_By_Type(W_Type : Master_Helper.Worker_Type) return Master_Helper.Worker_Entry_Vectors.Vector;
+    function Find_By_Access_Token_And_Type(Access_Token : String; W_Type : Utility.Worker_Type) return Master_Helper.Worker_Record_Access;
+    function Find_All_By_Type(W_Type : Utility.Worker_Type) return Master_Helper.Worker_Entry_Vectors.Vector;
     procedure Print;
   private
     Worker : Master_Helper.Worker_Entry_Vectors.Vector;

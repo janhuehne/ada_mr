@@ -2,6 +2,7 @@ with Ada.Containers.Vectors;
 with Ada.Strings.Unbounded;
 with Xml;
 with GNAT.Sockets;
+with Utility;
 
 package Master_Helper is
 
@@ -24,15 +25,6 @@ package Master_Helper is
   function To_String(Arg : Job_State) return String;
   function From_String(Arg : String) return Job_State;
   
-  type Worker_Type is (
-    Mapper,
-    Reducer,
-    Invalid
-  );
-  
-  function String_To_Worker_Type(Arg : String) return Worker_Type;
-  function To_String(Arg : Worker_Type) return String;
-  
   
   
 ----------------------------------------------------
@@ -40,7 +32,7 @@ package Master_Helper is
 ----------------------------------------------------
   type Worker_Record is record
     Identifier   : ASU.Unbounded_String;
-    W_Type       : Worker_Type;
+    W_Type       : Utility.Worker_Type;
     Ip           : GNAT.Sockets.Inet_Addr_Type;
     Port         : GNAT.Sockets.Port_Type;
     Access_Token : String(1..32);
@@ -92,7 +84,6 @@ package Master_Helper is
 ----------------------------------------------------
 -- EXCEPTION DEFINITIONS                           -
 ----------------------------------------------------
-  Unknow_Worker_Type : Exception;
   No_Job_Found : Exception;
   Initialization_Required : Exception;
   No_Worker_Found : Exception;

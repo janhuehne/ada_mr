@@ -129,7 +129,7 @@ package body Master is
       
       -- TODO: send this to all connected reducers!
       declare
-        Reducer_Vector : Master_Helper.Worker_Entry_Vectors.Vector := Worker.Find_All_By_Type(Master_Helper.Reducer);
+        Reducer_Vector : Master_Helper.Worker_Entry_Vectors.Vector := Worker.Find_All_By_Type(Utility.Reducer);
         
         procedure Send_Finalize(C : Master_Helper.Worker_Entry_Vectors.Cursor) is
           Reducer : Master_Helper.Worker_Record_Access := Master_Helper.Worker_Entry_Vectors.Element(C);
@@ -297,13 +297,13 @@ package body Master is
       --TODO: Salt für Hashfunktion in Xml_Datei
       --TODO: Method Authentification Code (HMAC)
       New_Worker.Access_Token := GNAT.MD5.Digest(
-        ASU.To_String(New_Worker.Identifier) & "-" & Master_Helper.To_String(New_Worker.W_Type) & "-" & Rand.Random(Gen)'Img
+        ASU.To_String(New_Worker.Identifier) & "-" & Utility.To_String(New_Worker.W_Type) & "-" & Rand.Random(Gen)'Img
       );
       
       Worker.Append(New_Worker);
     end Add;
     
-    function Find_By_Access_Token_And_Type(Access_Token : String; W_Type : Master_Helper.Worker_Type) return Master_Helper.Worker_Record_Access is
+    function Find_By_Access_Token_And_Type(Access_Token : String; W_Type : Utility.Worker_Type) return Master_Helper.Worker_Record_Access is
       Cursor : Master_Helper.Worker_Entry_Vectors.Cursor := Worker.First;
     begin
       loop
@@ -313,7 +313,7 @@ package body Master is
           Worker : Master_Helper.Worker_Record_Access := Master_Helper.Worker_Entry_Vectors.Element(Cursor);
         begin
           
-          if Master_Helper."="(Worker.W_Type, W_Type) and Worker.Access_Token = Access_Token then
+          if Utility."="(Worker.W_Type, W_Type) and Worker.Access_Token = Access_Token then
             return Worker;
           end if;
         end;
@@ -327,13 +327,13 @@ package body Master is
     end Find_By_Access_Token_And_Type;
     
     
-    function Find_All_By_Type(W_Type : Master_Helper.Worker_Type) return Master_Helper.Worker_Entry_Vectors.Vector is
+    function Find_All_By_Type(W_Type : Utility.Worker_Type) return Master_Helper.Worker_Entry_Vectors.Vector is
       Type_Vector : Master_Helper.Worker_Entry_Vectors.Vector;
       
       procedure Find(C : Master_Helper.Worker_Entry_Vectors.Cursor) is
         Worker : Master_Helper.Worker_Record_Access := Master_Helper.Worker_Entry_Vectors.Element(C);
       begin
-        if Master_Helper."="(Worker.W_Type, W_Type) then
+        if Utility."="(Worker.W_Type, W_Type) then
           Type_Vector.Append(Worker);
         end if;
       end Find;
@@ -349,7 +349,7 @@ package body Master is
         Worker_Entry : Master_Helper.Worker_Record_Access := Master_Helper.Worker_Entry_Vectors.Element(Cursor);
       begin
         Utility.Put(ASU.To_String(Worker_Entry.Identifier), 30, 2);
-        Utility.Put(Master_Helper.To_String(Worker_Entry.W_Type), 10, 2);
+        Utility.Put(Utility.To_String(Worker_Entry.W_Type), 10, 2);
         Utility.Put(Worker_Entry.Access_Token, 40, 2);
         Utility.Put(GNAT.Sockets.Image(Worker_Entry.Ip), 20, 2);
         Utility.Put(Worker_Entry.Port'Img, 20, 2);

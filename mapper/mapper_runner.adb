@@ -29,25 +29,24 @@ package body Mapper_Runner is
           Xml_Helper.Create_Initialization(Xml_Helper.Mapper, ASU.To_String(Mapper_Helper.Identifier), Mapper_Helper.Server_Bind_Ip, Mapper_Helper.Server_Bind_Port),
           10
         );
+        
+        Xml_Tree : Xml.Node_Access;
       begin
-        Ada.Text_IO.Put_Line(Response);
+        Xml_Tree := Xml_Helper.Get_Verified_Content(Xml_Parser.Parse(Content => Response));
         
-        declare
-          Xml_Tree : Xml.Node_Access := Xml_Parser.Parse(Content => Response);
-        begin
+        if Xml_Helper.Is_Command(Xml_Tree, "new_access_token") then
+          Mapper_Helper.Access_Token := Xml.Get_Value(
+            Xml.Find_Child_With_Tag(Xml_Tree, "details"),
+            "access_token"
+          );
           
-          if Xml_Helper.Is_Command(Xml_Tree, "new_access_token") then
-            Mapper_Helper.Access_Token := Xml.Get_Value(
-              Xml.Find_Child_With_Tag(Xml_Tree, "details"),
-              "access_token"
-            );
-          end if;
+          Logger.Put_Line("Mapper initalized with access token """ & Mapper_Helper.Access_Token & """", Logger.Info);
           
-          if Xml_Helper.Is_Command(Xml_Tree, "error") then
-            Ada.Exceptions.Raise_Exception(Utility.Initialisation_Failed'Identity, Xml.Get_Value(Xml.Find_Child_With_Tag(Xml_Tree, "details"), "message"));
-          end if;
-        end;
+        end if;
         
+        if Xml_Helper.Is_Command(Xml_Tree, "error") then
+          Ada.Exceptions.Raise_Exception(Utility.Initialisation_Failed'Identity, Xml.Get_Value(Xml.Find_Child_With_Tag(Xml_Tree, "details"), "message"));
+        end if;
       end;
     exception
       when Utility.Initialisation_Failed =>
@@ -64,6 +63,8 @@ package body Mapper_Runner is
       exit when Mapper_Helper.Aborted.Get_Exit; 
       
       
+      Logger.Put_Line("Asking for a new job", Logger.Info);
+      
       declare
       begin
         
@@ -78,17 +79,21 @@ package body Mapper_Runner is
             )
           );
           
-          Xml_Tree : Xml.Node_Access := Xml_Parser.Parse(Content => Response);
+          Xml_Tree : Xml.Node_Access := Xml_Helper.Get_Verified_Content(Xml_Parser.Parse(Content => Response));
           
           Details_For_Master_Notification : Utility.String_String_Maps.Map;
         begin
           
           if Xml_Helper.Is_Command(Xml_Tree, "new_job") then
             
+            Logger.Put_Line("New job received", Logger.Info);
+            
             declare
               Job : My_Job := From_Xml(Xml.Find_Child_With_Tag(Xml_Tree, "details"));
             begin
+              Logger.Put_Line("Computing job", Logger.Info);
               Compute_Job(Job);
+              Logger.Put_Line("Job computed", Logger.Info);
               
               -- --> Send result to reducer
               declare
@@ -115,7 +120,7 @@ package body Mapper_Runner is
               exception
                 when Error : others =>
                   Logger.Put_Line("Reducer unreachable! Sending job result to the master!", Logger.Err);
-                  Details_For_Master_Notification.Insert("message", "Reducer (" & GNAT.Sockets.Image(Mapper_Helper.Reducer_Ip) & ":" & Mapper_Helper.Reducer_Port'Img & ") unreachable");
+                  Details_For_Master_Notification.Insert("message", "Reducer (" & GNAT.Sockets.Image(Mapper_Helper.Reducer_Ip) & ":" & Utility.Trim(Mapper_Helper.Reducer_Port'Img) & ") unreachable");
                   
                   declare
                   begin
@@ -136,13 +141,14 @@ package body Mapper_Runner is
                     end;
                   exception
                     when Error : others =>
+                      Utility.Print_Exception(Error);
                       Logger.Put_Line("Master unreachable! Job failed!", Logger.Err);
                   end;
               end;
               -- <-- Send result to reducer
               
               -- send new job status to master
-              Details_For_Master_Notification.Insert("job_id", Get_Job_Id(Job)'Img);
+              Details_For_Master_Notification.Insert("job_id", Utility.Trim(Get_Job_Id(Job)'Img));
               Details_For_Master_Notification.Insert("job_state", "done");
               
               declare

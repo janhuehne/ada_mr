@@ -2,12 +2,13 @@ with Ada.Text_IO;
 with Utility;
 with Xml_Helper;
 with Logger;
+
 package body Char_Job is
   
   function To_Xml(Job : in My_Job) return String is
     Details : Utility.String_String_Maps.Map;
   begin
-    Details.Insert("job_id", Job.Job_Id'Img);
+    Details.Insert("job_id", Utility.Trim(Job.Job_Id'Img));
     Details.Insert("computable_string", ASU.To_String(Job.Computable_String));
     Details.Insert("responsible_reducer", Job.Responsible_Reducer);
     
@@ -107,7 +108,7 @@ package body Char_Job is
       Ada.Strings.Unbounded.Append(Result_String, "<");
       Ada.Strings.Unbounded.Append(Result_String, Utility.String_Integer_Maps.Key(Result_Cursor));
       Ada.Strings.Unbounded.Append(Result_String, ">");
-      Ada.Strings.Unbounded.Append(Result_String, Utility.String_Integer_Maps.Element(Result_Cursor)'Img);
+      Ada.Strings.Unbounded.Append(Result_String, Utility.Trim(Utility.String_Integer_Maps.Element(Result_Cursor)'Img));
       Ada.Strings.Unbounded.Append(Result_String, "</");
       Ada.Strings.Unbounded.Append(Result_String, Utility.String_Integer_Maps.Key(Result_Cursor));
       Ada.Strings.Unbounded.Append(Result_String, ">");

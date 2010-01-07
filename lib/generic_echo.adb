@@ -6,6 +6,8 @@ with Xml_Parser;
 with Xml_Helper;
 with Ada.Exceptions;
 
+with Crypto_Helper;
+with Logger;
 
 package body Generic_Echo is
 
@@ -49,7 +51,17 @@ package body Generic_Echo is
           
           -- we have input, so process it 
           if Input_Status = Completed then
-            Process_Request(S);
+            declare
+              Request     : String := String'Input(S);
+              Xml_Root    : Xml.Node_Access := Xml_Parser.Parse(Content => Request);
+            begin
+              
+              Process_Request(S, Xml_Helper.Request_From(Xml_Root), Xml_Helper.Get_Verified_Content(Xml_Root));
+            exception
+              when Error : others =>
+                Xml_Helper.Send_Error(S, Xml_Helper.Master, Error);
+            end;
+            
             exit; -- Shutdown socket after request is processed
           end if;
           

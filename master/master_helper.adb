@@ -26,28 +26,6 @@ package body Master_Helper is
     
   end Aborted;
   
-  
-  function String_To_Worker_Type(Arg : String) return Worker_Type is
-  begin
-    if Utility.Is_Equal(Arg, "Mapper", true) then
-      return Mapper;
-    elsif Utility.Is_Equal(Arg, "Reducer", true) then
-      return Reducer;
-    else
-      raise Unknow_Worker_Type;
-    end if;
-  end String_To_Worker_Type;
-  
-  
-  function To_String(Arg : Worker_Type) return String is
-  begin
-    case Arg is
-      when Mapper => return "Mapper";
-      when Reducer => return "Reducer";
-      when Invalid => return "N/A";
-    end case;
-  end To_String;
-  
   function To_String(Arg : Job_State) return String is
   begin
     case Arg is

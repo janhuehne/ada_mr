@@ -1,4 +1,6 @@
 with Logger;
+with Ada.Strings.Fixed;
+with Crypto_Helper;
 
 package body Utility is
   
@@ -189,21 +191,21 @@ package body Utility is
     -- Is this a GNAT bug or AB misreading Check_Selector docs?
     Check_Selector(Read_Selector, Read_Set, WSet, Read_Status, 0.005);
     
-    Logger.Put_Line("--> " & Command, Logger.Info);
+    Logger.Put_Line(Command, Logger.Info, "-->");
     
     String'Output(
       S, 
-      Command
+      Crypto_Helper.Encrypt(Command, "Keeey")
     );
     
     declare
       Str : String := String'Input(S);
     begin
-      Logger.Put_Line("<-- " & Str, Logger.Info);
+      Logger.Put_Line(Str, Logger.Info, "<--");
       Close_Selector(Read_Selector);
       Finalize;
       
-      return Str;
+      return Crypto_Helper.Decrypt(Str, "Keeeey");
     end;
   exception
     when Error : others =>
@@ -213,5 +215,36 @@ package body Utility is
       
       raise;
   end Send;
+  
+  
+  function String_To_Worker_Type(Arg : String) return Worker_Type is
+  begin
+    if Utility.Is_Equal(Arg, "Master", true) then
+      return Master;
+    elsif Utility.Is_Equal(Arg, "Mapper", true) then
+      return Mapper;
+    elsif Utility.Is_Equal(Arg, "Reducer", true) then
+      return Reducer;
+    else
+      raise Unknow_Worker_Type;
+    end if;
+  end String_To_Worker_Type;
+  
+  
+  function To_String(Arg : Worker_Type) return String is
+  begin
+    case Arg is
+      when Master => return "Master";
+      when Mapper => return "Mapper";
+      when Reducer => return "Reducer";
+      when Invalid => return "N/A";
+    end case;
+  end To_String;
+  
+  
+  function Trim(Input : String) return String is
+  begin
+    return Ada.Strings.Fixed.Trim(Input, Ada.Strings.Both);
+  end Trim;
   
 end Utility;

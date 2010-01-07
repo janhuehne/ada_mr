@@ -7,7 +7,6 @@ with Xml;
 with Xml_Parser;
 with Xml_Helper;
 with Mapper_Helper;
-with Utility;
 
 package body Mapper_Server is 
   
@@ -32,13 +31,9 @@ package body Mapper_Server is
   end Process_Incomming_Connection;
   
 
-  procedure Process_Request(S : Stream_Access) is
-    Request  : String          := String'Input(S);
-    Xml_Root : Xml.Node_Access := Xml_Parser.Parse(Content => Request);
+  procedure Process_Request(S : Stream_Access; From : Utility.Worker_Type; Xml_Root : Xml.Node_Access) is
   begin
-    
-    Ada.Text_IO.Put_Line("XML Request: " & Request);
-    
+    null;
   exception
     when Error : others => 
       Utility.Print_Exception(Error);

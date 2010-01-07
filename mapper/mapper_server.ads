@@ -4,6 +4,8 @@ use GNAT.Sockets;
 with Ada.Strings.Unbounded;
 
 with Generic_Server;
+with Utility;
+with Xml;
 
 generic
   with procedure Stop_Mapper;
@@ -14,7 +16,7 @@ package Mapper_Server is
   
   function Exit_Server return Boolean;
   procedure Process_Incomming_Connection(New_Sock : Socket_Type);
-  procedure Process_Request(S : Stream_Access);
+  procedure Process_Request(S : Stream_Access; From : Utility.Worker_Type; Xml_Root : Xml.Node_Access);
   
   package Server is new Generic_Server(
     Exit_Server,

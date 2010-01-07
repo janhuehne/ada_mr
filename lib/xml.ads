@@ -23,7 +23,9 @@ package Xml is
   
   procedure Add_Node(Root_Node : in out Node_Access; Child : in out Node_Access);
   procedure Print(Root_Node : in Node_Access; Depth : Integer := 0);
-    
+  function To_String(Root_Node : in Node_Access; Depth : Integer := 0) return String;
+  function Node_Content_To_String(Root_Node : in Node_Access) return String;
+  
   function Find_Child_With_Tag(Root_Node : in Node_Access; Tag : in String) return Node_Access;
   function Get_Value(Root : Node_Access; Tag : String) return String;
   function Get_Value_Or_Empty(Root : Node_Access; Tag : String) return String;

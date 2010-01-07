@@ -30,6 +30,52 @@ package body Xml is
     end if;
   end Print;
   
+  
+  function To_String(Root_Node : in Node_Access; Depth : Integer := 0) return String is
+    Result : ASU.Unbounded_String;
+    
+    procedure Iterate_Vector(c: Node_Access_Vector.Cursor) is
+    begin
+      ASU.Append(Result, To_String(Node_Access_Vector.Element(c), Depth + 1));
+    end Iterate_Vector;
+    
+  begin
+    if Root_Node.Children.Is_Empty = true then
+      ASU.Append(Result, "<" & ASU.To_String(Root_Node.Tag) & ">");
+      ASU.Append(Result, ASU.To_String(Root_Node.Value));
+      ASU.Append(Result, "</" & ASU.To_String(Root_Node.Tag) & ">");
+    else
+      ASU.Append(Result, "<" & ASU.To_String(Root_Node.Tag) & ">");
+      Node_Access_Vector.Iterate(Root_Node.Children, Iterate_Vector'Access);
+      ASU.Append(Result, "</" & ASU.To_String(Root_Node.Tag) & ">");
+    end if;
+    
+    return ASU.To_String(Result);
+    
+  end To_String;
+  
+  
+  function Node_Content_To_String(Root_Node : in Node_Access) return String is
+    Result : ASU.Unbounded_String;
+    
+    procedure Iterate_Vector(c: Node_Access_Vector.Cursor) is
+    begin
+      ASU.Append(Result, To_String(Node_Access_Vector.Element(c), 0));
+    end Iterate_Vector;
+    
+  begin
+    if Root_Node.Children.Is_Empty = true then
+      ASU.Append(Result, "<" & ASU.To_String(Root_Node.Tag) & ">");
+      ASU.Append(Result, ASU.To_String(Root_Node.Value));
+      ASU.Append(Result, "</" & ASU.To_String(Root_Node.Tag) & ">");
+    else
+      Node_Access_Vector.Iterate(Root_Node.Children, Iterate_Vector'Access);
+    end if;
+    
+    return ASU.To_String(Result);
+  end Node_Content_To_String;
+  
+  
   function Find_Child_With_Tag(Root_Node : in Node_Access; Tag : in String) return Node_Access is
   begin
     if ASU.To_String(Root_Node.Tag) = Tag then

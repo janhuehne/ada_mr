@@ -11,6 +11,8 @@ with Utility;
 
 with Logger;
 
+with Crypto_Helper;
+
 package body Master_Server is 
   
   function Exit_Server return Boolean is
@@ -30,12 +32,12 @@ package body Master_Server is
     Slave.Start(New_Sock);    
   end Process_Incomming_Connection;
   
-
-  procedure Process_Request(S : Stream_Access) is
-    Request  : String          := String'Input(S);
-    Xml_Root : Xml.Node_Access := Xml_Parser.Parse(Content => Request);
+  
+  procedure Process_Request(S : Stream_Access; From : Utility.Worker_Type; Xml_Root : Xml.Node_Access) is
+    use Utility;
   begin
-    if Xml_Helper.Is_Mapper_Request(Xml_Root) or Xml_Helper.Is_Reducer_Request(Xml_Root) then
+    
+    if From = Mapper or From = Reducer then
       
       if Xml_Helper.Is_Command(Xml_Root, "initialization") then
         
@@ -44,7 +46,7 @@ package body Master_Server is
           Worker_Entry : Master_Helper.Worker_Record_Access := new Master_Helper.Worker_Record;
         begin
           Worker_Entry.Identifier  := ASU.To_Unbounded_String(Xml.Get_Value(Details, "identifier"));
-          Worker_Entry.W_Type      := Master_Helper.String_To_Worker_Type(Xml.Get_Value(Details, "type"));
+          Worker_Entry.W_Type      := Utility.String_To_Worker_Type(Xml.Get_Value(Details, "type"));
           Worker_Entry.Ip          := Inet_Addr(Xml.Get_Value(Details, "ip"));
           Worker_Entry.Port        := Port_Type'Value(Xml.Get_Value(Details, "port"));
           
@@ -69,12 +71,12 @@ package body Master_Server is
         begin
           Worker := Find_Worker_By_Access_Token_And_Type(
             Xml.Get_Value(Xml_Root, "access_token"),
-            Master_Helper.Mapper
+            Utility.Mapper
           );
           
           
           -- <-- Start Handle Mapper requests
-          if Xml_Helper.Is_Mapper_Request(Xml_Root) then
+          if From = Mapper then
             
             
             -- *******************************************************
@@ -130,11 +132,13 @@ package body Master_Server is
                 Not_Delivered_Map_Result : Master_Helper.Not_Delivered_Map_Result_Access := new Master_Helper.Not_Delivered_Map_Result;
               begin
                 Not_Delivered_Map_Result.Reducer := Worker;
-                Not_Delivered_Map_Result.Result  := ASU.To_Unbounded_String(Request);
+                Not_Delivered_Map_Result.Result  := ASU.To_Unbounded_String("aa");
                 
                 Master_Helper.Undelivered_Job_Results.Append(Not_Delivered_Map_Result);
                 Logger.Put_Line(ASU.To_String(Worker.Identifier) & ": A job result could not delivered to a reducer.", Logger.Warn);
               end;
+              
+              String'Output(S, Xml_Helper.Create_System_Control(Xml_Helper.Master, "okay"));
             else
               Ada.Exceptions.Raise_Exception(Utility.Unknown_Command'Identity, "The command """ & Xml.Get_Value(Xml_Root, "command") & """is not supported from a mapper.");
             end if;

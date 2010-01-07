@@ -24,11 +24,15 @@ package Xml_Helper is
   
   function Hash_To_Xml_String(Details : Utility.String_String_Maps.Map) return String;
   
-  
-  function Is_Master_Request(Node : Xml.Node_Access) return Boolean;
-  function Is_Mapper_Request(Node : Xml.Node_Access) return Boolean;
-  function Is_Reducer_Request(Node : Xml.Node_Access) return Boolean;
+  function Request_From(Node : Xml.Node_Access) return Utility.Worker_Type;
+--  function Is_Master_Request(Node : Xml.Node_Access) return Boolean;
+--  function Is_Mapper_Request(Node : Xml.Node_Access) return Boolean;
+--  function Is_Reducer_Request(Node : Xml.Node_Access) return Boolean;
   function Is_Command(Node : Xml.Node_Access; Command : String) return Boolean;
   
   procedure Send_Error(S : GNAT.Sockets.Stream_Access; G_T : Group_Tag; Error : Ada.Exceptions.Exception_Occurrence);
+  
+  
+  function Get_Verified_Content(Xml_Root : Xml.Node_Access) return Xml.Node_Access;
+  
 end Xml_Helper;
