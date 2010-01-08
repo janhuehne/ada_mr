@@ -2,7 +2,7 @@
 with Ada.Text_IO;
 with Ada.Strings.Unbounded;
 with Ada.IO_Exceptions;
-with Utility;
+with Application_Helper;
 
 with Ada.Characters.Handling;
 use Ada.Characters.Handling;
@@ -95,7 +95,7 @@ package body Generic_Server is
       Empty(Accept_Set);
       Close_Socket(Server);
       Finalize;
-      Utility.Print_Exception(Error);
+      Application_Helper.Print_Exception(Error);
   end Server_Task;
 
 end Generic_Server;

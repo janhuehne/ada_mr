@@ -1,6 +1,6 @@
 with Ada.Text_IO;
 with Ada.Exceptions;
-with Utility;
+with Application_Helper;
 with Xml_Parser;
 package body Generic_Console is
   
@@ -26,15 +26,15 @@ package body Generic_Console is
         begin
           Process_User_Input(User_Input, To_Controll);
           
-          if Utility.Is_Equal(User_Input, "quit", true) OR 
-             Utility.Is_Equal(User_Input, "exit", true) OR 
-             Utility.Is_Equal(User_Input, "abort", true)
+          if Application_Helper.Is_Equal(User_Input, "quit", true) OR 
+             Application_Helper.Is_Equal(User_Input, "exit", true) OR 
+             Application_Helper.Is_Equal(User_Input, "abort", true)
           then
             exit;
           end if;
           
         exception
-          when Error : others => Utility.Print_Exception(Error);
+          when Error : others => Application_Helper.Print_Exception(Error);
         end;
       end if;
         

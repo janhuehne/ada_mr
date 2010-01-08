@@ -2,10 +2,10 @@ with GNAT.Sockets;
 use GNAT.Sockets;
 with Xml;
 with Ada.Strings.Unbounded;
-with Utility;
+with Application_Helper;
 
 generic
-  with procedure Process_Request(S : Stream_Access; From : Utility.Worker_Type; Xml_Root : Xml.Node_Access);
+  with procedure Process_Request(S : Stream_Access; From : Application_Helper.Worker_Type; Xml_Root : Xml.Node_Access);
     
 package Generic_Echo is
   

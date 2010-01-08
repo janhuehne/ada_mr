@@ -1,4 +1,4 @@
-with Utility;
+with Application_Helper;
 
 package body Master_Helper is
 
@@ -37,11 +37,11 @@ package body Master_Helper is
   
   function From_String(Arg : String) return Job_State is
   begin
-    if Utility.Is_Equal(Arg, "Pending", true) then
+    if Application_Helper.Is_Equal(Arg, "Pending", true) then
       return Pending;
-    elsif Utility.Is_Equal(Arg, "In_Progress", true) then
+    elsif Application_Helper.Is_Equal(Arg, "In_Progress", true) then
       return In_Progress;
-    elsif Utility.Is_Equal(Arg, "Done", true) then
+    elsif Application_Helper.Is_Equal(Arg, "Done", true) then
       return Done;
     else
       raise Unknown_Job_State;

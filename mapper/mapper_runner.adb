@@ -1,20 +1,20 @@
---with Utility.Worker_Type.Text_IO;
---with Utility.Worker_Type.Strings.Unbounded;
---with Utility.Worker_Type.IO_Exceptions;
+--with Application_Helper.Worker_Type.Text_IO;
+--with Application_Helper.Worker_Type.Strings.Unbounded;
+--with Application_Helper.Worker_Type.IO_Exceptions;
 --
---with Utility.Worker_Type.Characters.Handling;
---use Utility.Worker_Type.Characters.Handling;
+--with Application_Helper.Worker_Type.Characters.Handling;
+--use Application_Helper.Worker_Type.Characters.Handling;
 with Ada.Exceptions;
 
 with Xml;
 with Xml_Parser;
 with Xml_Helper;
 
---with Utility.Worker_Type.Exceptions;
+--with Application_Helper.Worker_Type.Exceptions;
 with Mapper_Helper;
 
 with Logger;
-with Utility;
+with Application_Helper;
 
 package body Mapper_Runner is 
   
@@ -24,7 +24,7 @@ package body Mapper_Runner is
     -- Initialization
     begin
       declare
-        Response : String := Utility.Send(
+        Response : String := Application_Helper.Send(
           Mapper_Helper.Master_Ip,
           Mapper_Helper.Master_Port,
           Xml_Helper.Create_Initialization(Xml_Helper.Mapper, ASU.To_String(Mapper_Helper.Identifier), Mapper_Helper.Server_Bind_Ip, Mapper_Helper.Server_Bind_Port),
@@ -46,16 +46,16 @@ package body Mapper_Runner is
         end if;
         
         if Xml_Helper.Is_Command(Xml_Tree, "error") then
-          Ada.Exceptions.Raise_Exception(Utility.Initialisation_Failed'Identity, Xml.Get_Value(Xml.Find_Child_With_Tag(Xml_Tree, "details"), "message"));
+          Ada.Exceptions.Raise_Exception(Application_Helper.Initialisation_Failed'Identity, Xml.Get_Value(Xml.Find_Child_With_Tag(Xml_Tree, "details"), "message"));
         end if;
       end;
     exception
-      when Utility.Initialisation_Failed =>
+      when Application_Helper.Initialisation_Failed =>
         raise;
       when GNAT.Sockets.Socket_Error =>
-        Ada.Exceptions.Raise_Exception(Utility.Initialisation_Failed'Identity, "Utility.Worker_Type MR Master is unreachable");
+        Ada.Exceptions.Raise_Exception(Application_Helper.Initialisation_Failed'Identity, "Application_Helper.Worker_Type MR Master is unreachable");
       when Error : others =>
-        Utility.Print_Exception(Error);
+        Application_Helper.Print_Exception(Error);
     end;
     
     -- Ask for new jobs and work off them
@@ -70,7 +70,7 @@ package body Mapper_Runner is
       begin
         
         declare
-          Response : String := Utility.Send(
+          Response : String := Application_Helper.Send(
             Mapper_Helper.Master_Ip,
             Mapper_Helper.Master_Port,
             Xml_Helper.Xml_Command(
@@ -82,7 +82,7 @@ package body Mapper_Runner is
           
           Xml_Tree : Xml.Node_Access := Xml_Helper.Get_Verified_Content(Xml_Parser.Parse(Content => Response));
           
-          Details_For_Master_Notification : Utility.String_String_Maps.Map;
+          Details_For_Master_Notification : Application_Helper.String_String_Maps.Map;
         begin
           
           if Xml_Helper.Is_Command(Xml_Tree, "new_job") then
@@ -98,12 +98,12 @@ package body Mapper_Runner is
               
               -- --> Send result to reducers
               declare
-                Reducer_Result_Map : Utility.String_String_Maps.Map;
+                Reducer_Result_Map : Application_Helper.String_String_Maps.Map;
                 
                 
-                procedure Send_Result_To_Reducer(Cursor : Utility.String_String_Maps.Cursor) is
-                  Reducer_Identifier : String := Utility.String_String_Maps.Key(Cursor);
-                  Result             : String := Utility.String_String_Maps.Element(Reducer_Result_Map, Reducer_Identifier);
+                procedure Send_Result_To_Reducer(Cursor : Application_Helper.String_String_Maps.Cursor) is
+                  Reducer_Identifier : String := Application_Helper.String_String_Maps.Key(Cursor);
+                  Result             : String := Application_Helper.String_String_Maps.Element(Reducer_Result_Map, Reducer_Identifier);
                 begin
                   Logger.Put_Line("Sending " & Result & " to " & Reducer_Identifier, Logger.Info);
                   
@@ -116,7 +116,7 @@ package body Mapper_Runner is
                       Details       => "<identifier>" & Reducer_Identifier & "</identifier>"
                     );
                     
-                    Response : String := Utility.Send(
+                    Response : String := Application_Helper.Send(
                       Mapper_Helper.Master_Ip,
                       Mapper_Helper.Master_Port,
                       Xml_Command,
@@ -139,7 +139,7 @@ package body Mapper_Runner is
                         Reducer_Ip   : String := Xml.Get_Value(Xml.Find_Child_With_Tag(Reducer_Details_Xml, "details"), "ip");
                         Reducer_Port : String := Xml.Get_Value(Xml.Find_Child_With_Tag(Reducer_Details_Xml, "details"), "port");
                         
-                        Response : String := Utility.Send(
+                        Response : String := Application_Helper.Send(
                           Reducer_Ip,
                           Reducer_Port,
                           Xml_Command,
@@ -156,14 +156,14 @@ package body Mapper_Runner is
                   
                   exception
                     when Error : others =>
-                      Utility.Print_Exception(Error);
+                      Application_Helper.Print_Exception(Error);
                       Logger.Put_Line("Reducer not found or not reachable! Sending job result to the master!", Logger.Err);
                       Details_For_Master_Notification.Insert("message", Reducer_Identifier & "not reachable");
                       
                       declare
                       begin
                         declare
-                          Response : String := Utility.Send(
+                          Response : String := Application_Helper.Send(
                             Mapper_Helper.Master_Ip,
                             Mapper_Helper.Master_Port,
                             Xml_Helper.Xml_Command(
@@ -179,7 +179,7 @@ package body Mapper_Runner is
                         end;
                       exception
                         when Error : others =>
-                          Utility.Print_Exception(Error);
+                          Application_Helper.Print_Exception(Error);
                           Logger.Put_Line("Master unreachable! Job failed!", Logger.Err);
                       end;
                   end;
@@ -194,13 +194,13 @@ package body Mapper_Runner is
               -- <-- Send result to reducer
               
               -- send new job status to master
-              Details_For_Master_Notification.Insert("job_id", Utility.Trim(Get_Job_Id(Job)'Img));
+              Details_For_Master_Notification.Insert("job_id", Application_Helper.Trim(Get_Job_Id(Job)'Img));
               Details_For_Master_Notification.Insert("job_state", "done");
               
               declare
               begin
                 declare
-                  Response : String := Utility.Send(
+                  Response : String := Application_Helper.Send(
                     Mapper_Helper.Master_Ip,
                     Mapper_Helper.Master_Port,
                     Xml_Helper.Xml_Command(
@@ -234,7 +234,7 @@ package body Mapper_Runner is
             Mapper_Helper.Aborted.Set_Exit;
           
           else
-            Ada.Exceptions.Raise_Exception(Utility.Unknown_Command'Identity, "Unsupported command: """ & Xml.Get_Value(Xml_Tree, "command"));
+            Ada.Exceptions.Raise_Exception(Application_Helper.Unknown_Command'Identity, "Unsupported command: """ & Xml.Get_Value(Xml_Tree, "command"));
             
           end if;
           
@@ -244,17 +244,17 @@ package body Mapper_Runner is
         when Error : Xml_Parser.Xml_Parse_Error =>
           Logger.Put_Line("Could not parse incomming XML file.", Logger.Err);
         
-        when Error : Utility.Unknown_Command =>
+        when Error : Application_Helper.Unknown_Command =>
           Logger.Put_Line("Unsupported command: " & Ada.Exceptions.Exception_Message(Error), Logger.Warn);
         
         when Error : others =>
-          Utility.Print_Exception(Error);
+          Application_Helper.Print_Exception(Error);
       end;
       
     end loop;
   exception
     when Error : others =>
-      Utility.Print_Exception(Error);
+      Application_Helper.Print_Exception(Error);
       Mapper_Helper.Aborted.Set_Abort;
   end Run; 
   

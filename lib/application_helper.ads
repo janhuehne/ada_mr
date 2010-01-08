@@ -13,7 +13,7 @@ with Ada.Exceptions;
 with GNAT.Sockets;
 
 
-package Utility is
+package Application_Helper is
   package ASU renames Ada.Strings.Unbounded;
   
   function Starts_With(Item : String; Pattern : String; Ignore_Case : Boolean := false) return Boolean;
@@ -69,4 +69,4 @@ package Utility is
   
   Unknow_Worker_Type : Exception;
   
-end Utility;
+end Application_Helper;

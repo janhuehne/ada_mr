@@ -1,7 +1,7 @@
 with Ada.Text_IO;
 
-with Utility;
-use Utility;
+with Application_Helper;
+use Application_Helper;
 
 with Logger;
 with Reducer_Helper;
@@ -22,7 +22,7 @@ package body Reducer is
     
     procedure Read_and_Parse_Config_File(Config_File : String) is
     begin
-      if Utility.Does_File_Exist(Config_File) then
+      if Application_Helper.Does_File_Exist(Config_File) then
         Ada.Text_IO.Put_Line("Parsing config file");
         Parse_Configuration(
           Xml_Parser.Parse(File_Name => Config_File)
@@ -33,8 +33,8 @@ package body Reducer is
       end if;
     exception
       when Error : others => 
-        Utility.Print_Exception(Error);
-        Ada.Exceptions.Raise_Exception(Utility.Configuration_File_Error'Identity, "There is a problem with the configuration file.");
+        Application_Helper.Print_Exception(Error);
+        Ada.Exceptions.Raise_Exception(Application_Helper.Configuration_File_Error'Identity, "There is a problem with the configuration file.");
     end Read_and_Parse_Config_File;
     
     
@@ -43,20 +43,20 @@ package body Reducer is
       Ada.Text_IO.New_Line;
       Ada.Text_IO.Put_Line(Banner & " configuration");
             
-      Utility.Put("--> Local IP address:", 30, 2);
-      Utility.Put(GNAT.Sockets.Image(Reducer_Helper.Server_Bind_Ip), 60, 2);
+      Application_Helper.Put("--> Local IP address:", 30, 2);
+      Application_Helper.Put(GNAT.Sockets.Image(Reducer_Helper.Server_Bind_Ip), 60, 2);
       Ada.Text_IO.New_Line;
       
-      Utility.Put("--> Local port:", 30, 2);
-      Utility.Put(Reducer_Helper.Server_Bind_Port'Img, 60, 2);
+      Application_Helper.Put("--> Local port:", 30, 2);
+      Application_Helper.Put(Reducer_Helper.Server_Bind_Port'Img, 60, 2);
       Ada.Text_IO.New_Line;
       
-      Utility.Put("--> Master host:", 30, 2);
-      Utility.Put(GNAT.Sockets.Image(Reducer_Helper.Master_Ip), 60, 2);
+      Application_Helper.Put("--> Master host:", 30, 2);
+      Application_Helper.Put(GNAT.Sockets.Image(Reducer_Helper.Master_Ip), 60, 2);
       Ada.Text_IO.New_Line;
       
-      Utility.Put("--> Master port:", 30, 2);
-      Utility.Put(Reducer_Helper.Master_Port'Img, 60, 2);
+      Application_Helper.Put("--> Master port:", 30, 2);
+      Application_Helper.Put(Reducer_Helper.Master_Port'Img, 60, 2);
       
       Ada.Text_IO.New_Line;
       Ada.Text_IO.New_Line;
@@ -136,7 +136,7 @@ package body Reducer is
             Merge_Jobs(Reducer_Helper.Xml_Node_Access_Vectors.Element(Cursor));
             Reducer_Helper.Finished_Jobs_Queue.Delete(Cursor);
           exception
-            when Error : others => Utility.Print_Exception(Error);
+            when Error : others => Application_Helper.Print_Exception(Error);
           end;
           
           Reducer_Helper.Xml_Node_Access_Vectors.Next(Cursor);

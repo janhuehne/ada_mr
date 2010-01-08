@@ -8,7 +8,7 @@ with Generic_Server;
 with Generic_Echo;
 
 with Xml;
-with Utility;
+with Application_Helper;
 
 generic
   with procedure Finalize_Jobs;
@@ -20,7 +20,7 @@ package Reducer_Server is
   
   function Exit_Server return Boolean;
   procedure Process_Incomming_Connection(New_Sock : Socket_Type);
-  procedure Process_Request(S : Stream_Access; From : Utility.Worker_Type; Xml_Root : Xml.Node_Access);
+  procedure Process_Request(S : Stream_Access; From : Application_Helper.Worker_Type; Xml_Root : Xml.Node_Access);
   
   package Server is new Generic_Server(
     Exit_Server,

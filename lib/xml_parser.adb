@@ -2,7 +2,7 @@ with Ada.Exceptions;
 with Ada.Text_IO;
 with Simple_Xml.Xml_Io;
 with Ada.Strings.Unbounded;
-with Utility;
+with Application_Helper;
 
 package body Xml_Parser is
   
@@ -65,7 +65,7 @@ package body Xml_Parser is
   
   function Is_Valid_Xml_String(Str : String) return Boolean is
   begin
-    return Utility.Starts_With(Str, "<?xml");
+    return Application_Helper.Starts_With(Str, "<?xml");
   end Is_Valid_Xml_String;
 
 end Xml_Parser;

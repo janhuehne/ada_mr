@@ -1,5 +1,5 @@
 with Ada.Strings.Unbounded;
-with Utility;
+with Application_Helper;
 with Crypto_Helper;
 with Logger;
 with Ada.Strings.Fixed;
@@ -64,13 +64,13 @@ package body Xml_Helper is
     return Ada.Strings.Unbounded.To_String(Xml_String);
   end Xml_Command;
   
-  function Xml_Command(G_T : Group_Tag; Command : String; Details : Utility.String_String_Maps.Map) return String is
+  function Xml_Command(G_T : Group_Tag; Command : String; Details : Application_Helper.String_String_Maps.Map) return String is
   begin
     return Xml_Command(G_T, Command, "", Details);
   end Xml_Command;
   
-  function Xml_Command(G_T : Group_Tag; Command : String; Access_Token : String; Details : Utility.String_String_Maps.Map) return String is
-    Detail_Cursor : Utility.String_String_Maps.Cursor := Utility.String_String_Maps.First(Details);
+  function Xml_Command(G_T : Group_Tag; Command : String; Access_Token : String; Details : Application_Helper.String_String_Maps.Map) return String is
+    Detail_Cursor : Application_Helper.String_String_Maps.Cursor := Application_Helper.String_String_Maps.First(Details);
     Detail_String : Ada.Strings.Unbounded.Unbounded_String;
   begin    
     return Xml_Command(
@@ -86,7 +86,7 @@ package body Xml_Helper is
     use Ada.Strings;
     use Ada.Strings.Fixed;
     
-    Details : Utility.String_String_Maps.Map;
+    Details : Application_Helper.String_String_Maps.Map;
   begin
     Details.Insert("type", Trim(Xml_Helper.To_String(G_T), Both));
     Details.Insert("identifier", Trim(Identifier, Both));
@@ -120,59 +120,59 @@ package body Xml_Helper is
     return Ada.Strings.Unbounded.To_String(Xml_String);
   end Create_System_Control;
   
-  function Hash_To_Xml_String(Details : Utility.String_String_Maps.Map) return String is
-    Detail_Cursor : Utility.String_String_Maps.Cursor := Utility.String_String_Maps.First(Details);
+  function Hash_To_Xml_String(Details : Application_Helper.String_String_Maps.Map) return String is
+    Detail_Cursor : Application_Helper.String_String_Maps.Cursor := Application_Helper.String_String_Maps.First(Details);
     Detail_String : Ada.Strings.Unbounded.Unbounded_String;
   begin
-    while Utility.String_String_Maps.Has_Element(Detail_Cursor) loop
+    while Application_Helper.String_String_Maps.Has_Element(Detail_Cursor) loop
       Ada.Strings.Unbounded.Append(Detail_String, "<");
-      Ada.Strings.Unbounded.Append(Detail_String, Utility.String_String_Maps.Key(Detail_Cursor));
+      Ada.Strings.Unbounded.Append(Detail_String, Application_Helper.String_String_Maps.Key(Detail_Cursor));
       Ada.Strings.Unbounded.Append(Detail_String, ">");
-      Ada.Strings.Unbounded.Append(Detail_String, Utility.String_String_Maps.Element(Detail_Cursor));
+      Ada.Strings.Unbounded.Append(Detail_String, Application_Helper.String_String_Maps.Element(Detail_Cursor));
       Ada.Strings.Unbounded.Append(Detail_String, "</");
-      Ada.Strings.Unbounded.Append(Detail_String, Utility.String_String_Maps.Key(Detail_Cursor));
+      Ada.Strings.Unbounded.Append(Detail_String, Application_Helper.String_String_Maps.Key(Detail_Cursor));
       Ada.Strings.Unbounded.Append(Detail_String, ">");
-      Utility.String_String_Maps.Next(Detail_Cursor);
+      Application_Helper.String_String_Maps.Next(Detail_Cursor);
     end loop;
     
     return ASU.To_String(Detail_String);
   end Hash_To_Xml_String;
   
-  function Request_From(Node : Xml.Node_Access) return Utility.Worker_Type is
+  function Request_From(Node : Xml.Node_Access) return Application_Helper.Worker_Type is
     Node_Tag : String := Xml.Get_Tag(Node);
   begin
-    if Utility.Is_Equal(Node_Tag, "adamr-master") then
-      return Utility.Master;
-    elsif Utility.Is_Equal(Node_Tag, "adamr-mapper") then
-      return Utility.Mapper;
-    elsif Utility.Is_Equal(Node_Tag, "adamr-reducer") then
-      return Utility.Reducer;
+    if Application_Helper.Is_Equal(Node_Tag, "adamr-master") then
+      return Application_Helper.Master;
+    elsif Application_Helper.Is_Equal(Node_Tag, "adamr-mapper") then
+      return Application_Helper.Mapper;
+    elsif Application_Helper.Is_Equal(Node_Tag, "adamr-reducer") then
+      return Application_Helper.Reducer;
     end if;
     
-    return Utility.Invalid;
+    return Application_Helper.Invalid;
   end;
   
 --  function Is_Master_Request(Node : Xml.Node_Access) return Boolean is
 --  begin
---    return Utility.Is_Equal(Xml.Get_Tag(Node), "adamr-master");
+--    return Application_Helper.Is_Equal(Xml.Get_Tag(Node), "adamr-master");
 --  end Is_Master_Request;
 --  
 --  
 --  function Is_Mapper_Request(Node : Xml.Node_Access) return Boolean is
 --  begin
---    return Utility.Is_Equal(Xml.Get_Tag(Node), "adamr-mapper");
+--    return Application_Helper.Is_Equal(Xml.Get_Tag(Node), "adamr-mapper");
 --  end Is_Mapper_Request;
 --  
 --  
 --  function Is_Reducer_Request(Node : Xml.Node_Access) return Boolean is
 --  begin
---    return Utility.Is_Equal(Xml.Get_Tag(Node), "adamr-reducer");
+--    return Application_Helper.Is_Equal(Xml.Get_Tag(Node), "adamr-reducer");
 --  end Is_Reducer_Request;
   
   
   function Is_Command(Node : Xml.Node_Access; Command : String) return Boolean is
   begin
-    return Utility.Is_Equal(Xml.Get_Value(Node, "command"), Command);
+    return Application_Helper.Is_Equal(Xml.Get_Value(Node, "command"), Command);
   end Is_Command;
   
   

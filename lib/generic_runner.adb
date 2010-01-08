@@ -1,5 +1,5 @@
 with Logger;
-with Utility;
+with Application_Helper;
 
 package body Generic_Runner is
 
@@ -13,7 +13,7 @@ package body Generic_Runner is
         begin
           Run;
         exception
-          when Error : others => Utility.Print_Exception(Error);
+          when Error : others => Application_Helper.Print_Exception(Error);
         end;
       or
         accept Stop;

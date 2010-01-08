@@ -1,7 +1,7 @@
 with Ada.Text_IO;
 with Ada.Strings.Unbounded;
 with Ada.IO_Exceptions;
-with Utility;
+with Application_Helper;
 
 with Ada.Characters.Handling;
 use Ada.Characters.Handling;
@@ -25,7 +25,7 @@ package body Reducer_Runner is
       begin
         
         declare
-          Response : String := Utility.Send(
+          Response : String := Application_Helper.Send(
             Reducer_Helper.Master_Ip,
             Reducer_Helper.Master_Port,
             Xml_Helper.Create_Initialization(Xml_Helper.Reducer, ASU.To_String(Reducer_Helper.Identifier), Reducer_Helper.Server_Bind_Ip, Reducer_Helper.Server_Bind_Port)
@@ -43,7 +43,7 @@ package body Reducer_Runner is
             end if;
             
             if Xml_Helper.Is_Command(Xml_Tree, "error") then
-              Ada.Exceptions.Raise_Exception(Utility.Initialisation_Failed'Identity, Xml.Get_Value(Xml.Find_Child_With_Tag(Xml_Tree, "details"), "message"));
+              Ada.Exceptions.Raise_Exception(Application_Helper.Initialisation_Failed'Identity, Xml.Get_Value(Xml.Find_Child_With_Tag(Xml_Tree, "details"), "message"));
             end if;
           end;
           
@@ -52,22 +52,22 @@ package body Reducer_Runner is
         exit;
         
       exception
-        when Utility.Initialisation_Failed =>
+        when Application_Helper.Initialisation_Failed =>
           raise;
         when GNAT.Sockets.Socket_Error =>
           Logger.Put_Line("Attempt " & I'Img & ": Master server is unreachable. Trying again.", Logger.Warn);
           
           if I = 10 then
-            Ada.Exceptions.Raise_Exception(Utility.Initialisation_Failed'Identity, "Ada MR Master is unreachable");
+            Ada.Exceptions.Raise_Exception(Application_Helper.Initialisation_Failed'Identity, "Ada MR Master is unreachable");
           end if;
         when Error : others =>
-          Utility.Print_Exception(Error);
+          Application_Helper.Print_Exception(Error);
       end;
     end loop;
     
   exception
     when Error : others =>
-      Utility.Print_Exception(Error);
+      Application_Helper.Print_Exception(Error);
       Reducer_Helper.Aborted.Stop;
   end Run; 
   

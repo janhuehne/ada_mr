@@ -2,7 +2,7 @@ with Ada.Text_IO;
 with Char_Job;
 with Xml;
 with Xml_Parser;
-with Utility;
+with Application_Helper;
 with Master;
 
 procedure MR_Master_Count_Char is

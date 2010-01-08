@@ -7,7 +7,7 @@ with Master_Server;
 with Generic_Console;
 with Generic_Observer;
 
-with Utility;
+with Application_Helper;
 
 generic
   type My_Job is private;
@@ -113,8 +113,8 @@ package Master is
   protected Worker is
     procedure Add(New_Worker : Master_Helper.Worker_Record_Access);
     function Find_By_Identifier(Identifier : String) return Master_Helper.Worker_Record_Access;
-    function Find_By_Access_Token_And_Type(Access_Token : String; W_Type : Utility.Worker_Type) return Master_Helper.Worker_Record_Access;
-    function Find_All_By_Type(W_Type : Utility.Worker_Type) return Master_Helper.Worker_Entry_Vectors.Vector;
+    function Find_By_Access_Token_And_Type(Access_Token : String; W_Type : Application_Helper.Worker_Type) return Master_Helper.Worker_Record_Access;
+    function Find_All_By_Type(W_Type : Application_Helper.Worker_Type) return Master_Helper.Worker_Entry_Vectors.Vector;
     procedure Print;
   private
     Worker : Master_Helper.Worker_Entry_Vectors.Vector;

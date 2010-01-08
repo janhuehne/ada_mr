@@ -2,7 +2,7 @@ with Ada.Containers.Vectors;
 with Ada.Strings.Unbounded;
 with Xml;
 with GNAT.Sockets;
-with Utility;
+with Application_Helper;
 
 package Master_Helper is
 
@@ -32,7 +32,7 @@ package Master_Helper is
 ----------------------------------------------------
   type Worker_Record is record
     Identifier   : ASU.Unbounded_String;
-    W_Type       : Utility.Worker_Type;
+    W_Type       : Application_Helper.Worker_Type;
     Ip           : GNAT.Sockets.Inet_Addr_Type;
     Port         : GNAT.Sockets.Port_Type;
     Access_Token : String(1..32);

@@ -1,7 +1,7 @@
 with Ada.Text_IO;
 
-with Utility;
-use Utility;
+with Application_Helper;
+use Application_Helper;
 
 with Logger;
 with Mapper_Helper;
@@ -23,7 +23,7 @@ package body Mapper is
     
     procedure Read_and_Parse_Config_File(Config_File : String) is
     begin
-      if Utility.Does_File_Exist(Config_File) then
+      if Application_Helper.Does_File_Exist(Config_File) then
         Ada.Text_IO.Put_Line("Parsing config file");
         Parse_Configuration(
           Xml_Parser.Parse(File_Name => Config_File)
@@ -34,8 +34,8 @@ package body Mapper is
       end if;
     exception
       when Error : others => 
-        Utility.Print_Exception(Error);
-        Ada.Exceptions.Raise_Exception(Utility.Configuration_File_Error'Identity, "There is a problem with the configuration file.");
+        Application_Helper.Print_Exception(Error);
+        Ada.Exceptions.Raise_Exception(Application_Helper.Configuration_File_Error'Identity, "There is a problem with the configuration file.");
     end Read_and_Parse_Config_File;
     
     procedure Print_Configuration is
@@ -43,28 +43,28 @@ package body Mapper is
       Ada.Text_IO.New_Line;
       Ada.Text_IO.Put_Line("-> Ada MR Mapper configuration");
       
-      Utility.Put("Identifier:", 20, 2);
-      Utility.Put(ASU.To_String(Mapper_Helper.Identifier), 60, 2);
+      Application_Helper.Put("Identifier:", 20, 2);
+      Application_Helper.Put(ASU.To_String(Mapper_Helper.Identifier), 60, 2);
       Ada.Text_IO.New_Line;
       
-      Utility.Put("Access token:", 20, 2);
-      Utility.Put(Mapper_Helper.Access_Token, 60, 2);
+      Application_Helper.Put("Access token:", 20, 2);
+      Application_Helper.Put(Mapper_Helper.Access_Token, 60, 2);
       Ada.Text_IO.New_Line;
       
-      Utility.Put("Listen on ip:", 20, 2);
-      Utility.Put(GNAT.Sockets.Image(Mapper_Helper.Server_Bind_Ip), 60, 2);
+      Application_Helper.Put("Listen on ip:", 20, 2);
+      Application_Helper.Put(GNAT.Sockets.Image(Mapper_Helper.Server_Bind_Ip), 60, 2);
       Ada.Text_IO.New_Line;
       
-      Utility.Put("Listen on port:", 20, 2);
-      Utility.Put(Mapper_Helper.Server_Bind_Port'Img, 60, 2);
+      Application_Helper.Put("Listen on port:", 20, 2);
+      Application_Helper.Put(Mapper_Helper.Server_Bind_Port'Img, 60, 2);
       Ada.Text_IO.New_Line;
       
-      Utility.Put("Master host:", 20, 2);
-      Utility.Put(GNAT.Sockets.Image(Mapper_Helper.Master_Ip), 60, 2);
+      Application_Helper.Put("Master host:", 20, 2);
+      Application_Helper.Put(GNAT.Sockets.Image(Mapper_Helper.Master_Ip), 60, 2);
       Ada.Text_IO.New_Line;
       
-      Utility.Put("Master port:", 20, 2);
-      Utility.Put(Mapper_Helper.Master_Port'Img, 60, 2);
+      Application_Helper.Put("Master port:", 20, 2);
+      Application_Helper.Put(Mapper_Helper.Master_Port'Img, 60, 2);
       Ada.Text_IO.New_Line;
       Ada.Text_IO.New_Line;
       Ada.Text_IO.New_Line;

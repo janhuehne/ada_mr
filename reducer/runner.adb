@@ -1,7 +1,7 @@
 with Ada.Text_IO;
 with Ada.Strings.Unbounded;
 with Ada.IO_Exceptions;
-with Utility;
+with Application_Helper;
 
 with Ada.Characters.Handling;
 use Ada.Characters.Handling;

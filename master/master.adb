@@ -1,8 +1,8 @@
 with Ada.Text_IO;
 
 
-with Utility;
-use Utility;
+with Application_Helper;
+use Application_Helper;
 
 --with Server;
 with Logger;
@@ -26,7 +26,7 @@ package body Master is
     
     procedure Read_and_Parse_Config_File(Config_File : String) is
     begin
-      if Utility.Does_File_Exist(Config_File) then
+      if Application_Helper.Does_File_Exist(Config_File) then
         Ada.Text_IO.Put_Line("Parsing config file");
         Parse_Configuration(
           Xml_Parser.Parse(File_Name => Config_File)
@@ -37,8 +37,8 @@ package body Master is
       end if;
     exception
       when Error : others => 
-        Utility.Print_Exception(Error);
-        Ada.Exceptions.Raise_Exception(Utility.Configuration_File_Error'Identity, "There is a problem with the configuration file.");
+        Application_Helper.Print_Exception(Error);
+        Ada.Exceptions.Raise_Exception(Application_Helper.Configuration_File_Error'Identity, "There is a problem with the configuration file.");
     end Read_and_Parse_Config_File;
     
   begin
@@ -129,13 +129,13 @@ package body Master is
       
       -- TODO: send this to all connected reducers!
       declare
-        Reducer_Vector : Master_Helper.Worker_Entry_Vectors.Vector := Worker.Find_All_By_Type(Utility.Reducer);
+        Reducer_Vector : Master_Helper.Worker_Entry_Vectors.Vector := Worker.Find_All_By_Type(Application_Helper.Reducer);
         
         procedure Send_Finalize(C : Master_Helper.Worker_Entry_Vectors.Cursor) is
           Reducer : Master_Helper.Worker_Record_Access := Master_Helper.Worker_Entry_Vectors.Element(C);
         begin
           declare
-            Response : String := Utility.Send(
+            Response : String := Application_Helper.Send(
               Reducer.Ip,
               Reducer.Port,
               Xml_Helper.Xml_Command(Xml_Helper.Master, "finalize"),
@@ -297,7 +297,7 @@ package body Master is
       --TODO: Salt für Hashfunktion in Xml_Datei
       --TODO: Method Authentification Code (HMAC)
       New_Worker.Access_Token := GNAT.MD5.Digest(
-        ASU.To_String(New_Worker.Identifier) & "-" & Utility.To_String(New_Worker.W_Type) & "-" & Rand.Random(Gen)'Img
+        ASU.To_String(New_Worker.Identifier) & "-" & Application_Helper.To_String(New_Worker.W_Type) & "-" & Rand.Random(Gen)'Img
       );
       
       Worker.Append(New_Worker);
@@ -313,7 +313,7 @@ package body Master is
           Worker : Master_Helper.Worker_Record_Access := Master_Helper.Worker_Entry_Vectors.Element(Cursor);
         begin
           
-          if Utility.Is_Equal(ASU.To_String(Worker.Identifier), Identifier) then
+          if Application_Helper.Is_Equal(ASU.To_String(Worker.Identifier), Identifier) then
             return Worker;
           end if;
         end;
@@ -326,7 +326,7 @@ package body Master is
     end Find_By_Identifier;
     
     
-    function Find_By_Access_Token_And_Type(Access_Token : String; W_Type : Utility.Worker_Type) return Master_Helper.Worker_Record_Access is
+    function Find_By_Access_Token_And_Type(Access_Token : String; W_Type : Application_Helper.Worker_Type) return Master_Helper.Worker_Record_Access is
       Cursor : Master_Helper.Worker_Entry_Vectors.Cursor := Worker.First;
     begin
       loop
@@ -336,7 +336,7 @@ package body Master is
           Worker : Master_Helper.Worker_Record_Access := Master_Helper.Worker_Entry_Vectors.Element(Cursor);
         begin
           
-          if Utility."="(Worker.W_Type, W_Type) and Worker.Access_Token = Access_Token then
+          if Application_Helper."="(Worker.W_Type, W_Type) and Worker.Access_Token = Access_Token then
             return Worker;
           end if;
         end;
@@ -350,13 +350,13 @@ package body Master is
     end Find_By_Access_Token_And_Type;
     
     
-    function Find_All_By_Type(W_Type : Utility.Worker_Type) return Master_Helper.Worker_Entry_Vectors.Vector is
+    function Find_All_By_Type(W_Type : Application_Helper.Worker_Type) return Master_Helper.Worker_Entry_Vectors.Vector is
       Type_Vector : Master_Helper.Worker_Entry_Vectors.Vector;
       
       procedure Find(C : Master_Helper.Worker_Entry_Vectors.Cursor) is
         Worker : Master_Helper.Worker_Record_Access := Master_Helper.Worker_Entry_Vectors.Element(C);
       begin
-        if Utility."="(Worker.W_Type, W_Type) then
+        if Application_Helper."="(Worker.W_Type, W_Type) then
           Type_Vector.Append(Worker);
         end if;
       end Find;
@@ -371,11 +371,11 @@ package body Master is
       procedure Print(Cursor : Master_Helper.Worker_Entry_Vectors.Cursor) is
         Worker_Entry : Master_Helper.Worker_Record_Access := Master_Helper.Worker_Entry_Vectors.Element(Cursor);
       begin
-        Utility.Put(ASU.To_String(Worker_Entry.Identifier), 30, 2);
-        Utility.Put(Utility.To_String(Worker_Entry.W_Type), 10, 2);
-        Utility.Put(Worker_Entry.Access_Token, 40, 2);
-        Utility.Put(GNAT.Sockets.Image(Worker_Entry.Ip), 20, 2);
-        Utility.Put(Worker_Entry.Port'Img, 20, 2);
+        Application_Helper.Put(ASU.To_String(Worker_Entry.Identifier), 30, 2);
+        Application_Helper.Put(Application_Helper.To_String(Worker_Entry.W_Type), 10, 2);
+        Application_Helper.Put(Worker_Entry.Access_Token, 40, 2);
+        Application_Helper.Put(GNAT.Sockets.Image(Worker_Entry.Ip), 20, 2);
+        Application_Helper.Put(Worker_Entry.Port'Img, 20, 2);
         Ada.Text_IO.New_Line;
       end Print;
       
@@ -383,11 +383,11 @@ package body Master is
       Ada.Text_IO.New_Line;
       Ada.Text_IO.Put_Line("Connected worker:");
       Ada.Text_IO.New_Line;
-      Utility.Put("Identifier", 30, 2);
-      Utility.Put("Type", 10, 2);
-      Utility.Put("Access Token", 40, 2);
-      Utility.Put("IP address", 20, 2);
-      Utility.Put("Listen on port", 20, 2);
+      Application_Helper.Put("Identifier", 30, 2);
+      Application_Helper.Put("Type", 10, 2);
+      Application_Helper.Put("Access Token", 40, 2);
+      Application_Helper.Put("IP address", 20, 2);
+      Application_Helper.Put("Listen on port", 20, 2);
       Ada.Text_IO.New_Line;
       Ada.Text_IO.Put_Line("------------------------------------------------------------------------------------------------------------------");
       
@@ -433,21 +433,21 @@ package body Master is
       Ada.Text_IO.New_Line;
       Ada.Text_IO.New_Line;
     
-    elsif (Utility.Is_Equal(User_Input, "config", true)) then
+    elsif (Application_Helper.Is_Equal(User_Input, "config", true)) then
       Ada.Text_IO.New_Line;
       Ada.Text_IO.Put_Line("-> " & Banner & " configuration");
             
-      Utility.Put("IP address:", 20, 2);
-      Utility.Put(GNAT.Sockets.Image(Master_Helper.Server_Bind_Ip), 60, 2);
+      Application_Helper.Put("IP address:", 20, 2);
+      Application_Helper.Put(GNAT.Sockets.Image(Master_Helper.Server_Bind_Ip), 60, 2);
       Ada.Text_IO.New_Line;
       
-      Utility.Put("Port:", 20, 2);
-      Utility.Put(Master_Helper.Server_Bind_Port'Img, 60, 2);
+      Application_Helper.Put("Port:", 20, 2);
+      Application_Helper.Put(Master_Helper.Server_Bind_Port'Img, 60, 2);
       Ada.Text_IO.New_Line;
       Ada.Text_IO.New_Line;
       Ada.Text_IO.New_Line;
     
-    elsif Utility.Is_Equal(User_Input, "quit", true) OR Is_Equal(User_Input, "exit", true) then
+    elsif Application_Helper.Is_Equal(User_Input, "quit", true) OR Is_Equal(User_Input, "exit", true) then
       To_Controll.Stop;
     
     elsif (Is_Equal(User_Input, "worker", true)) then

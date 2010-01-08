@@ -1,5 +1,5 @@
 with Ada.Text_IO;
-with Utility;
+with Application_Helper;
 with Logger;
 
 package body Generic_Observer is
@@ -23,7 +23,7 @@ package body Generic_Observer is
           end loop;
           
         exception
-          when Error : others => Utility.Print_Exception(Error, "Observer Task");
+          when Error : others => Application_Helper.Print_Exception(Error, "Observer Task");
         end;
       or
         accept Stop;

@@ -7,7 +7,7 @@ with Xml;
 with Xml_Parser;
 with Xml_Helper;
 
-with Utility;
+with Application_Helper;
 
 package body Reducer_Server is 
   
@@ -28,9 +28,9 @@ package body Reducer_Server is
   end Process_Incomming_Connection;
   
 
-  procedure Process_Request(S : Stream_Access; From : Utility.Worker_Type; Xml_Root : Xml.Node_Access) is
+  procedure Process_Request(S : Stream_Access; From : Application_Helper.Worker_Type; Xml_Root : Xml.Node_Access) is
   begin
-    if Utility."="(From, Utility.Mapper) then
+    if Application_Helper."="(From, Application_Helper.Mapper) then
       
       if Xml_Helper.Is_Command(Xml_Root, "job_result") then
       
@@ -42,7 +42,7 @@ package body Reducer_Server is
         );
       end if;
         
-    elsif Utility."="(From, Utility.Master) then
+    elsif Application_Helper."="(From, Application_Helper.Master) then
       
       if Xml_Helper.Is_Command(Xml_Root, "finalize") then
         Finalize_Jobs;
@@ -57,7 +57,7 @@ package body Reducer_Server is
     
   exception
     when Error : others => 
-      Utility.Print_Exception(Error);
+      Application_Helper.Print_Exception(Error);
       String'Output(S, Xml_Helper.Create_System_Control(Xml_Helper.Reducer, Ada.Exceptions.Exception_Message(Error)));
   end Process_Request;
 end Reducer_Server;

@@ -2,7 +2,7 @@ with Logger;
 with Ada.Strings.Fixed;
 with Crypto_Helper;
 
-package body Utility is
+package body Application_Helper is
   
   function Starts_With(Item : String; Pattern : String; Ignore_Case : Boolean := false) return Boolean is
   begin
@@ -235,11 +235,11 @@ package body Utility is
   
   function String_To_Worker_Type(Arg : String) return Worker_Type is
   begin
-    if Utility.Is_Equal(Arg, "Master", true) then
+    if Application_Helper.Is_Equal(Arg, "Master", true) then
       return Master;
-    elsif Utility.Is_Equal(Arg, "Mapper", true) then
+    elsif Application_Helper.Is_Equal(Arg, "Mapper", true) then
       return Mapper;
-    elsif Utility.Is_Equal(Arg, "Reducer", true) then
+    elsif Application_Helper.Is_Equal(Arg, "Reducer", true) then
       return Reducer;
     else
       raise Unknow_Worker_Type;
@@ -263,4 +263,4 @@ package body Utility is
     return Ada.Strings.Fixed.Trim(Input, Ada.Strings.Both);
   end Trim;
   
-end Utility;
+end Application_Helper;

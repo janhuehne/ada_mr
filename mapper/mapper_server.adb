@@ -31,12 +31,12 @@ package body Mapper_Server is
   end Process_Incomming_Connection;
   
 
-  procedure Process_Request(S : Stream_Access; From : Utility.Worker_Type; Xml_Root : Xml.Node_Access) is
+  procedure Process_Request(S : Stream_Access; From : Application_Helper.Worker_Type; Xml_Root : Xml.Node_Access) is
   begin
     null;
   exception
     when Error : others => 
-      Utility.Print_Exception(Error);
+      Application_Helper.Print_Exception(Error);
       String'Output(S, Xml_Helper.Create_System_Control(Xml_Helper.Master, Ada.Exceptions.Exception_Message(Error)));
   end Process_Request;
 end Mapper_Server;

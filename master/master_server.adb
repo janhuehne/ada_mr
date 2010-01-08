@@ -7,7 +7,7 @@ with Xml;
 with Xml_Parser;
 with Xml_Helper;
 
-with Utility;
+with Application_Helper;
 
 with Logger;
 
@@ -33,8 +33,8 @@ package body Master_Server is
   end Process_Incomming_Connection;
   
   
-  procedure Process_Request(S : Stream_Access; From : Utility.Worker_Type; Xml_Root : Xml.Node_Access) is
-    use Utility;
+  procedure Process_Request(S : Stream_Access; From : Application_Helper.Worker_Type; Xml_Root : Xml.Node_Access) is
+    use Application_Helper;
   begin
     
     if From = Mapper or From = Reducer then
@@ -46,7 +46,7 @@ package body Master_Server is
           Worker_Entry : Master_Helper.Worker_Record_Access := new Master_Helper.Worker_Record;
         begin
           Worker_Entry.Identifier  := ASU.To_Unbounded_String(Xml.Get_Value(Details, "identifier"));
-          Worker_Entry.W_Type      := Utility.String_To_Worker_Type(Xml.Get_Value(Details, "type"));
+          Worker_Entry.W_Type      := Application_Helper.String_To_Worker_Type(Xml.Get_Value(Details, "type"));
           Worker_Entry.Ip          := Inet_Addr(Xml.Get_Value(Details, "ip"));
           Worker_Entry.Port        := Port_Type'Value(Xml.Get_Value(Details, "port"));
           
@@ -71,7 +71,7 @@ package body Master_Server is
         begin
           Worker := Find_Worker_By_Access_Token_And_Type(
             Xml.Get_Value(Xml_Root, "access_token"),
-            Utility.Mapper
+            Application_Helper.Mapper
           );
           
           
@@ -103,7 +103,7 @@ package body Master_Server is
                     Details => "<seconds>10</seconds>"
                   ));
                 when Error : others => 
-                  Utility.Print_Exception(Error);
+                  Application_Helper.Print_Exception(Error);
               end;
             
             
@@ -153,7 +153,7 @@ package body Master_Server is
                 String'Output(S, Xml_Helper.Xml_Command(
                   G_T     => Xml_Helper.Master, 
                   Command => "reducer_details", 
-                  Details => "<ip>" & Utility.Trim(GNAT.Sockets.Image(Reducer.Ip)) & "</ip><port>" & Utility.Trim(Reducer.Port'Img) & "</port>"
+                  Details => "<ip>" & Application_Helper.Trim(GNAT.Sockets.Image(Reducer.Ip)) & "</ip><port>" & Application_Helper.Trim(Reducer.Port'Img) & "</port>"
                 ));
               exception
                 when Error : Master_Helper.No_Worker_Found =>
@@ -161,7 +161,7 @@ package body Master_Server is
               end;
               
             else
-              Ada.Exceptions.Raise_Exception(Utility.Unknown_Command'Identity, "The command """ & Xml.Get_Value(Xml_Root, "command") & """is not supported from a mapper.");
+              Ada.Exceptions.Raise_Exception(Application_Helper.Unknown_Command'Identity, "The command """ & Xml.Get_Value(Xml_Root, "command") & """is not supported from a mapper.");
             end if;
           end if;
           -- End Handle Mapper requests -->
@@ -205,7 +205,7 @@ package body Master_Server is
 --                Details => "<seconds>10</seconds>"
 --              ));
 --            when Error : others => 
---              Utility.Print_Exception(Error);
+--              Application_Helper.Print_Exception(Error);
 --              --Change_Job_State(Job_Entry, Master_Helper.Pending);
 --          end;
 --        exception 
@@ -263,13 +263,13 @@ package body Master_Server is
 --        end;
 --            
 --      else
---        Ada.Exceptions.Raise_Exception(Utility.Unknown_Command'Identity, "The command """ & Xml.Get_Value(Xml_Root, "command") & """is not supported."); 
+--        Ada.Exceptions.Raise_Exception(Application_Helper.Unknown_Command'Identity, "The command """ & Xml.Get_Value(Xml_Root, "command") & """is not supported."); 
 --      end if;
 --      
 --    end if;
   exception
     when Error : others => 
-      Utility.Print_Exception(Error);
+      Application_Helper.Print_Exception(Error);
       String'Output(S, Xml_Helper.Create_System_Control(Xml_Helper.Master, Ada.Exceptions.Exception_Message(Error)));
   end Process_Request;
   

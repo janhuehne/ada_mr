@@ -1,6 +1,6 @@
 with Ada.Containers.Vectors;
 with Ada.Strings.Unbounded;
-with Utility;
+with Application_Helper;
 with Xml;
 
 package Char_Job is
@@ -71,7 +71,7 @@ package Char_Job is
   procedure Finalize;
   
   -- Function to split a result for serval reducers
-  function Split_Result_For_Different_Reducer return Utility.String_String_Maps.Map;
+  function Split_Result_For_Different_Reducer return Application_Helper.String_String_Maps.Map;
   
   
   
@@ -84,7 +84,7 @@ package Char_Job is
   
   
   -- Job result hash
-  Result_Hash : Utility.String_Integer_Maps.Map;
+  Result_Hash : Application_Helper.String_Integer_Maps.Map;
   
   -- Counts the jobs
   Job_Counter : Natural := 1;
