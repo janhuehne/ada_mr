@@ -18,7 +18,7 @@ package body Reducer is
   task body Reducer_Task is
     Server_Task       : Server.Server.Server_Task;
     Runner_Task       : Runner.Runner.Runner_Task;
---    Result_Merge      : Result_Merge_Task;
+    Result_Merge      : Result_Merge_Task;
     
     procedure Read_and_Parse_Config_File(Config_File : String) is
     begin
@@ -98,7 +98,7 @@ package body Reducer is
         Runner_Task.Start;
         
         -- start merging task to merge mapper results
---          Result_Merge.Start;
+        Result_Merge.Start;
       or
         accept Stop;
           Server_Task.Stop;

@@ -2,7 +2,7 @@ with GNAT.Sockets;
 use GNAT.Sockets;
 with Xml;
 with Ada.Strings.Unbounded;
-
+with Utility;
 with Generic_Runner;
 
 generic
@@ -11,7 +11,7 @@ generic
   with function To_Xml(Job : in My_Job) return String;
   with function Get_Job_Id(Job : in My_Job) return Natural;
   with procedure Compute_Job(Job : in My_Job);
-  with function Job_Result_To_Xml return String;
+  with function Split_Result_For_Different_Reducer return Utility.String_String_Maps.Map;
     
 package Mapper_Runner is  
   

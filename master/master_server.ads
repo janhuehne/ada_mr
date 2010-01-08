@@ -15,6 +15,7 @@ generic
   type My_Job is private;
   type Job_Entry_Record_Access is private;
   with procedure Add_Worker(New_Worker : Master_Helper.Worker_Record_Access);
+  with function Find_Worker_By_Identifier(Identifier : String) return Master_Helper.Worker_Record_Access;
   with function Find_Worker_By_Access_Token_And_Type(Access_Token : String; W_Type : Utility.Worker_Type) return Master_Helper.Worker_Record_Access;
   with function Get_Job_By_Id(Id : Natural) return Job_Entry_Record_Access;
   with function Get_Next_Pending_Job return Job_Entry_Record_Access;

@@ -16,7 +16,7 @@ procedure MR_Mapper_Count_Char is
       Job.Get_Job_Id,
       Job.Print_Job,
       Job.Compute_Job,
-      Job.Job_Result_To_Xml
+      Job.Split_Result_For_Different_Reducer
     );
 begin
 

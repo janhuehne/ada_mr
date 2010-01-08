@@ -6,6 +6,7 @@ with Mapper_Server;
 with Ada.Strings.Unbounded;
 with Generic_Console;
 with Generic_Observer;
+with Utility;
 
 generic
   type My_Job is private;
@@ -14,7 +15,7 @@ generic
   with function Get_Job_Id(Job : in My_Job) return Natural;
   with procedure Print_Job(Job : in My_Job; State : String);
   with procedure Compute_Job(Job : in My_Job);
-  with function Job_Result_To_Xml return String;
+  with function Split_Result_For_Different_Reducer return Utility.String_String_Maps.Map;
   
 package Mapper is
 
@@ -34,7 +35,7 @@ package Mapper is
     To_Xml,
     Get_Job_Id,
     Compute_Job, 
-    Job_Result_To_Xml
+    Split_Result_For_Different_Reducer
   );
 
 

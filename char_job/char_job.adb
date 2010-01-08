@@ -2,6 +2,7 @@ with Ada.Text_IO;
 with Utility;
 with Xml_Helper;
 with Logger;
+with Ada.Strings.Maps;
 
 package body Char_Job is
   
@@ -9,7 +10,7 @@ package body Char_Job is
     Details : Utility.String_String_Maps.Map;
   begin
     Details.Insert("job_id", Utility.Trim(Job.Job_Id'Img));
-    Details.Insert("computable_string", ASU.To_String(Job.Computable_String));
+    Details.Insert("computable_string", "#" & ASU.To_String(Job.Computable_String) & "#");
     
     return Xml_Helper.Hash_To_Xml_String(Details);
   end To_Xml;
@@ -18,7 +19,7 @@ package body Char_Job is
     J : My_Job;
   begin
     J.Job_Id              := Integer'Value(Xml.Get_Value(Xml_Node, "job_id"));
-    J.Computable_String   := ASU.To_Unbounded_String(Xml.Get_Value(Xml_Node, "computable_string"));
+    J.Computable_String   := ASU.Trim(ASU.To_Unbounded_String(Xml.Get_Value(Xml_Node, "computable_string")), Ada.Strings.Maps.To_Set("#"), Ada.Strings.Maps.To_Set("#"));
     
     return J;
   end From_Xml;
@@ -79,17 +80,27 @@ package body Char_Job is
   procedure Compute_Job(Job : in My_Job) is
     Computable_String : String := ASU.To_String(Job.Computable_String);
     Element_Cursor : Utility.String_Integer_Maps.Cursor;
+    
+    function Special_Char(Input : String) return String is
+    begin
+      if Input = " " or Input = "." or Input = "," or Input = ";" then
+        return "SZ";
+      else
+        return Input;
+      end if;
+    end;
   begin
+    Logger.Put_Line("Analysing: " & Computable_String, Logger.Info);
     
     for I in Computable_String'First .. Computable_String'Last loop
-      Element_Cursor := Result_Hash.Find(Computable_String(I..I));
+      Element_Cursor := Result_Hash.Find(Special_Char(Computable_String(I..I)));
       if Utility.String_Integer_Maps."/="(Element_Cursor, Utility.String_Integer_Maps.No_Element) then
         Result_Hash.Replace_Element(
           Element_Cursor, 
           Utility.String_Integer_Maps.Element(Element_Cursor) + 1
         );
       else
-        Result_Hash.Insert(Computable_String(I..I), 1);
+        Result_Hash.Insert(Special_Char(Computable_String(I..I)), 1);
       end if;
     end loop;
     
@@ -172,7 +183,7 @@ package body Char_Job is
   procedure Split_Raw_Data is
     First : Natural := Complete_String'First;
     Last  : Natural;
-    Step  : Natural := 10;
+    Step  : Natural := 30;
   begin
     Logger.Put_Line("Splitting raw data into jobs", Logger.Info);
     
@@ -209,6 +220,17 @@ package body Char_Job is
     
     return J;
   end Get_Next_Raw_Job;
+  
+  
+  function Split_Result_For_Different_Reducer return Utility.String_String_Maps.Map is
+    Mapping         : Utility.String_String_Maps.Map;
+    Reducer_Mapping : Utility.String_String_Maps.Map;
+    
+  begin
+    Utility.String_String_Maps.Insert(Mapping, "Reducer_01", Job_Result_To_Xml);
+    
+    return Mapping;
+  end Split_Result_For_Different_Reducer;
   
   
 end Char_Job;

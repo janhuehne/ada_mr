@@ -105,6 +105,22 @@ package body Utility is
   end Print_Exception;
   
   
+  function Send(Host : String; Port : String; Command : String; Tries : Natural := 1; Wait_Between_Tries : Natural := 5) return String is
+    use GNAT.Sockets;
+    
+    Addr : Sock_Addr_Type(Family_Inet);
+  begin
+    Addr.Addr := Addresses(Get_Host_By_Name (Host), 1);
+    Addr.Port := Port_Type'Value(Port);
+    
+    if Tries = 1 then
+      return Send(Addr, Command);
+    else
+      return Send(Addr, Command, Tries, Wait_Between_Tries);
+    end if;
+  end Send;
+  
+  
   function Send(Host : String; Port : GNAT.Sockets.Port_Type; Command : String; Tries : Natural := 1; Wait_Between_Tries : Natural := 5) return String is
     use GNAT.Sockets;
     

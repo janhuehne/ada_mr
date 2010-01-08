@@ -28,13 +28,9 @@ package body Reducer_Server is
   end Process_Incomming_Connection;
   
 
-  procedure Process_Request(S : Stream_Access) is
-    Request  : String          := String'Input(S);
-    Xml_Root : Xml.Node_Access := Xml_Parser.Parse(Content => Request);
+  procedure Process_Request(S : Stream_Access; From : Utility.Worker_Type; Xml_Root : Xml.Node_Access) is
   begin
-    Ada.Text_IO.Put_Line("XML Request: " & Request);
-    
-    if Xml_Helper.Is_Mapper_Request(Xml_Root) then
+    if Utility."="(From, Utility.Mapper) then
       
       if Xml_Helper.Is_Command(Xml_Root, "job_result") then
       
@@ -46,7 +42,7 @@ package body Reducer_Server is
         );
       end if;
         
-    elsif Xml_Helper.Is_Master_Request(Xml_Root) then
+    elsif Utility."="(From, Utility.Master) then
       
       if Xml_Helper.Is_Command(Xml_Root, "finalize") then
         Finalize_Jobs;

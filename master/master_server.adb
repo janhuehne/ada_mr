@@ -139,6 +139,27 @@ package body Master_Server is
               end;
               
               String'Output(S, Xml_Helper.Create_System_Control(Xml_Helper.Master, "okay"));
+            
+              -- *******************************************************
+              -- Return the reducer details like ip and port
+            elsif Xml_Helper.Is_Command(Xml_Root, "reducer_details") then
+              
+              declare
+                Details : Xml.Node_Access := Xml.Find_Child_With_Tag(Xml_Root, "details");
+                Reducer : Master_Helper.Worker_Record_Access;
+              begin
+                Reducer := Find_Worker_By_Identifier(Xml.Get_Value(Details, "identifier"));
+                
+                String'Output(S, Xml_Helper.Xml_Command(
+                  G_T     => Xml_Helper.Master, 
+                  Command => "reducer_details", 
+                  Details => "<ip>" & Utility.Trim(GNAT.Sockets.Image(Reducer.Ip)) & "</ip><port>" & Utility.Trim(Reducer.Port'Img) & "</port>"
+                ));
+              exception
+                when Error : Master_Helper.No_Worker_Found =>
+                  Xml_Helper.Send_Error(S, Xml_Helper.Master, Error);
+              end;
+              
             else
               Ada.Exceptions.Raise_Exception(Utility.Unknown_Command'Identity, "The command """ & Xml.Get_Value(Xml_Root, "command") & """is not supported from a mapper.");
             end if;

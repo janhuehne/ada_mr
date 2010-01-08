@@ -32,9 +32,9 @@ package body Reducer_Runner is
           );
         begin
           declare
-            Xml_Tree : Xml.Node_Access := Xml_Parser.Parse(Content => Response);
+            Xml_Tree : Xml.Node_Access;
           begin
-            
+            Xml_Tree := Xml_Helper.Get_Verified_Content(Xml_Parser.Parse(Content => Response));
             if Xml_Helper.Is_Command(Xml_Tree, "new_access_token") then
               Reducer_Helper.Access_Token := Xml.Get_Value(
                 Xml.Find_Child_With_Tag(Xml_Tree, "details"),

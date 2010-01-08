@@ -70,6 +70,9 @@ package Char_Job is
   -- Procedure called by the reducer to handle the job result
   procedure Finalize;
   
+  -- Function to split a result for serval reducers
+  function Split_Result_For_Different_Reducer return Utility.String_String_Maps.Map;
+  
   
   
   -- Precalculated jobs
@@ -77,7 +80,7 @@ package Char_Job is
   
   
   -- Basic data
-  Complete_String : String := "abcdefghijklmnopqrstuvwxyz-abcdefghijklmnopqrstuvwxyzzz";
+  Complete_String : String := "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
   
   
   -- Job result hash

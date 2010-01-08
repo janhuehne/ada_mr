@@ -16,6 +16,9 @@ package Mapper_Helper is
   end Aborted;
   
   
+  Reducer_Not_Found : Exception;
+  
+  
   ----------------------------------------------------
   -- GLOBAL VARIABLES                                -
   ----------------------------------------------------

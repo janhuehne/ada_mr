@@ -303,6 +303,29 @@ package body Master is
       Worker.Append(New_Worker);
     end Add;
     
+    function Find_By_Identifier(Identifier : String) return Master_Helper.Worker_Record_Access is
+      Cursor : Master_Helper.Worker_Entry_Vectors.Cursor := Worker.First;
+    begin
+      loop
+        exit when Master_Helper.Worker_Entry_Vectors."="(Cursor, Master_Helper.Worker_Entry_Vectors.No_Element);
+        
+        declare
+          Worker : Master_Helper.Worker_Record_Access := Master_Helper.Worker_Entry_Vectors.Element(Cursor);
+        begin
+          
+          if Utility.Is_Equal(ASU.To_String(Worker.Identifier), Identifier) then
+            return Worker;
+          end if;
+        end;
+        
+        Master_Helper.Worker_Entry_Vectors.Next(Cursor);
+        
+      end loop;
+      
+      Ada.Exceptions.Raise_Exception(Master_Helper.No_Worker_Found'Identity, "No worker found");
+    end Find_By_Identifier;
+    
+    
     function Find_By_Access_Token_And_Type(Access_Token : String; W_Type : Utility.Worker_Type) return Master_Helper.Worker_Record_Access is
       Cursor : Master_Helper.Worker_Entry_Vectors.Cursor := Worker.First;
     begin
