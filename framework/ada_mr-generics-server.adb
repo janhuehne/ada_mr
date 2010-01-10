@@ -26,6 +26,9 @@ package body Ada_Mr.Generics.Server is
     Accept_Set      : Socket_Set_Type;
     WSet            : Socket_Set_Type;
     Accept_Status   : Selector_Status;
+    
+    Total_Tasks     : Natural := 0;
+    Slave           : Echo.Echo_Access;
   begin
     loop
       select
@@ -73,7 +76,25 @@ package body Ada_Mr.Generics.Server is
             --  Hence the Accept_Socket call should not block. 
             Accept_Socket(Server, New_Sock, Peer_Addr);
             
-            Process_Incomming_Connection(New_Sock);
+            
+            if Echo.Buffer.Num_Waiting = 0 and Total_Tasks < Echo.Max_Tasks then
+              -- start new task
+              Slave := new Echo.Echo;
+              Total_Tasks := Total_Tasks + 1;
+              Logger.Put_Line("New echo task started", Logger.Info);
+
+              -- call entry Start to activate task
+              Slave.Start(New_Sock, Slave);
+            else
+              Logger.Put_Line("Waiting for an idle echo task", Logger.Info);
+              Echo.Buffer.Extract(Slave);
+              
+              -- call entry Start to re-activate task
+              Slave.ReStart(New_Sock);
+              Logger.Put_Line("Idle echo task reactivated", Logger.Info);
+            end if;
+
+            --Process_Incomming_Connection(New_Sock);
           end if;
         end loop;
           

@@ -10,7 +10,30 @@ with Ada_Mr.Crypt.Helper;
 with Ada_Mr.Logger;
 
 package body Ada_Mr.Generics.Echo is
-
+  
+  protected body Buffer is
+    entry Deposit(X : in Echo_Access) when Count < Max_Tasks is
+    begin
+      Buf(I) := X;
+      I := I + 1;
+      Count := Count + 1;
+    end Deposit;
+    
+    entry Extract(X : out Echo_Access) when Count > 0 is
+    begin
+      X := Buf(J);
+      J := J + 1;
+      Count := Count - 1;
+    end Extract;
+    
+    function Num_Waiting return Natural is
+    begin
+      return Count;
+    end Num_Waiting;
+  end Buffer;
+  
+  
+  
   task body Echo is 
     Sock : Socket_Type;
     S : Stream_Access;
@@ -18,6 +41,7 @@ package body Ada_Mr.Generics.Echo is
     Input_Set : Socket_Set_Type;
     WSet : Socket_Set_Type;
     Input_Status : Selector_Status;
+    Me : Echo_Access;
   begin 
     --set up selector 
     Create_Selector(Input_Selector);
@@ -28,8 +52,9 @@ package body Ada_Mr.Generics.Echo is
     Empty(Input_Set);
     Empty(WSet);
     
-    ACCEPT Start(N_Sock : IN Socket_Type) DO
+    accept Start(N_Sock : IN Socket_Type; Self : IN Echo_Access) do
       Sock := N_Sock;
+      Me   := Self;
     end Start;
     
     loop
@@ -67,11 +92,18 @@ package body Ada_Mr.Generics.Echo is
           
         end loop;
         
+        Ada_Mr.Logger.Put_Line("Closing connection", Logger.Info);
         ShutDown_Socket(Sock, Shut_Read_Write);
+        Buffer.Deposit(Me);
+      exception
+        when others =>
+          Ada_Mr.Logger.Put_Line("Connection closed unexpectedly", Logger.Info);
+          Close_Socket(Sock);
+          Buffer.Deposit(Me);
       end;
       
       select
-        ACCEPT ReStart (N_Sock : IN Socket_Type) DO
+        accept ReStart (N_Sock : IN Socket_Type) DO
           Sock := N_Sock;
         end ReStart;
       or
