@@ -437,9 +437,9 @@ package body Application_Helper is
   
   function Read_Configuration(Key : String) return String is
   begin
-    return To_Lower(String_String_Maps.Element(
+    return String_String_Maps.Element(
       String_String_Maps.Find(Configuration, To_Lower(Key))
-    ));
+    );
   exception
       when Error : Constraint_Error =>
         Ada.Exceptions.Raise_Exception(Configuration_Param_Not_Found'Identity, "Key """ & Key & """ not found in the configuration");
