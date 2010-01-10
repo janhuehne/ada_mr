@@ -1,15 +1,15 @@
 with Ada.Text_IO;
 with Ada.Command_Line;
 with Char_Job;
-with Application_Helper;
-with Xml;
-with Xml_Parser;
-with Mapper;
+with Ada_Mr.Helper;
+with Ada_Mr.Xml;
+with Ada_Mr.Xml.Parser;
+with Ada_Mr.Mapper.Main;
 
 procedure MR_Mapper_Count_Char is
    package Job renames Char_Job;
     
-    package Mapper_MR is new Mapper(
+    package Mapper_MR is new Ada_Mr.Mapper.Main(
       Job.My_Job,
       Job.From_Xml,
       Job.To_Xml,

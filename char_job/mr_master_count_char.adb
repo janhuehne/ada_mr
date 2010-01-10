@@ -1,14 +1,14 @@
 with Ada.Text_IO;
 with Char_Job;
-with Xml;
-with Xml_Parser;
-with Application_Helper;
-with Master;
+with Ada_Mr.Xml;
+with Ada_Mr.Xml.Parser;
+with Ada_Mr.Helper;
+with Ada_Mr.Master.Main;
 
 procedure MR_Master_Count_Char is
   package Job renames Char_Job;
   
-  package Master_MR is new Master(
+  package Master_MR is new Ada_Mr.Master.Main(
     Job.My_Job,
     Job.From_Xml,
     Job.To_Xml,

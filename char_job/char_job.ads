@@ -1,7 +1,7 @@
 with Ada.Containers.Vectors;
 with Ada.Strings.Unbounded;
-with Application_Helper;
-with Xml;
+with Ada_Mr.Helper;
+with Ada_Mr.Xml;
 
 package Char_Job is
   
@@ -32,7 +32,7 @@ package Char_Job is
   
   
   -- Deserializes a job from the xml format
-  function From_Xml(Xml_Node : Xml.Node_Access) return My_Job;
+  function From_Xml(Xml_Node : Ada_Mr.Xml.Node_Access) return My_Job;
   
   
   --  Returns the id from a given job
@@ -64,14 +64,14 @@ package Char_Job is
   
   
   -- Procedure to merge pending job results
-  procedure Merge_Jobs(Xml_Node : Xml.Node_Access);
+  procedure Merge_Jobs(Xml_Node : Ada_Mr.Xml.Node_Access);
   
   
   -- Procedure called by the reducer to handle the job result
   procedure Finalize;
   
   -- Function to split a result for serval reducers
-  function Split_Result_For_Different_Reducer return Application_Helper.String_String_Maps.Map;
+  function Split_Result_For_Different_Reducer return Ada_Mr.Helper.String_String_Maps.Map;
   
   
   
@@ -84,7 +84,7 @@ package Char_Job is
   
   
   -- Job result hash
-  Result_Hash : Application_Helper.String_Integer_Maps.Map;
+  Result_Hash : Ada_Mr.Helper.String_Integer_Maps.Map;
   
   -- Counts the jobs
   Job_Counter : Natural := 1;
