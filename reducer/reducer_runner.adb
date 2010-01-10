@@ -25,55 +25,46 @@ package body Reducer_Runner is
     Master_Port := GNAT.Sockets.Port_Type'Value(Application_Helper.Read_Configuration("MASTER-PORT"));
     
     -- Initialization
-    for I in 1 .. 10 loop
+    begin
       declare
+        Response : String := Application_Helper.Send(
+          Master_Ip,
+          Master_Port,
+          Xml_Helper.Create_Initialization(
+            Xml_Helper.Reducer, 
+            Application_Helper.Read_Configuration("IDENTIFIER"), 
+            GNAT.Sockets.Inet_Addr(Application_Helper.Read_Configuration("LOCAL_SERVER", "BIND_IP")),
+            GNAT.Sockets.Port_Type'Value(Application_Helper.Read_Configuration("LOCAL_SERVER", "BIND_PORT"))
+          ),
+          Natural'Value(Application_Helper.Read_Configuration("SETTINGS", "MAX_CONNECTION_TRIES")),
+          Natural'Value(Application_Helper.Read_Configuration("SETTINGS", "TIMEOUT_CONNECTION_TRIES"))
+        );
+        
+        Xml_Tree : Xml.Node_Access;
       begin
+        Xml_Tree := Xml_Helper.Get_Verified_Content(Xml_Parser.Parse(Content => Response));
         
-        declare
-          Response : String := Application_Helper.Send(
-            Master_Ip,
-            Master_Port,
-            Xml_Helper.Create_Initialization(
-              Xml_Helper.Reducer, 
-              Application_Helper.Read_Configuration("IDENTIFIER"), 
-              GNAT.Sockets.Inet_Addr(Application_Helper.Read_Configuration("LOCAL_SERVER", "BIND_IP")),
-              GNAT.Sockets.Port_Type'Value(Application_Helper.Read_Configuration("LOCAL_SERVER", "BIND_PORT"))
-            )
+        if Xml_Helper.Is_Command(Xml_Tree, "new_access_token") then
+          Application_Helper.Add_Configuration(
+            "ACCESS_TOKEN", 
+            Xml.Get_Value(Xml.Find_Child_With_Tag(Xml_Tree, "details"), "access_token")
           );
-        begin
-          declare
-            Xml_Tree : Xml.Node_Access;
-          begin
-            Xml_Tree := Xml_Helper.Get_Verified_Content(Xml_Parser.Parse(Content => Response));
-            if Xml_Helper.Is_Command(Xml_Tree, "new_access_token") then
-              Application_Helper.Add_Configuration(
-                "ACCESS_TOKEN", 
-                Xml.Get_Value(Xml.Find_Child_With_Tag(Xml_Tree, "details"), "access_token")
-              );
-            end if;
-            
-            if Xml_Helper.Is_Command(Xml_Tree, "error") then
-              Ada.Exceptions.Raise_Exception(Application_Helper.Initialisation_Failed'Identity, Xml.Get_Value(Xml.Find_Child_With_Tag(Xml_Tree, "details"), "message"));
-            end if;
-          end;
-          
-        end;
+                    
+          Logger.Put_Line("Reducer initalized with access token """ & Application_Helper.Read_Configuration("ACCESS_TOKEN") & """", Logger.Info);
+        end if;
         
-        exit;
-        
-      exception
-        when Application_Helper.Initialisation_Failed =>
-          raise;
-        when GNAT.Sockets.Socket_Error =>
-          Logger.Put_Line("Attempt " & I'Img & ": Master server is unreachable. Trying again.", Logger.Warn);
-          
-          if I = 10 then
-            Ada.Exceptions.Raise_Exception(Application_Helper.Initialisation_Failed'Identity, "Ada MR Master is unreachable");
-          end if;
-        when Error : others =>
-          Application_Helper.Print_Exception(Error);
+        if Xml_Helper.Is_Command(Xml_Tree, "error") then
+          Ada.Exceptions.Raise_Exception(Application_Helper.Initialisation_Failed'Identity, Xml.Get_Value(Xml.Find_Child_With_Tag(Xml_Tree, "details"), "message"));
+        end if;
       end;
-    end loop;
+    exception
+      when Application_Helper.Initialisation_Failed =>
+        raise;
+      when GNAT.Sockets.Socket_Error =>
+        Ada.Exceptions.Raise_Exception(Application_Helper.Initialisation_Failed'Identity, "Ada MR Master is not reachable");
+      when Error : others =>
+        Application_Helper.Print_Exception(Error);
+    end;
     
   exception
     when Error : others =>

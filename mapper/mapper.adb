@@ -19,56 +19,6 @@ package body Mapper is
   task body Mapper_Task is
     Runner_Task   : Runner.Runner.Runner_Task;
     Server_Task   : Server.Server.Server_Task;
-    Observer_Task : Observer.Observer_Task;
-    
-    procedure Read_and_Parse_Config_File(Config_File : String) is
-    begin
-      if Application_Helper.Does_File_Exist(Config_File) then
-        Ada.Text_IO.Put_Line("Parsing config file");
-        Parse_Configuration(
-          Xml_Parser.Parse(File_Name => Config_File)
-        );
-        Ada.Text_IO.Put_Line("--> Done");
-      else
-        Ada.Text_IO.Put_Line("No config file found!");
-      end if;
-    exception
-      when Error : others => 
-        Application_Helper.Print_Exception(Error);
-        Ada.Exceptions.Raise_Exception(Application_Helper.Configuration_File_Error'Identity, "There is a problem with the configuration file.");
-    end Read_and_Parse_Config_File;
-    
-    procedure Print_Configuration is
-    begin
-      Ada.Text_IO.New_Line;
-      Ada.Text_IO.Put_Line("-> Ada MR Mapper configuration");
-      
-      Application_Helper.Put("Identifier:", 20, 2);
-      Application_Helper.Put(ASU.To_String(Mapper_Helper.Identifier), 60, 2);
-      Ada.Text_IO.New_Line;
-      
-      Application_Helper.Put("Access token:", 20, 2);
-      Application_Helper.Put(Mapper_Helper.Access_Token, 60, 2);
-      Ada.Text_IO.New_Line;
-      
-      Application_Helper.Put("Listen on ip:", 20, 2);
-      Application_Helper.Put(GNAT.Sockets.Image(Mapper_Helper.Server_Bind_Ip), 60, 2);
-      Ada.Text_IO.New_Line;
-      
-      Application_Helper.Put("Listen on port:", 20, 2);
-      Application_Helper.Put(Mapper_Helper.Server_Bind_Port'Img, 60, 2);
-      Ada.Text_IO.New_Line;
-      
-      Application_Helper.Put("Master host:", 20, 2);
-      Application_Helper.Put(GNAT.Sockets.Image(Mapper_Helper.Master_Ip), 60, 2);
-      Ada.Text_IO.New_Line;
-      
-      Application_Helper.Put("Master port:", 20, 2);
-      Application_Helper.Put(Mapper_Helper.Master_Port'Img, 60, 2);
-      Ada.Text_IO.New_Line;
-      Ada.Text_IO.New_Line;
-      Ada.Text_IO.New_Line;
-    end Print_Configuration;
     
   begin
     Ada.Text_IO.New_Line;
@@ -93,29 +43,37 @@ package body Mapper is
           Main_Task := Self;
           
           -- parse configuration
-          Read_and_Parse_Config_File(Config_File);
+          --Read_and_Parse_Config_File(Config_File);
+          Application_Helper.Set_Default_Configuration(Application_Helper.Mapper);
+          Application_Helper.Parse_Configuration(Config_File, Application_Helper.Mapper);
         end Start;
         
         -- print configuration
-        Print_Configuration;
+        Application_Helper.Print_Configuration;
         
         -- start local server to accept incomming connections
-        Server_Task.Start(Mapper_Helper.Server_Bind_Ip, Mapper_Helper.Server_Bind_Port);
-        
-        -- observer task
-        Observer_Task.Start(Main_Task);
+        Server_Task.Start(
+          GNAT.Sockets.Inet_Addr(Application_Helper.Read_Configuration("LOCAL_SERVER-BIND_IP")),
+          GNAT.Sockets.Port_Type'Value(Application_Helper.Read_Configuration("LOCAL_SERVER-BIND_PORT"))
+        );
         
         -- runner task 
         Runner_Task.Start;
       or
         accept Stop;
         Logger.Put_Line("Depending tasks will be terminted", Logger.Info);
+        Mapper_Helper.Aborted.Stop;
         Runner_Task.Stop;
         Server_Task.Stop;
-        Observer_Task.Stop;
         exit;
       end select;
     end loop;
+  exception
+    when Error : others =>
+      Application_Helper.Print_Exception(Error);
+      Mapper_Helper.Aborted.Stop;
+      Runner_Task.Stop;
+      Server_Task.Stop;
   end Mapper_Task;
   
   
@@ -132,57 +90,4 @@ package body Mapper is
     return "ADA MR Mapper";
   end Banner;
   
-  
-  procedure Parse_Configuration(Config_Xml : Xml.Node_Access) is
-  begin
-    Mapper_Helper.Identifier      := ASU.To_Unbounded_String(Xml.Get_Value(Config_Xml, "identifier"));
-    Mapper_Helper.Hmac_Passphrase := ASU.To_Unbounded_String(Xml.Get_Value(Config_Xml, "hmac"));
-    
-    declare
-      Local_Server_Details : Xml.Node_Access := Xml.Find_Child_With_Tag(Config_Xml, "local_server");
-    begin
-      Mapper_Helper.Server_Bind_Ip   := GNAT.Sockets.Inet_Addr(Xml.Get_Value(Local_Server_Details, "bind_ip"));
-      Mapper_Helper.Server_Bind_Port := GNAT.Sockets.Port_Type'Value(Xml.Get_Value(Local_Server_Details, "bind_port"));
-    end;
-    
-    declare
-      Master_Details : Xml.Node_Access := Xml.Find_Child_With_Tag(Config_Xml, "master");
-    begin
-      Mapper_Helper.Master_Ip   := GNAT.Sockets.Inet_Addr(Xml.Get_Value(Master_Details, "ip"));
-      Mapper_Helper.Master_Port := GNAT.Sockets.Port_Type'Value(Xml.Get_Value(Master_Details, "port"));
-    end;
-    
-    declare
-      Reducer_Details : Xml.Node_Access := Xml.Find_Child_With_Tag(Config_Xml, "reducer");
-    begin
-      Mapper_Helper.Reducer_Ip   := GNAT.Sockets.Inet_Addr(Xml.Get_Value(Reducer_Details, "ip"));
-      Mapper_Helper.Reducer_Port := GNAT.Sockets.Port_Type'Value(Xml.Get_Value(Reducer_Details, "port"));
-    end;
-    
-  end Parse_Configuration;
-  
-  
-----------------------------------------------------
--- GENERIC OBSERVER TASK                          --
-----------------------------------------------------
-  function Exit_Observer return Boolean is
-  begin
-    if Mapper_Helper.Aborted.Get_Exit = true OR Mapper_Helper.Aborted.Get_Abort = true then
-      return true;
-    end if;
-      
-    return false;
-  end Exit_Observer;
-  
-  
-  function Observe(To_Controll : Mapper_Task_Access) return Boolean is
-  begin
-    
-    if Mapper_Helper.Aborted.Get_Exit = true OR Mapper_Helper.Aborted.Get_Abort = true then
-      To_Controll.Stop;
-      return true;
-    end if;
-    
-    return false;
-  end Observe;
 end Mapper;

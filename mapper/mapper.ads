@@ -24,6 +24,8 @@ package Mapper is
 ----------------------------------------------------
   package ASU renames Ada.Strings.Unbounded;
 
+  procedure Stop_Mapper_Task;
+
 
 
 ----------------------------------------------------
@@ -35,7 +37,8 @@ package Mapper is
     To_Xml,
     Get_Job_Id,
     Compute_Job, 
-    Split_Result_For_Different_Reducer
+    Split_Result_For_Different_Reducer,
+    Stop_Mapper_Task
   );
 
 
@@ -50,21 +53,20 @@ package Mapper is
     entry Start(Self : Mapper_Task_Access; Config_File : String);
     entry Stop;
   end Mapper_Task;
-  
-  procedure Stop_Mapper_Task;
+
 
 
 ----------------------------------------------------
 -- GENERIC OBSERVER TASK                          --
 ----------------------------------------------------
-  function Exit_Observer return Boolean;
-  function Observe(To_Controll : Mapper_Task_Access) return Boolean;
+--  function Exit_Observer return Boolean;
+--  function Observe(To_Controll : Mapper_Task_Access) return Boolean;
   
-  package Observer is new Generic_Observer(
-    Mapper_Task_Access,
-    Exit_Observer,
-    Observe
-  );
+--  package Observer is new Generic_Observer(
+--    Mapper_Task_Access,
+--    Exit_Observer,
+--    Observe
+--  );
 
 
 
@@ -88,7 +90,7 @@ package Mapper is
 -- GENERIC CONSOLE METHODS                        --
 ----------------------------------------------------
   function Banner return String;
-  procedure Parse_Configuration(Config_Xml : Xml.Node_Access);
+--  procedure Parse_Configuration(Config_Xml : Xml.Node_Access);
   
 --  package Console is new Generic_Console(
 --    Mapper_Task_Access,

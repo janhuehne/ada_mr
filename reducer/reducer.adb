@@ -73,6 +73,7 @@ package body Reducer is
   exception
     when Error : others =>
       Application_Helper.Print_Exception(Error);
+      Reducer_Helper.Aborted.Stop;
       Server_Task.Stop;
       Runner_Task.Stop;
       Result_Merge.Stop;

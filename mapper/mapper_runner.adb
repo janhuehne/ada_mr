@@ -19,16 +19,26 @@ with Application_Helper;
 package body Mapper_Runner is 
   
   procedure Run is
+    Master_Ip   : GNAT.Sockets.Inet_Addr_Type;
+    Master_Port : GNAT.Sockets.Port_Type;
   begin
-    null;
+    Master_Ip   := GNAT.Sockets.Inet_Addr(Application_Helper.Read_Configuration("MASTER-IP"));
+    Master_Port := GNAT.Sockets.Port_Type'Value(Application_Helper.Read_Configuration("MASTER-PORT"));
+
     -- Initialization
     begin
       declare
         Response : String := Application_Helper.Send(
-          Mapper_Helper.Master_Ip,
-          Mapper_Helper.Master_Port,
-          Xml_Helper.Create_Initialization(Xml_Helper.Mapper, ASU.To_String(Mapper_Helper.Identifier), Mapper_Helper.Server_Bind_Ip, Mapper_Helper.Server_Bind_Port),
-          10
+          Master_Ip,
+          Master_Port,
+          Xml_Helper.Create_Initialization(
+            Xml_Helper.Mapper, 
+            Application_Helper.Read_Configuration("IDENTIFIER"), 
+            GNAT.Sockets.Inet_Addr(Application_Helper.Read_Configuration("LOCAL_SERVER", "BIND_IP")),
+            GNAT.Sockets.Port_Type'Value(Application_Helper.Read_Configuration("LOCAL_SERVER", "BIND_PORT"))
+          ),
+          Natural'Value(Application_Helper.Read_Configuration("SETTINGS", "MAX_CONNECTION_TRIES")),
+          Natural'Value(Application_Helper.Read_Configuration("SETTINGS", "TIMEOUT_CONNECTION_TRIES"))
         );
         
         Xml_Tree : Xml.Node_Access;
@@ -36,13 +46,12 @@ package body Mapper_Runner is
         Xml_Tree := Xml_Helper.Get_Verified_Content(Xml_Parser.Parse(Content => Response));
         
         if Xml_Helper.Is_Command(Xml_Tree, "new_access_token") then
-          Mapper_Helper.Access_Token := Xml.Get_Value(
-            Xml.Find_Child_With_Tag(Xml_Tree, "details"),
-            "access_token"
+          Application_Helper.Add_Configuration(
+            "ACCESS_TOKEN", 
+            Xml.Get_Value(Xml.Find_Child_With_Tag(Xml_Tree, "details"), "access_token")
           );
-          
-          Logger.Put_Line("Mapper initalized with access token """ & Mapper_Helper.Access_Token & """", Logger.Info);
-          
+                    
+          Logger.Put_Line("Mapper initalized with access token """ & Application_Helper.Read_Configuration("ACCESS_TOKEN") & """", Logger.Info);
         end if;
         
         if Xml_Helper.Is_Command(Xml_Tree, "error") then
@@ -53,15 +62,14 @@ package body Mapper_Runner is
       when Application_Helper.Initialisation_Failed =>
         raise;
       when GNAT.Sockets.Socket_Error =>
-        Ada.Exceptions.Raise_Exception(Application_Helper.Initialisation_Failed'Identity, "Application_Helper.Worker_Type MR Master is unreachable");
+        Ada.Exceptions.Raise_Exception(Application_Helper.Initialisation_Failed'Identity, "Ada MR Master is not reachable");
       when Error : others =>
         Application_Helper.Print_Exception(Error);
     end;
     
     -- Ask for new jobs and work off them
     loop
-      exit when Mapper_Helper.Aborted.Get_Abort;
-      exit when Mapper_Helper.Aborted.Get_Exit; 
+      exit when Mapper_Helper.Aborted.Check;
       
       
       Logger.Put_Line("Asking for a new job", Logger.Info);
@@ -71,13 +79,15 @@ package body Mapper_Runner is
         
         declare
           Response : String := Application_Helper.Send(
-            Mapper_Helper.Master_Ip,
-            Mapper_Helper.Master_Port,
+            Master_Ip,
+            Master_Port,
             Xml_Helper.Xml_Command(
               G_T          => Xml_Helper.Mapper,
               Command      => "job_request",
-              Access_Token => Mapper_Helper.Access_Token
-            )
+              Access_Token => Application_Helper.Read_Configuration("ACCESS_TOKEN")
+            ),
+            Natural'Value(Application_Helper.Read_Configuration("SETTINGS", "MAX_CONNECTION_TRIES")),
+            Natural'Value(Application_Helper.Read_Configuration("SETTINGS", "TIMEOUT_CONNECTION_TRIES"))
           );
           
           Xml_Tree : Xml.Node_Access := Xml_Helper.Get_Verified_Content(Xml_Parser.Parse(Content => Response));
@@ -112,15 +122,16 @@ package body Mapper_Runner is
                     Xml_Command : String := Xml_Helper.Xml_Command(
                       G_T           => Xml_Helper.Mapper,
                       Command       => "reducer_details",
-                      Access_Token  => Mapper_Helper.Access_Token,
+                      Access_Token  => Application_Helper.Read_Configuration("ACCESS_TOKEN"),
                       Details       => "<identifier>" & Reducer_Identifier & "</identifier>"
                     );
                     
                     Response : String := Application_Helper.Send(
-                      Mapper_Helper.Master_Ip,
-                      Mapper_Helper.Master_Port,
+                      Master_Ip,
+                      Master_Port,
                       Xml_Command,
-                      5
+                      Natural'Value(Application_Helper.Read_Configuration("SETTINGS", "MAX_CONNECTION_TRIES")),
+                      Natural'Value(Application_Helper.Read_Configuration("SETTINGS", "TIMEOUT_CONNECTION_TRIES"))
                     );
                     
                     Reducer_Details_Xml : Xml.Node_Access;
@@ -143,7 +154,8 @@ package body Mapper_Runner is
                           Reducer_Ip,
                           Reducer_Port,
                           Xml_Command,
-                          5
+                          Natural'Value(Application_Helper.Read_Configuration("SETTINGS", "MAX_CONNECTION_TRIES")),
+                          Natural'Value(Application_Helper.Read_Configuration("SETTINGS", "TIMEOUT_CONNECTION_TRIES"))
                         );
                       begin
                         Logger.Put_Line("Job result send to reducer """ & Reducer_Identifier & """", Logger.Info);
@@ -164,15 +176,16 @@ package body Mapper_Runner is
                       begin
                         declare
                           Response : String := Application_Helper.Send(
-                            Mapper_Helper.Master_Ip,
-                            Mapper_Helper.Master_Port,
+                            Master_Ip,
+                            Master_Port,
                             Xml_Helper.Xml_Command(
                               G_T     => Xml_Helper.Mapper,
                               Command => "not_delivered_map_result",
-                              Access_Token => Mapper_Helper.Access_Token,
+                              Access_Token => Application_Helper.Read_Configuration("ACCESS_TOKEN"),
                               Details => "<result>" & Result & "</result>"
                             ),
-                            5
+                            Natural'Value(Application_Helper.Read_Configuration("SETTINGS", "MAX_CONNECTION_TRIES")),
+                            Natural'Value(Application_Helper.Read_Configuration("SETTINGS", "TIMEOUT_CONNECTION_TRIES"))
                           );
                         begin
                           null;
@@ -201,15 +214,16 @@ package body Mapper_Runner is
               begin
                 declare
                   Response : String := Application_Helper.Send(
-                    Mapper_Helper.Master_Ip,
-                    Mapper_Helper.Master_Port,
+                    Master_Ip,
+                    Master_Port,
                     Xml_Helper.Xml_Command(
                       G_T     => Xml_Helper.Mapper,
                       Command => "change_job_state",
-                      Access_Token => Mapper_Helper.Access_Token,
+                      Access_Token => Application_Helper.Read_Configuration("ACCESS_TOKEN"),
                       Details => Details_For_Master_Notification
                     ),
-                    5
+                    Natural'Value(Application_Helper.Read_Configuration("SETTINGS", "MAX_CONNECTION_TRIES")),
+                    Natural'Value(Application_Helper.Read_Configuration("SETTINGS", "TIMEOUT_CONNECTION_TRIES"))
                   );
                 begin
                   null;
@@ -231,11 +245,10 @@ package body Mapper_Runner is
             end;
           
           elsif Xml_Helper.Is_Command(Xml_Tree, "exit") then
-            Mapper_Helper.Aborted.Set_Exit;
+            Mapper_Helper.Aborted.Stop;
           
           else
             Ada.Exceptions.Raise_Exception(Application_Helper.Unknown_Command'Identity, "Unsupported command: """ & Xml.Get_Value(Xml_Tree, "command"));
-            
           end if;
           
         end;
@@ -255,7 +268,7 @@ package body Mapper_Runner is
   exception
     when Error : others =>
       Application_Helper.Print_Exception(Error);
-      Mapper_Helper.Aborted.Set_Abort;
+      Stop_Mapper;
   end Run; 
   
 end Mapper_Runner;
