@@ -18,7 +18,12 @@ with Logger;
 package body Reducer_Runner is 
   
   procedure Run is
+    Master_Ip   : GNAT.Sockets.Inet_Addr_Type;
+    Master_Port : GNAT.Sockets.Port_Type;
   begin
+    Master_Ip   := GNAT.Sockets.Inet_Addr(Application_Helper.Read_Configuration("MASTER-IP"));
+    Master_Port := GNAT.Sockets.Port_Type'Value(Application_Helper.Read_Configuration("MASTER-PORT"));
+    
     -- Initialization
     for I in 1 .. 10 loop
       declare
@@ -26,9 +31,14 @@ package body Reducer_Runner is
         
         declare
           Response : String := Application_Helper.Send(
-            Reducer_Helper.Master_Ip,
-            Reducer_Helper.Master_Port,
-            Xml_Helper.Create_Initialization(Xml_Helper.Reducer, ASU.To_String(Reducer_Helper.Identifier), Reducer_Helper.Server_Bind_Ip, Reducer_Helper.Server_Bind_Port)
+            Master_Ip,
+            Master_Port,
+            Xml_Helper.Create_Initialization(
+              Xml_Helper.Reducer, 
+              Application_Helper.Read_Configuration("IDENTIFIER"), 
+              GNAT.Sockets.Inet_Addr(Application_Helper.Read_Configuration("LOCAL_SERVER", "BIND_IP")),
+              GNAT.Sockets.Port_Type'Value(Application_Helper.Read_Configuration("LOCAL_SERVER", "BIND_PORT"))
+            )
           );
         begin
           declare
@@ -36,9 +46,9 @@ package body Reducer_Runner is
           begin
             Xml_Tree := Xml_Helper.Get_Verified_Content(Xml_Parser.Parse(Content => Response));
             if Xml_Helper.Is_Command(Xml_Tree, "new_access_token") then
-              Reducer_Helper.Access_Token := Xml.Get_Value(
-                Xml.Find_Child_With_Tag(Xml_Tree, "details"),
-                "access_token"
+              Application_Helper.Add_Configuration(
+                "ACCESS_TOKEN", 
+                Xml.Get_Value(Xml.Find_Child_With_Tag(Xml_Tree, "details"), "access_token")
               );
             end if;
             

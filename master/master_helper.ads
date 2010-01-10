@@ -95,4 +95,5 @@ package Master_Helper is
   Server_Bind_Ip   : GNAT.Sockets.Inet_Addr_Type;
   Server_Bind_Port : GNAT.Sockets.Port_Type;
   
+  Hmac_Passphrase : ASU.Unbounded_String;
 end Master_Helper;

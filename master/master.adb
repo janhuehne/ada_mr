@@ -411,8 +411,15 @@ package body Master is
   
   procedure Parse_Configuration(Config_Xml : Xml.Node_Access) is
   begin
-    Master_Helper.Server_Bind_Ip   := GNAT.Sockets.Inet_Addr(Xml.Get_Value(Config_Xml, "bind_ip"));
-    Master_Helper.Server_Bind_Port := GNAT.Sockets.Port_Type'Value(Xml.Get_Value(Config_Xml, "bind_port"));
+    Master_Helper.Hmac_Passphrase := ASU.To_Unbounded_String(Xml.Get_Value(Config_Xml, "hmac"));
+    
+    declare
+      Local_Server_Details : Xml.Node_Access := Xml.Find_Child_With_Tag(Config_Xml, "local_server");
+    begin
+      Master_Helper.Server_Bind_Ip   := GNAT.Sockets.Inet_Addr(Xml.Get_Value(Local_Server_Details, "bind_ip"));
+      Master_Helper.Server_Bind_Port := GNAT.Sockets.Port_Type'Value(Xml.Get_Value(Local_Server_Details, "bind_port"));
+    end;
+    
   end Parse_Configuration;
   
   procedure Process_User_Input(User_Input : String; To_Controll : Master_Task_Access) is

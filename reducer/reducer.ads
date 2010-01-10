@@ -33,6 +33,7 @@ package Reducer is
 ----------------------------------------------------
   task type Result_Merge_Task is
     entry Start;
+    entry Stop;
   end Result_Merge_Task;
 
 
@@ -58,7 +59,7 @@ package Reducer is
 -- GENERIC CONSOLE INSTANCE                       --
 ----------------------------------------------------
   function Banner return String;
-  procedure Parse_Configuration(Config_Xml : Xml.Node_Access);
+--  procedure Parse_Configuration(Config_Xml : Xml.Node_Access);
   
   
   

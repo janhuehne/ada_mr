@@ -135,7 +135,8 @@ package body Mapper is
   
   procedure Parse_Configuration(Config_Xml : Xml.Node_Access) is
   begin
-    Mapper_Helper.Identifier            := ASU.To_Unbounded_String(Xml.Get_Value(Config_Xml, "identifier"));
+    Mapper_Helper.Identifier      := ASU.To_Unbounded_String(Xml.Get_Value(Config_Xml, "identifier"));
+    Mapper_Helper.Hmac_Passphrase := ASU.To_Unbounded_String(Xml.Get_Value(Config_Xml, "hmac"));
     
     declare
       Local_Server_Details : Xml.Node_Access := Xml.Find_Child_With_Tag(Config_Xml, "local_server");

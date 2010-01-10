@@ -1,6 +1,7 @@
 with Logger;
 with Ada.Strings.Fixed;
 with Crypto_Helper;
+with Xml_Parser;
 
 package body Application_Helper is
   
@@ -52,17 +53,23 @@ package body Application_Helper is
   
   procedure Put(Str : String; Field_Length : Natural := 0; Space_Pos : Natural := 1) is
     
+    Field : Positive := Field_Length;
+    
     procedure Print_Spaces is
       Space_Counter : Natural := 0;
     begin
       loop
-        exit when Field_Length - Str'Length = Space_Counter;
+        exit when Field - Str'Length = Space_Counter;
           Ada.Text_IO.Put(" ");
           Space_Counter := Space_Counter + 1;
       end loop;
     end Print_Spaces;
     
   begin
+    if Str'Length > Field then
+      Field := Str'Length + 1;
+    end if;
+      
     if Space_Pos = 1 then
       Print_Spaces;
     end if;
@@ -262,5 +269,209 @@ package body Application_Helper is
   begin
     return Ada.Strings.Fixed.Trim(Input, Ada.Strings.Both);
   end Trim;
+  
+  
+  procedure Parse_Configuration(Config_File : String; W_Type : Worker_Type) is
+    Config_Xml : Xml.Node_Access;
+  begin
+    
+    if Does_File_Exist(Config_File) then
+      Logger.Put_Line("Parsing configuration file", Logger.Info);
+      Config_Xml := Xml_Parser.Parse(File_Name => Config_File);
+    else
+      Logger.Put_Line("No configuration file found", Logger.Err);
+      raise Configuration_File_Error;
+    end if;
+    
+    
+  -- only for MAPPER or REDUCER
+  ------------------------------
+    if W_Type = Mapper or W_Type = Reducer then
+      
+      -- identifier
+      String_String_Maps.Insert(
+        Configuration,
+        "identifier",
+        Xml.Get_Value(Config_Xml, "identifier")
+      );
+      
+      
+      
+      -- master configutation
+      declare
+        Master_Details : Xml.Node_Access;
+      begin
+        Master_Details := Xml.Find_Child_With_Tag(Config_Xml, "master");
+        
+        Application_Helper.String_String_Maps.Insert(
+          Application_Helper.Configuration,
+          "master-ip",
+          Xml.Get_Value(Master_Details, "ip")
+        );
+
+        Application_Helper.String_String_Maps.Insert(
+          Application_Helper.Configuration,
+          "master-port",
+          Xml.Get_Value(Master_Details, "port")
+        );
+      end;
+      
+    end if;
+    
+    
+    
+  -- for ALL worker!
+  ------------------------------
+    -- local server configuration
+    declare
+      Local_Server_Details : Xml.Node_Access;
+    begin
+      Local_Server_Details := Xml.Find_Child_With_Tag(Config_Xml, "local_server");
+      
+      Add_Configuration("local_server", "bind_ip", Xml.Get_Value(Local_Server_Details, "bind_ip"));
+      Add_Configuration("local_server", "bind_port", Xml.Get_Value(Local_Server_Details, "bind_port"));
+    end;
+    
+    
+    
+    -- crypto configutation
+    declare
+      Crypto_Details : Xml.Node_Access;
+      
+      procedure Iterate_Crypto_Details(c: Xml.Node_Access_Vector.Cursor) is
+        Node : Xml.Node_Access := Xml.Node_Access_Vector.Element(c);
+      begin
+        Add_Configuration("crypto", ASU.To_String(Node.Tag), ASU.To_String(Node.Value));
+      end Iterate_Crypto_Details;
+      
+    begin
+      Crypto_Details := Xml.Find_Child_With_Tag(Config_Xml, "crypto");
+      Xml.Node_Access_Vector.Iterate(Crypto_Details.Children, Iterate_Crypto_Details'Access);
+    end;
+    
+    
+    
+    -- settings
+    declare
+      Settings_Details : Xml.Node_Access;
+      
+      procedure Iterate_Settings_Details(c: Xml.Node_Access_Vector.Cursor) is
+        Node : Xml.Node_Access := Xml.Node_Access_Vector.Element(c);
+      begin
+        Add_Configuration("settings", ASU.To_String(Node.Tag), ASU.To_String(Node.Value));
+      end Iterate_Settings_Details;
+      
+    begin
+      Settings_Details := Xml.Find_Child_With_Tag(Config_Xml, "settings");
+      Xml.Node_Access_Vector.Iterate(Settings_Details.Children, Iterate_Settings_Details'Access);
+    end;
+    
+    
+    
+    -- user settings
+    declare
+      User_Details : Xml.Node_Access;
+      
+      procedure Iterate_User_Details(c: Xml.Node_Access_Vector.Cursor) is
+        Node : Xml.Node_Access := Xml.Node_Access_Vector.Element(c);
+      begin
+        Add_Configuration("user", ASU.To_String(Node.Tag), ASU.To_String(Node.Value));
+      end Iterate_User_Details;
+      
+    begin
+      User_Details := Xml.Find_Child_With_Tag(Config_Xml, "user");
+      Xml.Node_Access_Vector.Iterate(User_Details.Children, Iterate_User_Details'Access);
+    exception
+      when Error : Constraint_Error =>
+        Logger.Put_Line("No user settings found", Logger.Warn);
+    end;
+    
+    Logger.Put_Line("Configuration file successfully parsed", Logger.Info);
+  exception
+    when Error : others => 
+      Application_Helper.Print_Exception(Error);
+      Ada.Exceptions.Raise_Exception(Configuration_File_Error'Identity, "There is a problem with the configuration file.");
+  end;
+  
+  
+  
+  procedure Print_Configuration is
+    
+    procedure Print_Entry(C : String_String_Maps.Cursor) is
+    begin
+      Put(
+        To_Upper(String_String_Maps.Key(C)),
+        40, 2
+      );
+      
+      Put_Line(
+        String_String_Maps.Element(C),
+        60, 2
+      );
+    end Print_Entry;
+    
+  begin
+    Ada.Text_IO.New_Line;
+    Ada.Text_IO.New_Line;
+    Ada.Text_IO.Put_Line("**************************************");
+    Ada.Text_IO.Put_Line("Configuration parameter");
+    Ada.Text_IO.Put_Line("--------------------------------------");
+    String_String_Maps.Iterate(Configuration, Print_Entry'Access);
+    Ada.Text_IO.New_Line;
+    Ada.Text_IO.New_Line;
+  end Print_Configuration;
+  
+  
+  function Read_Configuration(Prefix : String; Key : String) return String is
+  begin
+    return Read_Configuration(To_Lower(Prefix & "-" & Key));
+  end Read_Configuration;
+  
+  
+  function Read_Configuration(Key : String) return String is
+  begin
+    return To_Lower(String_String_Maps.Element(
+      String_String_Maps.Find(Configuration, To_Lower(Key))
+    ));
+  exception
+      when Error : Constraint_Error =>
+        Ada.Exceptions.Raise_Exception(Configuration_Param_Not_Found'Identity, "Key """ & Key & """ not found in the configuration");
+  end Read_Configuration;
+  
+  
+  procedure Set_Default_Configuration(W_Type : Worker_Type) is
+  begin
+    Add_Configuration("settings", "max_connection_tries", "5");
+    Add_Configuration("settings", "timeout_connection_tries", "5");
+  end Set_Default_Configuration;
+  
+  
+  procedure Add_Configuration(Prefix : String; Key : String; Value : String) is
+  begin
+    Add_Configuration(Prefix & "-" & Key, Value);
+  end Add_Configuration;
+  
+  
+  procedure Add_Configuration(Key : String; Value : String) is
+    Lower_Key : String := To_Lower(Key);
+    C         : String_String_Maps.Cursor;
+  begin
+    C := String_String_Maps.Find(Configuration, Lower_Key);
+    
+    if String_String_Maps."="(C, String_String_Maps.No_Element) then
+      String_String_Maps.Insert(
+        Configuration,
+        Lower_Key,
+        Value
+      );
+    else
+      String_String_Maps.Replace(
+        Configuration,
+        Lower_Key,
+        Value
+      );
+    end if;
+  end Add_Configuration;
+  
   
 end Application_Helper;
