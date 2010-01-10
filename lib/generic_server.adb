@@ -81,21 +81,27 @@ package body Generic_Server is
         accept Stop;
         Logger.Put_Line("Terminating server task", Logger.Info);
         --  tidy up
-        Close_Selector(Accept_Selector);
-        Empty(Accept_Set);
-        Close_Socket(Server);
-        Finalize;
+        declare
+        begin
+          Close_Selector(Accept_Selector);
+          Empty(Accept_Set);
+          Close_Socket(Server);
+          Finalize;
+        exception
+          when others => null;
+        end;
         exit;
       end select;
     end loop;
     Logger.Put_Line("Server task terminated", Logger.Info);
   exception
-    when Error : others => 
+    when Error : others =>
+      Application_Helper.Print_Exception(Error);
+      
       Close_Selector(Accept_Selector);
       Empty(Accept_Set);
       Close_Socket(Server);
       Finalize;
-      Application_Helper.Print_Exception(Error);
   end Server_Task;
 
 end Generic_Server;

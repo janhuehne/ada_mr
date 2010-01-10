@@ -20,27 +20,9 @@ with Xml_Parser;
 package body Master is
   
   task body Master_Task is
-    Master_Server_Task : Server.Server.Server_Task;
-    Observer_Task      : Observer.Observer_Task;
-    Console_Task       : Console.Console;
-    
-    procedure Read_and_Parse_Config_File(Config_File : String) is
-    begin
-      if Application_Helper.Does_File_Exist(Config_File) then
-        Ada.Text_IO.Put_Line("Parsing config file");
-        Parse_Configuration(
-          Xml_Parser.Parse(File_Name => Config_File)
-        );
-        Ada.Text_IO.Put_Line("--> Done");
-      else
-        Ada.Text_IO.Put_Line("No config file found!");
-      end if;
-    exception
-      when Error : others => 
-        Application_Helper.Print_Exception(Error);
-        Ada.Exceptions.Raise_Exception(Application_Helper.Configuration_File_Error'Identity, "There is a problem with the configuration file.");
-    end Read_and_Parse_Config_File;
-    
+    Server_Task    : Server.Server.Server_Task;
+    Observer_Task  : Observer.Observer_Task;
+    Console_Task   : Console.Console;
   begin
     Ada.Text_IO.New_Line;
     Ada.Text_IO.New_Line;
@@ -62,20 +44,23 @@ package body Master is
           Main_Task := Self;
           
           -- parse configuration
-          Read_and_Parse_Config_File(Config_File);
+          Application_Helper.Set_Default_Configuration(Application_Helper.Master);
+          Application_Helper.Parse_Configuration(Config_File, Application_Helper.Master);
         end Start;
         
+        Application_Helper.Print_Configuration;
+        
+        Logger.Put_Line("Splitting raw data", Logger.Info);
         Split_Raw_Data;
         
-        
-        Logger.Put_Line("Importing jobs ...", Logger.Info);
+        Logger.Put_Line("Importing jobs", Logger.Info);
         
         loop
           declare
           begin
             Jobs.Add(Get_Next_Raw_Job);
           exception
-            when CONSTRAINT_ERROR => exit;
+            when Constraint_Error => exit;
           end;
         end loop;
         
@@ -85,9 +70,10 @@ package body Master is
           Main_Task
         );
         
-        Master_Server_Task.Start(
-          Master_Helper.Server_Bind_Ip, 
-          Master_Helper.Server_Bind_Port
+        -- start local server to accept incomming connections
+        Server_Task.Start(
+          GNAT.Sockets.Inet_Addr(Application_Helper.Read_Configuration("LOCAL_SERVER-BIND_IP")),
+          GNAT.Sockets.Port_Type'Value(Application_Helper.Read_Configuration("LOCAL_SERVER-BIND_PORT"))
         );
         
         Observer_Task.Start(Main_Task);
@@ -95,17 +81,27 @@ package body Master is
         accept Stop;
         Logger.Put_Line(" -> Please wait, while closing the client connections.", Logger.Info);
         Master_Helper.Aborted.Set_Exit;
-        Master_Server_Task.Stop;
+        Server_Task.Stop;
         Observer_Task.Stop;
+        abort Console_Task;
         exit;
       end select;
     end loop;
+  exception
+    when Error : others =>
+      Application_Helper.Print_Exception(Error);
+      Master_Helper.Aborted.Set_Exit;
+      Server_Task.Stop;
+      Observer_Task.Stop;
+      abort Console_Task;
   end Master_Task;
   
   procedure Stop_Master_Task is
   begin
     Main_Task.Stop;
   end Stop_Master_Task;
+  
+  
   
   ----------------------------------------------------
   -- GENERIC OBSERVER TASK                           -
@@ -409,30 +405,14 @@ package body Master is
     return "ADA MR Master";
   end Banner;
   
-  procedure Parse_Configuration(Config_Xml : Xml.Node_Access) is
-  begin
-    Master_Helper.Hmac_Passphrase := ASU.To_Unbounded_String(Xml.Get_Value(Config_Xml, "hmac"));
-    
-    declare
-      Local_Server_Details : Xml.Node_Access := Xml.Find_Child_With_Tag(Config_Xml, "local_server");
-    begin
-      Master_Helper.Server_Bind_Ip   := GNAT.Sockets.Inet_Addr(Xml.Get_Value(Local_Server_Details, "bind_ip"));
-      Master_Helper.Server_Bind_Port := GNAT.Sockets.Port_Type'Value(Xml.Get_Value(Local_Server_Details, "bind_port"));
-    end;
-    
-  end Parse_Configuration;
   
   procedure Process_User_Input(User_Input : String; To_Controll : Master_Task_Access) is
   begin
-    if (Is_Equal(User_Input, "start", true)) then
---      To_Controll.Start(To_Controll);
-      null;
-    
-    elsif (Is_Equal(User_Input, "help", true)) then
+    if (Is_Equal(User_Input, "help", true)) then
       Ada.Text_IO.Put_Line("");
       Ada.Text_IO.Put_Line("  Commands:");
-      Ada.Text_IO.Put_Line("    start        Starts the Ada MR Master Server");
       Ada.Text_IO.Put_Line("    worker       Prints all connected worker");
+      Ada.Text_IO.Put_Line("    config       Prints configuration");
       Ada.Text_IO.Put_Line("    quit         Exit Ada MR Master and stop all mapper and reducer");
       Ada.Text_IO.Put_Line("    jobs         Number of unprocessed jobs");
       Ada.Text_IO.Put_Line("    help         Displays this message");
@@ -441,18 +421,7 @@ package body Master is
       Ada.Text_IO.New_Line;
     
     elsif (Application_Helper.Is_Equal(User_Input, "config", true)) then
-      Ada.Text_IO.New_Line;
-      Ada.Text_IO.Put_Line("-> " & Banner & " configuration");
-            
-      Application_Helper.Put("IP address:", 20, 2);
-      Application_Helper.Put(GNAT.Sockets.Image(Master_Helper.Server_Bind_Ip), 60, 2);
-      Ada.Text_IO.New_Line;
-      
-      Application_Helper.Put("Port:", 20, 2);
-      Application_Helper.Put(Master_Helper.Server_Bind_Port'Img, 60, 2);
-      Ada.Text_IO.New_Line;
-      Ada.Text_IO.New_Line;
-      Ada.Text_IO.New_Line;
+      Application_Helper.Print_Configuration;
     
     elsif Application_Helper.Is_Equal(User_Input, "quit", true) OR Is_Equal(User_Input, "exit", true) then
       To_Controll.Stop;

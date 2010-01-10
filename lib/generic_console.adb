@@ -1,7 +1,8 @@
 with Ada.Text_IO;
 with Ada.Exceptions;
 with Application_Helper;
-with Xml_Parser;
+with Logger;
+
 package body Generic_Console is
   
   task body Console is
@@ -13,9 +14,7 @@ package body Generic_Console is
       To_Controll         := M_Arg;
     end Start;
     
-    Ada.Text_IO.Put_Line("Welcome to " & Banner & " console!");
-    
-    Ada.Text_IO.Put(":> ");
+    Logger.Put_Line("Welcome to " & Banner & " console!", Logger.Info);
     
     loop
       Ada.Text_IO.Get_Line(In_String, In_Last);

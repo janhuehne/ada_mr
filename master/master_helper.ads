@@ -89,11 +89,4 @@ package Master_Helper is
   No_Worker_Found : Exception;
   Unknown_Job_State : Exception;
   
-----------------------------------------------------
--- GLOBAL VARIABLES                                -
-----------------------------------------------------
-  Server_Bind_Ip   : GNAT.Sockets.Inet_Addr_Type;
-  Server_Bind_Port : GNAT.Sockets.Port_Type;
-  
-  Hmac_Passphrase : ASU.Unbounded_String;
 end Master_Helper;

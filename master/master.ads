@@ -144,13 +144,13 @@ package Master is
 -- GENERIC CONSOLE INSTANCE                       --
 ----------------------------------------------------
   function Banner return String;
-  procedure Parse_Configuration(Config_Xml : Xml.Node_Access);
+--  procedure Parse_Configuration(Config_Xml : Xml.Node_Access);
   procedure Process_User_Input(User_Input : String; To_Controll : Master_Task_Access);
   
   package Console is new Generic_Console(
     Master_Task_Access,
     Banner,
-    Parse_Configuration,
+--    Parse_Configuration,
     Process_User_Input
   );
   

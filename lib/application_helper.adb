@@ -347,6 +347,10 @@ package body Application_Helper is
     begin
       Crypto_Details := Xml.Find_Child_With_Tag(Config_Xml, "crypto");
       Xml.Node_Access_Vector.Iterate(Crypto_Details.Children, Iterate_Crypto_Details'Access);
+    exception
+      when Error : Constraint_Error =>
+        Logger.Put_Line("No crypto settings found. Using defaults.", Logger.Warn);
+    
     end;
     
     
@@ -364,6 +368,9 @@ package body Application_Helper is
     begin
       Settings_Details := Xml.Find_Child_With_Tag(Config_Xml, "settings");
       Xml.Node_Access_Vector.Iterate(Settings_Details.Children, Iterate_Settings_Details'Access);
+    exception
+      when Error : Constraint_Error =>
+        Logger.Put_Line("No settings found. Using defaults.", Logger.Warn);
     end;
     
     
@@ -441,6 +448,10 @@ package body Application_Helper is
   
   procedure Set_Default_Configuration(W_Type : Worker_Type) is
   begin
+    -- default crypto settings
+    Add_Configuration("crypto", "hmac", "Default_Not_Secure");
+    
+    -- default settings
     Add_Configuration("settings", "max_connection_tries", "5");
     Add_Configuration("settings", "timeout_connection_tries", "5");
   end Set_Default_Configuration;
