@@ -17,17 +17,7 @@ package body Ada_Mr.Reducer.Server is
   end Exit_Server;
   
   
-  procedure Process_Incomming_Connection(New_Sock : GNAT.Sockets.Socket_Type) is
-    Slave : Echo_MR.Echo_Access;
-  begin
-    Ada.Text_IO.Put_Line ( "-> New incomming task" );
-    
-    Slave := new Echo_MR.Echo;
-    Slave.Start(New_Sock);
-    
-  end Process_Incomming_Connection;
   
-
   procedure Process_Request(S : Stream_Access; From : Ada_Mr.Helper.Worker_Type; Xml_Root : Ada_Mr.Xml.Node_Access) is
   begin
     if Ada_Mr.Helper."="(From, Ada_Mr.Helper.Mapper) then
