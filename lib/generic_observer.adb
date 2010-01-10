@@ -33,7 +33,6 @@ package body Generic_Observer is
     end loop;
     
     Logger.Put_Line("Observer task terminated", Logger.Info);
-    
   end Observer_Task;
   
 end Generic_Observer;

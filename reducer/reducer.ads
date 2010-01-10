@@ -51,7 +51,9 @@ package Reducer is
 ----------------------------------------------------
 -- RUNNER INSTANCE                                --
 ----------------------------------------------------
-  package Runner renames Reducer_Runner;
+  package Runner is new Reducer_Runner(
+    Stop_Reducer_Task
+  );
 
 
 

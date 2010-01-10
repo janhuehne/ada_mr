@@ -13,7 +13,7 @@ package body Reducer_Server is
   
   function Exit_Server return Boolean is
   begin
-    return false;
+    return Reducer_Helper.Aborted.Check;
   end Exit_Server;
   
   

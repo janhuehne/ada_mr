@@ -78,7 +78,7 @@ package body Reducer_Runner is
   exception
     when Error : others =>
       Application_Helper.Print_Exception(Error);
-      Reducer_Helper.Aborted.Stop;
+      Stop_Reducer;
   end Run; 
   
 end Reducer_Runner;

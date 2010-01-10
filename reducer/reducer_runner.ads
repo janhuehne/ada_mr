@@ -5,6 +5,9 @@ with Ada.Strings.Unbounded;
 
 with Generic_Runner;
 
+generic
+  with procedure Stop_Reducer;
+
 package Reducer_Runner is
   
   package ASU renames Ada.Strings.Unbounded;

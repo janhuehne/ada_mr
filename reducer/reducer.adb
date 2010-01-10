@@ -61,8 +61,12 @@ package body Reducer is
         Result_Merge.Start;
       or
         accept Stop;
-          Server_Task.Stop;
---        Reducer_Helper.Aborted.Stop;
+        Logger.Put_Line("Stopping all reducer tasks", Logger.Info);
+        Reducer_Helper.Aborted.Stop;
+        Server_Task.Stop;
+        Runner_Task.Stop;
+        Result_Merge.Stop;
+        
         exit;
       end select;
     end loop;
@@ -112,9 +116,11 @@ package body Reducer is
         end loop;
       or 
         accept Stop;
+        Logger.Put_Line("Terminating result merge task", Logger.Info);
         exit;
       end select;
     end loop;
+    Logger.Put_Line("Result merge task terminated", Logger.Info);
   end Result_Merge_Task;
   
   

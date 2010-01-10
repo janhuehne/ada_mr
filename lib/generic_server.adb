@@ -84,11 +84,11 @@ package body Generic_Server is
         Close_Selector(Accept_Selector);
         Empty(Accept_Set);
         Close_Socket(Server);
-        Logger.Put_Line("Server task terminated", Logger.Info);
         Finalize;
         exit;
       end select;
     end loop;
+    Logger.Put_Line("Server task terminated", Logger.Info);
   exception
     when Error : others => 
       Close_Selector(Accept_Selector);
