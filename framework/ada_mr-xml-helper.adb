@@ -50,7 +50,7 @@ package body Ada_Mr.Xml.Helper is
     Ada.Strings.Unbounded.Append(Xml_String, ">");
     
     Ada.Strings.Unbounded.Append(Xml_String, "<hmac>");
-    Ada.Strings.Unbounded.Append(Xml_String, Ada_Mr.Crypt.Helper.Compute_HMAC(ASU.To_String(Xml_Content),"MastMappReducer"));
+    Ada.Strings.Unbounded.Append(Xml_String, Ada_Mr.Crypt.Helper.Compute_HMAC(ASU.To_String(Xml_Content), Ada_Mr.Helper.Read_Configuration("CRYPTO", "HMAC")));
     Ada.Strings.Unbounded.Append(Xml_String, "</hmac>");
     
     Ada.Strings.Unbounded.Append(Xml_String, "<content>");
