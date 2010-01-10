@@ -183,7 +183,7 @@ package body Char_Job is
   procedure Split_Raw_Data is
     First : Natural := Complete_String'First;
     Last  : Natural;
-    Step  : Natural := 30;
+    Step  : Natural := 10;
   begin
     Ada_Mr.Logger.Put_Line("Splitting raw data into jobs", Ada_Mr.Logger.Info);
     
