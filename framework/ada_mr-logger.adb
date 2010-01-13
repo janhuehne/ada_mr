@@ -35,7 +35,7 @@ package body Ada_Mr.Logger is
   end Put_Line;
   
   
-  procedure New_Line(Item : String; Level : Log_Level) is
+  procedure New_Line(Level : Log_Level) is
   begin
     if Has_Correct_Level(Level) then
       Ada.Text_IO.New_Line;

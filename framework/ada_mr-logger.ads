@@ -6,7 +6,7 @@ package Ada_Mr.Logger is
   
   procedure Put(Item : String; Level : Log_Level; Prefix : String := "");
   procedure Put_Line(Item : String; Level : Log_Level; Prefix : String := "");
-  procedure New_Line(Item : String; Level : Log_Level);
+  procedure New_Line(Level : Log_Level);
   
   function Image(Level : Log_Level) return String;
   
