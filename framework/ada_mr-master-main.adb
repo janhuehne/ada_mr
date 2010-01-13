@@ -13,15 +13,14 @@ with Ada_Mr.Xml.Helper;
 with GNAT.Sockets;
 
 with Ada.Exceptions;
-with Ada.Numerics.Discrete_Random;
-with GNAT.MD5;
+with Ada_Mr.Crypt.Helper;
 with Ada_Mr.Xml.Parser;
 
 package body Ada_Mr.Master.Main is
   
   task body Master_Task is
     Server_Task    : Server.Server.Server_Task;
-    Observer_Task  : Observer.Observer_Task;
+    Observer_Task  : Observer.Runner_Task;
     Console_Task   : Console.Console;
   begin
     Ada.Text_IO.New_Line;
@@ -76,7 +75,7 @@ package body Ada_Mr.Master.Main is
           GNAT.Sockets.Port_Type'Value(Ada_Mr.Helper.Read_Configuration("LOCAL_SERVER-BIND_PORT"))
         );
         
-        Observer_Task.Start(Main_Task);
+        Observer_Task.Start;
       or
         accept Stop;
         Ada_Mr.Logger.Put_Line(" -> Please wait, while closing the client connections.", Ada_Mr.Logger.Info);
@@ -116,39 +115,45 @@ package body Ada_Mr.Master.Main is
   end Exit_Observer;
   
   
-  function Observe(To_Controll : Master_Task_Access) return Boolean is
+  --function Observe(To_Controll : Master_Task_Access) return Boolean is
+  procedure Observe is
     use GNAT.Sockets;
   begin
-    if Jobs.Count_By_State(Ada_Mr.Master.Helper.Done) = Jobs.Count then
-    
-      Ada_Mr.Logger.Put_Line("All jobs done", Ada_Mr.Logger.Info);
+    loop
+      exit when Exit_Observer;
       
-      -- TODO: send this to all connected reducers!
-      declare
-        Reducer_Vector : Ada_Mr.Master.Helper.Worker_Entry_Vectors.Vector := Worker.Find_All_By_Type(Ada_Mr.Helper.Reducer);
+      if Jobs.Count_By_State(Ada_Mr.Master.Helper.Done) = Jobs.Count then
+      
+        Ada_Mr.Logger.Put_Line("All jobs done", Ada_Mr.Logger.Info);
         
-        procedure Send_Finalize(C : Ada_Mr.Master.Helper.Worker_Entry_Vectors.Cursor) is
-          Reducer : Ada_Mr.Master.Helper.Worker_Record_Access := Ada_Mr.Master.Helper.Worker_Entry_Vectors.Element(C);
-        begin
-          declare
-            Response : String := Ada_Mr.Helper.Send(
-              Reducer.Ip,
-              Reducer.Port,
-              Ada_Mr.Xml.Helper.Xml_Command(Ada_Mr.Xml.Helper.Master, "finalize"),
-              5
-            );
+        -- TODO: send this to all connected reducers!
+        declare
+          Reducer_Vector : Ada_Mr.Master.Helper.Worker_Entry_Vectors.Vector := Worker.Find_All_By_Type(Ada_Mr.Helper.Reducer);
+          
+          procedure Send_Finalize(C : Ada_Mr.Master.Helper.Worker_Entry_Vectors.Cursor) is
+            Reducer : Ada_Mr.Master.Helper.Worker_Record_Access := Ada_Mr.Master.Helper.Worker_Entry_Vectors.Element(C);
           begin
-            null;
-          end;
-        end Send_Finalize;
-      begin
-        Reducer_Vector.Iterate(Send_Finalize'Access);
-      end;
-    
-      return true;
-    end if;
-      
-    return false;
+            declare
+              Response : String := Ada_Mr.Helper.Send(
+                Reducer.Ip,
+                Reducer.Port,
+                Ada_Mr.Xml.Helper.Xml_Command(Ada_Mr.Xml.Helper.Master, "finalize"),
+                5
+              );
+            begin
+              null;
+            end;
+          end Send_Finalize;
+        begin
+          Reducer_Vector.Iterate(Send_Finalize'Access);
+        end;
+        
+        Main_Task.Stop;
+        
+    --    return true;
+      end if;
+    end loop;  
+  --  return false;
   end Observe;
 
 
@@ -283,17 +288,10 @@ package body Ada_Mr.Master.Main is
   protected body Worker is
   
     procedure Add(New_Worker : Ada_Mr.Master.Helper.Worker_Record_Access) is
-      subtype Rand_Range is Integer range 1..999999;
-      package Rand is new Ada.Numerics.Discrete_Random(Rand_Range);
-      Gen : Rand.Generator;
     begin
-      Rand.Reset(Gen);
-      
-      --TODO: HashFunktion in Paket auslagern.
-      --TODO: Salt für Hashfunktion in Xml_Datei
-      --TODO: Method Authentification Code (HMAC)
-      New_Worker.Access_Token := GNAT.MD5.Digest(
-        ASU.To_String(New_Worker.Identifier) & "-" & Ada_Mr.Helper.To_String(New_Worker.W_Type) & "-" & Rand.Random(Gen)'Img
+      New_Worker.Access_Token := Ada_Mr.Crypt.Helper.Create_Access_Token(
+        ASU.To_String(New_Worker.Identifier),
+        Ada_Mr.Helper.To_String(New_Worker.W_Type)
       );
       
       Worker.Append(New_Worker);

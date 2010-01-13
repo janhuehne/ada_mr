@@ -5,7 +5,7 @@ with Ada_Mr.Xml;
 with Ada_Mr.Master.Helper;
 with Ada_Mr.Master.Server;
 with Ada_Mr.Generics.Console;
-with Ada_Mr.Generics.Observer;
+  with Ada_Mr.Generics.Runner;
 
 with Ada_Mr.Helper;
 
@@ -54,11 +54,9 @@ package Ada_Mr.Master.Main is
 -- GENERIC OBSERVER TASK                           -
 ----------------------------------------------------
   function Exit_Observer return Boolean;
-  function Observe(To_Controll : Master_Task_Access) return Boolean;
+  procedure Observe;
   
-  package Observer is new Ada_Mr.Generics.Observer(
-    Master_Task_Access,
-    Exit_Observer,
+  package Observer is new Ada_Mr.Generics.Runner(
     Observe
   );
   

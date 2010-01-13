@@ -1,4 +1,6 @@
 with Ada_Mr.Logger;
+with Ada.Numerics.Discrete_Random;
+with GNAT.MD5;
 
 package body Ada_Mr.Crypt.Helper is
   
@@ -73,5 +75,19 @@ package body Ada_Mr.Crypt.Helper is
   begin
     return Message;
   end Decrypt;
+  
+  
+  
+  function Create_Access_Token(Identifier : String; Worker_Type : String) return String is
+    subtype Rand_Range is Integer range 1..999999;
+    package Rand is new Ada.Numerics.Discrete_Random(Rand_Range);
+    Gen : Rand.Generator;
+  begin
+    Rand.Reset(Gen);
+    
+    return GNAT.MD5.Digest(
+      Identifier & "-" & Worker_Type & "-" & Rand.Random(Gen)'Img
+    );
+  end Create_Access_Token;
   
 end Ada_Mr.Crypt.Helper;
