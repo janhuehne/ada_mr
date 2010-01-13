@@ -23,8 +23,8 @@ package Ada_Mr.Reducer.Server is
   
   package Server is new Ada_Mr.Generics.Server(
     Exit_Server,
-    Process_Request,
-    Stop_Reducer
+      Process_Request--,
+--    Stop_Reducer
   );
   
   package Echo_MR is new Ada_Mr.Generics.Echo(

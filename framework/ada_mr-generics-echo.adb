@@ -1,13 +1,12 @@
 with Ada.Text_IO;
-with Ada_Mr.Helper;
-with Ada_Mr.Xml;
-with Ada_Mr.Xml.Parser;
-
-with Ada_Mr.Xml.Helper;
 with Ada.Exceptions;
 
-with Ada_Mr.Crypt.Helper;
+with Ada_Mr.Xml.Parser;
+with Ada_Mr.Xml.Helper;
+
 with Ada_Mr.Logger;
+with Ada_Mr.Crypt.Helper;
+
 
 package body Ada_Mr.Generics.Echo is
   

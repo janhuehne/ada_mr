@@ -5,9 +5,8 @@ with Ada_Mr.Xml;
 
 generic
    with function Exit_Server return Boolean;
---   with procedure Process_Incomming_Connection(New_Sock : GNAT.Sockets.Socket_Type);
    with procedure Process_Request(S : GNAT.Sockets.Stream_Access; From : Ada_Mr.Helper.Worker_Type; Xml_Root : Ada_Mr.Xml.Node_Access);
-   with procedure Stop_Main_Task;
+--   with procedure Stop_Main_Task;
      
 package Ada_Mr.Generics.Server is
   

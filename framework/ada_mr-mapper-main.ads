@@ -1,11 +1,15 @@
 with Ada.Containers.Vectors;
-with Ada_Mr.Mapper.Runner;
-with Ada_Mr.Xml;
-with GNAT.Sockets;
-with Ada_Mr.Mapper.Server;
 with Ada.Strings.Unbounded;
-with Ada_Mr.Generics.Console;
-with Ada_Mr.Generics.Observer;
+with GNAT.Sockets;
+
+with Ada_Mr.Mapper.Runner;
+with Ada_Mr.Mapper.Server;
+with Ada_Mr.Xml;
+
+
+
+--with Ada_Mr.Generics.Console;
+--with Ada_Mr.Generics.Observer;
 with Ada_Mr.Helper;
 
 generic

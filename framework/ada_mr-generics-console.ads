@@ -1,5 +1,5 @@
-with Ada_Mr.Xml;
 with Ada.Strings.Unbounded;
+
 generic
   type To_Controll_Task_Access is private;
   with function Banner return String;

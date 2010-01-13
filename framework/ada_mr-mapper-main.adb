@@ -1,4 +1,5 @@
 with Ada.Text_IO;
+with Ada.Exceptions;
 
 with Ada_Mr.Helper;
 use Ada_Mr.Helper;
@@ -7,8 +8,6 @@ with Ada_Mr.Logger;
 with Ada_Mr.Mapper.Helper;
 
 with Ada_Mr.Xml.Helper;
-with Ada.Exceptions;
-
 with Ada_Mr.Xml.Parser;
 
 package body Ada_Mr.Mapper.Main is

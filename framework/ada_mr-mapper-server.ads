@@ -19,8 +19,8 @@ package Ada_Mr.Mapper.Server is
   
   package Server is new Ada_Mr.Generics.Server(
     Exit_Server,
-    Process_Request,
-    Stop_Mapper
+    Process_Request
+--    Stop_Mapper
   );
   
 --  package Echo_MR is new Ada_Mr.Generics.Echo(

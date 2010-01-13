@@ -1,13 +1,9 @@
-
-with Ada.Text_IO;
 with Ada.Strings.Unbounded;
 with Ada.IO_Exceptions;
-with Ada_Mr.Helper;
 
 with Ada.Characters.Handling;
 use Ada.Characters.Handling;
 
-with Ada_Mr.Xml;
 with Ada_Mr.Xml.Parser;
 
 with Ada_Mr.Logger;

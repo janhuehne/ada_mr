@@ -1,9 +1,11 @@
 with GNAT.Sockets;
 use GNAT.Sockets;
-with Ada_Mr.Xml;
 with Ada.Strings.Unbounded;
-with Ada_Mr.Helper;
+
 with Ada_Mr.Generics.Runner;
+with Ada_Mr.Helper;
+with Ada_Mr.Xml;
+
 
 generic
   type My_Job is private;

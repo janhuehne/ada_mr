@@ -32,8 +32,9 @@ package Ada_Mr.Master.Server is
   
   package Server is new Ada_Mr.Generics.Server(
     Exit_Server,
-    Process_Request,
-    Stop_Master
+    Process_Request
+--    ,
+--    Stop_Master
   );
   
 end Ada_Mr.Master.Server;

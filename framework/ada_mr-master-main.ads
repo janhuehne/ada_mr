@@ -150,7 +150,6 @@ package Ada_Mr.Master.Main is
   package Console is new Ada_Mr.Generics.Console(
     Master_Task_Access,
     Banner,
---    Parse_Configuration,
     Process_User_Input
   );
   

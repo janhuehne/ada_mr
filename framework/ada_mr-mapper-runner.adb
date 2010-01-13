@@ -6,7 +6,6 @@
 --use Ada_Mr.Helper.Worker_Type.Characters.Handling;
 with Ada.Exceptions;
 
-with Ada_Mr.Xml;
 with Ada_Mr.Xml.Parser;
 with Ada_Mr.Xml.Helper;
 
