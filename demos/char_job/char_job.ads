@@ -3,76 +3,58 @@ with Ada.Strings.Unbounded;
 with Ada_Mr.Helper;
 with Ada_Mr.Xml;
 
+with Ada_Mr.Job;
+
 package Char_Job is
   
+  -- Package rename
   package ASU renames Ada.Strings.Unbounded;
   
   
-  -- Job record
-  type My_Job is record
-    Job_Id            : Positive;
+  -- Job record definition
+  type Char_Job is new Ada_Mr.Job.Job with record
     Computable_String : ASU.Unbounded_String;
     Length            : Natural;
   end record;
   
   
-  -- procedure which is called by the generic master
-  type Add_Job_Procedure is access procedure(Job : My_Job);
+  -- xml stuff
+  overriding function To_Xml(The_Job : Char_Job) return String;
+  overriding function From_Xml(Xml_Node : Ada_Mr.Xml.Node_Access) return Char_Job;
   
   
-  -- Vector to store all computed jobs
-  package Job_Vector is new Ada.Containers.Vectors(
-    Element_Type => My_Job, 
-    Index_Type => Positive
-  );
-  
-  
-  -- Serializes a job into the xml format
-  function To_Xml(Job : in My_Job) return String;
-  
-  
-  -- Deserializes a job from the xml format
-  function From_Xml(Xml_Node : Ada_Mr.Xml.Node_Access) return My_Job;
-  
-  
-  --  Returns the id from a given job
-  function Get_Job_Id(Job : My_Job) return Natural;
-  
-  
-  -- Splits the raw data into comoputable subjobs
+  -- splitting and get raw data
   procedure Split_Raw_Data;
+  overriding function Get_Next_Raw_Job return Char_Job;
   
   
-  -- Is called from the generic master to import the jobs
-  function Get_Next_Raw_Job return My_Job;
+  -- print job on stdio
+  overriding procedure Print_Job(The_Job : Char_Job; State : String);
   
   
-  -- Used to compute the specific job ids
-  function Get_Next_Job_Counter(Auto_Inc : Boolean := true) return Natural;
+  -- compute job (map function)
+  overriding procedure Compute_Job(The_Job : Char_Job);
   
   
-  -- Called by the generic system to print job in stio
-  procedure Print_Job(Job : in My_Job; State : String);
-  
-  
-  -- Called by the generic mapper to compute a job
-  procedure Compute_Job(Job : in My_Job);
-  
-  
-  -- Serializes the job result into the xml format
-  function Job_Result_To_Xml return String;
-  
-  
-  -- Procedure to merge pending job results
-  procedure Merge_Jobs(Xml_Node : Ada_Mr.Xml.Node_Access);
-  
-  
-  -- Procedure called by the reducer to handle the job result
-  procedure Finalize;
-  
-  -- Function to split a result for serval reducers
+  -- splitting the job result for serval reducers
   function Split_Result_For_Different_Reducer return Ada_Mr.Helper.String_String_Maps.Map;
   
+  
+  -- merge job results
+  procedure Merge_Job_Results(Xml_Node : Ada_Mr.Xml.Node_Access);
+  
+  
+  procedure Finalize;
+  
+  
+  
+  
+  -- package instance
+  -- Vector to store all computed jobs
+  package Job_Vector is new Ada.Containers.Vectors(
+    Element_Type => Char_Job, 
+    Index_Type => Positive
+  );
   
   
   -- Precalculated jobs
@@ -85,8 +67,4 @@ package Char_Job is
   
   -- Job result hash
   Result_Hash : Ada_Mr.Helper.String_Integer_Maps.Map;
-  
-  -- Counts the jobs
-  Job_Counter : Natural := 1;
-  
 end Char_Job;

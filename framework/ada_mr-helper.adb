@@ -289,13 +289,7 @@ package body Ada_Mr.Helper is
     if W_Type = Mapper or W_Type = Reducer then
       
       -- identifier
-      String_String_Maps.Insert(
-        Configuration,
-        "identifier",
-        Ada_Mr.Xml.Get_Value(Config_Xml, "identifier")
-      );
-      
-      
+      Add_Configuration("identifier",  Ada_Mr.Xml.Get_Value(Config_Xml, "identifier"));
       
       -- master configutation
       declare
@@ -303,17 +297,12 @@ package body Ada_Mr.Helper is
       begin
         Master_Details := Ada_Mr.Xml.Find_Child_With_Tag(Config_Xml, "master");
         
-        Ada_Mr.Helper.String_String_Maps.Insert(
-          Ada_Mr.Helper.Configuration,
-          "master-ip",
-          Ada_Mr.Xml.Get_Value(Master_Details, "ip")
-        );
-
-        Ada_Mr.Helper.String_String_Maps.Insert(
-          Ada_Mr.Helper.Configuration,
-          "master-port",
-          Ada_Mr.Xml.Get_Value(Master_Details, "port")
-        );
+        Add_Configuration("master", "ip", Ada_Mr.Xml.Get_Value(Master_Details, "ip"));
+        Add_Configuration("master", "port", Ada_Mr.Xml.Get_Value(Master_Details, "port"));
+        
+      exception
+        when Error : Constraint_Error =>
+          Ada_Mr.Logger.Put_Line("No master settings found. Using defaults.", Ada_Mr.Logger.Warn);
       end;
       
     end if;
@@ -330,6 +319,9 @@ package body Ada_Mr.Helper is
       
       Add_Configuration("local_server", "bind_ip", Ada_Mr.Xml.Get_Value(Local_Server_Details, "bind_ip"));
       Add_Configuration("local_server", "bind_port", Ada_Mr.Xml.Get_Value(Local_Server_Details, "bind_port"));
+    exception
+      when Error : Constraint_Error =>
+        Ada_Mr.Logger.Put_Line("No local server settings found. Using defaults.", Ada_Mr.Logger.Warn);
     end;
     
     
@@ -448,8 +440,32 @@ package body Ada_Mr.Helper is
   
   procedure Set_Default_Configuration(W_Type : Worker_Type) is
   begin
+    
+    -- default local server
+    if W_Type = Master then
+      Add_Configuration("local_server", "bind_ip", "127.0.0.1");
+      Add_Configuration("local_server", "bind_port", "7000");
+      
+    elsif W_Type = Mapper then
+      Add_Configuration("local_server", "bind_ip", "127.0.0.1");
+      Add_Configuration("local_server", "bind_port", "8000");
+    
+    elsif W_Type = Reducer then
+      Add_Configuration("local_server", "bind_ip", "127.0.0.1");
+      Add_Configuration("local_server", "bind_port", "9000");
+    end if;
+    
+    
+    -- default master
+    if W_Type = Mapper or W_Type = Reducer then
+      Add_Configuration("master", "ip", "127.0.0.1");
+      Add_Configuration("master", "port", "7000");
+    end if;
+    
+    
     -- default crypto settings
     Add_Configuration("crypto", "hmac", "Default_Not_Secure");
+    
     
     -- default settings
     Add_Configuration("settings", "max_connection_tries", "5");

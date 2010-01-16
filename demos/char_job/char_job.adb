@@ -6,79 +6,81 @@ with Ada.Strings.Maps;
 
 package body Char_Job is
   
-  function To_Xml(Job : in My_Job) return String is
+  overriding function To_Xml(The_Job : Char_Job) return String is
     Details : Ada_Mr.Helper.String_String_Maps.Map;
   begin
-    Details.Insert("job_id", Ada_Mr.Helper.Trim(Job.Job_Id'Img));
-    Details.Insert("computable_string", "#" & ASU.To_String(Job.Computable_String) & "#");
+    Details.Insert("job_id", Ada_Mr.Helper.Trim(The_Job.Job_Id'Img));
+    Details.Insert("computable_string", "#" & ASU.To_String(The_Job.Computable_String) & "#");
     
     return Ada_Mr.Xml.Helper.Hash_To_Xml_String(Details);
   end To_Xml;
   
-  function From_Xml(Xml_Node : Ada_Mr.Xml.Node_Access) return My_Job is
-    J : My_Job;
+  
+  overriding function From_Xml(Xml_Node : Ada_Mr.Xml.Node_Access) return Char_Job is
+    J : Char_Job;
   begin
     J.Job_Id              := Integer'Value(Ada_Mr.Xml.Get_Value(Xml_Node, "job_id"));
     J.Computable_String   := ASU.Trim(ASU.To_Unbounded_String(Ada_Mr.Xml.Get_Value(Xml_Node, "computable_string")), Ada.Strings.Maps.To_Set("#"), Ada.Strings.Maps.To_Set("#"));
     
     return J;
   end From_Xml;
-  
-  function Get_Job_Id(Job : My_Job) return Natural is
+--  
+--  function Get_Job_Id(Job : My_Job) return Natural is
+--  begin
+--    return Job.Job_Id;
+--  end Get_Job_Id;
+--  
+--  procedure Split_Data_Into_Jobs(Process : Add_Job_Procedure) is
+--    First : Natural := Complete_String'First;
+--    Last  : Natural;
+--    Step  : Natural := 10;
+--  begin
+--    
+--    loop
+--      Last := First + Step - 1;
+--      
+--      if Last > Complete_String'Last then
+--        Last := Complete_String'Last;
+--      end if;
+--      
+--      declare
+--        Job : My_Job;
+--      begin
+--        Job.Job_Id := Get_Next_Job_Counter;
+--        Job.Computable_String := ASU.To_Unbounded_String(Complete_String(First .. Last));
+--        Job.Length := Last - First + 1;
+--        
+--        Process(Job);
+--      end;
+--      
+--      First := Last + 1;
+--      
+--      exit when Last = Complete_String'Last;
+--    end loop;
+--    
+--  end Split_Data_Into_Jobs;
+--  
+--  function Get_Next_Job_Counter(Auto_Inc : Boolean := true) return Natural is
+--    Return_Value : Natural := Job_Counter;
+--  begin
+--    if Auto_Inc = true then
+--      Job_Counter := Job_Counter + 1;
+--    end if;
+--      
+--    return Return_Value;
+--  end Get_Next_Job_Counter;
+--  
+  overriding procedure Print_Job(The_Job : Char_Job; State : String) is
   begin
-    return Job.Job_Id;
-  end Get_Job_Id;
-  
-  procedure Split_Data_Into_Jobs(Process : Add_Job_Procedure) is
-    First : Natural := Complete_String'First;
-    Last  : Natural;
-    Step  : Natural := 10;
-  begin
-    
-    loop
-      Last := First + Step - 1;
-      
-      if Last > Complete_String'Last then
-        Last := Complete_String'Last;
-      end if;
-      
-      declare
-        Job : My_Job;
-      begin
-        Job.Job_Id := Get_Next_Job_Counter;
-        Job.Computable_String := ASU.To_Unbounded_String(Complete_String(First .. Last));
-        Job.Length := Last - First + 1;
-        
-        Process(Job);
-      end;
-      
-      First := Last + 1;
-      
-      exit when Last = Complete_String'Last;
-    end loop;
-    
-  end Split_Data_Into_Jobs;
-  
-  function Get_Next_Job_Counter(Auto_Inc : Boolean := true) return Natural is
-    Return_Value : Natural := Job_Counter;
-  begin
-    if Auto_Inc = true then
-      Job_Counter := Job_Counter + 1;
-    end if;
-      
-    return Return_Value;
-  end Get_Next_Job_Counter;
-  
-  procedure Print_Job(Job : in My_Job; State : String) is
-  begin
-    Ada_Mr.Helper.Put(Job.Job_Id'Img, 10, 1);
-    Ada_Mr.Helper.Put(ASU.To_String(Job.Computable_String), 30, 1);
+    Ada_Mr.Helper.Put(The_Job.Job_Id'Img, 10, 1);
+    Ada_Mr.Helper.Put(ASU.To_String(The_Job.Computable_String), 30, 1);
     Ada_Mr.Helper.Put(State, 20);
     Ada.Text_IO.New_Line;
   end Print_Job;
   
-  procedure Compute_Job(Job : in My_Job) is
-    Computable_String : String := ASU.To_String(Job.Computable_String);
+  
+  overriding procedure Compute_Job(The_Job : Char_Job) is
+    Computable_String : String := ASU.To_String(The_Job.Computable_String);
     Element_Cursor : Ada_Mr.Helper.String_Integer_Maps.Cursor;
     
     function Special_Char(Input : String) return String is
@@ -107,29 +109,29 @@ package body Char_Job is
   exception
     when Error : others => raise Ada_Mr.Helper.Compute_Job_Error;
   end Compute_Job;
-  
-  function Job_Result_To_Xml return String is
-    Result_Cursor : Ada_Mr.Helper.String_Integer_Maps.Cursor := Ada_Mr.Helper.String_Integer_Maps.First(Result_Hash);
-    Result_String : Ada.Strings.Unbounded.Unbounded_String;
-  begin
-    while Ada_Mr.Helper.String_Integer_Maps.Has_Element(Result_Cursor) loop
-      Ada.Strings.Unbounded.Append(Result_String, "<");
-      Ada.Strings.Unbounded.Append(Result_String, Ada_Mr.Helper.String_Integer_Maps.Key(Result_Cursor));
-      Ada.Strings.Unbounded.Append(Result_String, ">");
-      Ada.Strings.Unbounded.Append(Result_String, Ada_Mr.Helper.Trim(Ada_Mr.Helper.String_Integer_Maps.Element(Result_Cursor)'Img));
-      Ada.Strings.Unbounded.Append(Result_String, "</");
-      Ada.Strings.Unbounded.Append(Result_String, Ada_Mr.Helper.String_Integer_Maps.Key(Result_Cursor));
-      Ada.Strings.Unbounded.Append(Result_String, ">");
-      
-      Ada_Mr.Helper.String_Integer_Maps.Next(Result_Cursor);
-    end loop;
-    
-    Ada_Mr.Helper.String_Integer_Maps.Clear(Result_Hash);
-    
-    return ASU.To_String(Result_String);
-  end Job_Result_To_Xml;
-  
-  procedure Merge_Jobs(Xml_Node : Ada_Mr.Xml.Node_Access) is
+--  
+--  function Job_Result_To_Xml return String is
+--    Result_Cursor : Ada_Mr.Helper.String_Integer_Maps.Cursor := Ada_Mr.Helper.String_Integer_Maps.First(Result_Hash);
+--    Result_String : Ada.Strings.Unbounded.Unbounded_String;
+--  begin
+--    while Ada_Mr.Helper.String_Integer_Maps.Has_Element(Result_Cursor) loop
+--      Ada.Strings.Unbounded.Append(Result_String, "<");
+--      Ada.Strings.Unbounded.Append(Result_String, Ada_Mr.Helper.String_Integer_Maps.Key(Result_Cursor));
+--      Ada.Strings.Unbounded.Append(Result_String, ">");
+--      Ada.Strings.Unbounded.Append(Result_String, Ada_Mr.Helper.Trim(Ada_Mr.Helper.String_Integer_Maps.Element(Result_Cursor)'Img));
+--      Ada.Strings.Unbounded.Append(Result_String, "</");
+--      Ada.Strings.Unbounded.Append(Result_String, Ada_Mr.Helper.String_Integer_Maps.Key(Result_Cursor));
+--      Ada.Strings.Unbounded.Append(Result_String, ">");
+--      
+--      Ada_Mr.Helper.String_Integer_Maps.Next(Result_Cursor);
+--    end loop;
+--    
+--    Ada_Mr.Helper.String_Integer_Maps.Clear(Result_Hash);
+--    
+--    return ASU.To_String(Result_String);
+--  end Job_Result_To_Xml;
+--  
+  procedure Merge_Job_Results(Xml_Node : Ada_Mr.Xml.Node_Access) is
     Cursor : Ada_Mr.Xml.Node_Access_Vector.Cursor := Xml_Node.Children.First;
   begin
     loop
@@ -154,16 +156,16 @@ package body Char_Job is
           );
         end if;
       end;
-
+      
       Ada_Mr.Xml.Node_Access_Vector.Next(Cursor);
     end loop;
     
   end Merge_Jobs;
   
+  
   procedure Finalize is
     Cursor : Ada_Mr.Helper.String_Integer_Maps.Cursor := Result_Hash.First;
   begin
-    
     Ada.Text_IO.Put_Line("Reducer result:");
     
     loop
@@ -180,6 +182,7 @@ package body Char_Job is
     
   end Finalize;
   
+  
   procedure Split_Raw_Data is
     First : Natural := Complete_String'First;
     Last  : Natural;
@@ -189,23 +192,23 @@ package body Char_Job is
     
     loop
       Last := First + Step - 1;
-
+      
       if Last > Complete_String'Last then
         Last := Complete_String'Last;
       end if;
-
+      
       declare
-        Job : My_Job;
+        Job : Char_Job;
       begin
-        Job.Job_Id := Get_Next_Job_Counter;
+        Job.Job_Id := Ada_Mr.Job.Get_Next_Job_Id;
         Job.Computable_String := ASU.To_Unbounded_String(Complete_String(First .. Last));
         Job.Length := Last - First + 1;
         
         Calculated_Jobs.Append(Job);
       end;
-
+      
       First := Last + 1;
-
+      
       exit when Last = Complete_String'Last;
     end loop;
     
@@ -213,8 +216,8 @@ package body Char_Job is
   end Split_Raw_Data;
   
   
-  function Get_Next_Raw_Job return My_Job is
-    J : My_Job := Calculated_Jobs.First_Element;
+  overriding function Get_Next_Raw_Job return Char_Job is
+    J : Char_Job := Calculated_Jobs.First_Element;
   begin
     Calculated_Jobs.Delete_First;
     
@@ -226,11 +229,33 @@ package body Char_Job is
     Mapping         : Ada_Mr.Helper.String_String_Maps.Map;
     Reducer_Mapping : Ada_Mr.Helper.String_String_Maps.Map;
     
+    
+    function Job_Result_To_Xml return String is
+      Result_Cursor : Ada_Mr.Helper.String_Integer_Maps.Cursor := Ada_Mr.Helper.String_Integer_Maps.First(Result_Hash);
+      Result_String : Ada.Strings.Unbounded.Unbounded_String;
+    begin
+      while Ada_Mr.Helper.String_Integer_Maps.Has_Element(Result_Cursor) loop
+        Ada.Strings.Unbounded.Append(Result_String, "<");
+        Ada.Strings.Unbounded.Append(Result_String, Ada_Mr.Helper.String_Integer_Maps.Key(Result_Cursor));
+        Ada.Strings.Unbounded.Append(Result_String, ">");
+        Ada.Strings.Unbounded.Append(Result_String, Ada_Mr.Helper.Trim(Ada_Mr.Helper.String_Integer_Maps.Element(Result_Cursor)'Img));
+        Ada.Strings.Unbounded.Append(Result_String, "</");
+        Ada.Strings.Unbounded.Append(Result_String, Ada_Mr.Helper.String_Integer_Maps.Key(Result_Cursor));
+        Ada.Strings.Unbounded.Append(Result_String, ">");
+        
+        Ada_Mr.Helper.String_Integer_Maps.Next(Result_Cursor);
+      end loop;
+      
+      Ada_Mr.Helper.String_Integer_Maps.Clear(Result_Hash);
+      
+      return ASU.To_String(Result_String);
+    end Job_Result_To_Xml;
+    
   begin
     Ada_Mr.Helper.String_String_Maps.Insert(Mapping, "Reducer_01", Job_Result_To_Xml);
     
     return Mapping;
   end Split_Result_For_Different_Reducer;
-  
+--  
   
 end Char_Job;

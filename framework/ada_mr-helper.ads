@@ -113,7 +113,7 @@ package Ada_Mr.Helper is
   Unknow_Worker_Type : Exception;
   Configuration_Param_Not_Found : Exception;
 
-
+private
 ----------------------------------------------------
 -- GLOBAL VARIABLES                               --
 ----------------------------------------------------

@@ -9,7 +9,7 @@ procedure MR_Master_Count_Char is
   package Job renames Char_Job;
   
   package Master_MR is new Ada_Mr.Master.Main(
-    Job.My_Job,
+    Job.Char_Job,
     Job.From_Xml,
     Job.To_Xml,
     Job.Get_Job_Id,

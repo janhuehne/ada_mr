@@ -32,6 +32,8 @@ package Ada_Mr.Reducer.Main is
 
   procedure Stop_Reducer_Task;
 
+
+
 ----------------------------------------------------
 -- RESULT MERGE TASK                               -
 ----------------------------------------------------
