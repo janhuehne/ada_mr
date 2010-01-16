@@ -534,7 +534,7 @@ package body Ada_Mr.Helper is
           if Starts_With(Argument, "--config_file=", true) then
             Parse_Configuration(Ada_Mr.Helper.Sub_Str(Argument, 15, Argument'Last), W_Type);
           else
-            Parse_Configuration(To_Lower(To_String(W_Type)) & "_config.xml", Mapper);
+            Parse_Configuration(To_Lower(To_String(W_Type)) & "_config.xml", W_Type);
           end if;
           
           -- only for mapper or reducer
@@ -547,6 +547,7 @@ package body Ada_Mr.Helper is
         end;
       end loop;
     else
+      Parse_Configuration(To_Lower(To_String(W_Type)) & "_config.xml", W_Type);
       Logger.Put_Line("No command line arguments found.", Logger.Warn);
     end if;
   end Parse_Command_Line_Arguments;
