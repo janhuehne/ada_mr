@@ -13,16 +13,16 @@ LIBS=-I../../lib/simple_xml -I../../framework -aL/usr/local/lib/libadacrypt-dev-
 
 
 master:
-	$(CC) $(LIBS) mr_master_$(PROJECT).adb $(CFLAGS)
+	$(CC) $(LIBS) master_$(PROJECT).adb $(CFLAGS)
 	$(DEL) *.o *.ali
 
 mapper:
-	$(CC) $(LIBS) mr_mapper_$(PROJECT).adb $(CFLAGS)
+	$(CC) $(LIBS) mapper_$(PROJECT).adb $(CFLAGS)
 	$(DEL) *.o *.ali
 	
 reducer:
-	$(CC) $(LIBS) mr_reducer_$(PROJECT).adb $(CFLAGS)
+	$(CC) $(LIBS) reducer_$(PROJECT).adb $(CFLAGS)
 	$(DEL) *.o *.ali
 
 clean:
-	$(DEL) *.o *.ali mr_master_$(PROJECT) mr_mapper_$(PROJECT) mr_reducer_$(PROJECT)
+	$(DEL) *.o *.ali master_$(PROJECT) mapper_$(PROJECT) reducer_$(PROJECT)
