@@ -4,6 +4,8 @@ with Ada_Mr.Xml;
 with GNAT.Sockets;
 with Ada_Mr.Helper;
 
+with Ada.Calendar;
+
 package Ada_Mr.Master.Helper is
 
 ----------------------------------------------------
@@ -36,6 +38,7 @@ package Ada_Mr.Master.Helper is
     Ip           : GNAT.Sockets.Inet_Addr_Type;
     Port         : GNAT.Sockets.Port_Type;
     Access_Token : String(1..32);
+    Updated_At   : Ada.Calendar.Time;
   end record;
   
   type Worker_Record_Access is access Worker_Record;

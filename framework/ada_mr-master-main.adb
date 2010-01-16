@@ -1,5 +1,6 @@
 with Ada.Text_IO;
-
+with Ada.Calendar;
+with GNAT.Calendar.Time_IO;
 
 with Ada_Mr.Helper;
 use Ada_Mr.Helper;
@@ -45,11 +46,11 @@ package body Ada_Mr.Master.Main is
         
         
         -- set default configuration
-        Ada_Mr.Helper.Set_Default_Configuration(Ada_Mr.Helper.Mapper);
+        Ada_Mr.Helper.Set_Default_Configuration(Ada_Mr.Helper.Master);
         
         
         -- reading command line arguments
-        Ada_Mr.Helper.Parse_Command_Line_Arguments(Ada_Mr.Helper.Mapper);
+        Ada_Mr.Helper.Parse_Command_Line_Arguments(Ada_Mr.Helper.Master);
         
         
         -- print configuration
@@ -296,12 +297,34 @@ package body Ada_Mr.Master.Main is
   protected body Worker is
   
     procedure Add(New_Worker : Ada_Mr.Master.Helper.Worker_Record_Access) is
+      Cursor : Ada_Mr.Master.Helper.Worker_Entry_Vectors.Cursor := Worker.First;
     begin
       New_Worker.Access_Token := Ada_Mr.Crypt.Helper.Create_Access_Token(
         ASU.To_String(New_Worker.Identifier),
         Ada_Mr.Helper.To_String(New_Worker.W_Type)
       );
       
+      New_Worker.Updated_At := Ada.Calendar.Clock;
+      
+      loop
+        exit when Ada_Mr.Master.Helper.Worker_Entry_Vectors."="(Cursor, Ada_Mr.Master.Helper.Worker_Entry_Vectors.No_Element);
+        
+        declare
+          Worker : Ada_Mr.Master.Helper.Worker_Record_Access := Ada_Mr.Master.Helper.Worker_Entry_Vectors.Element(Cursor);
+        begin
+          
+          if Ada_Mr.Helper.Is_Equal(ASU.To_String(Worker.Identifier), New_Worker.Identifier) then
+            exit;
+          end if;
+        end;
+        
+        Ada_Mr.Master.Helper.Worker_Entry_Vectors.Next(Cursor);
+      end loop;
+      
+      
+      if Ada_Mr.Master.Helper.Worker_Entry_Vectors."/="(Cursor, Ada_Mr.Master.Helper.Worker_Entry_Vectors.No_Element) then
+        Worker.Delete(Cursor);
+      end if;
       Worker.Append(New_Worker);
     end Add;
     
@@ -378,6 +401,7 @@ package body Ada_Mr.Master.Main is
         Ada_Mr.Helper.Put(Worker_Entry.Access_Token, 40, 2);
         Ada_Mr.Helper.Put(GNAT.Sockets.Image(Worker_Entry.Ip), 20, 2);
         Ada_Mr.Helper.Put(Worker_Entry.Port'Img, 20, 2);
+        Ada_Mr.Helper.Put(GNAT.Calendar.Time_IO.Image(Worker_Entry.Updated_At, "%Y-%m-%d %H:%M:%S"), 30, 2);
         Ada.Text_IO.New_Line;
       end Print;
       
@@ -390,6 +414,7 @@ package body Ada_Mr.Master.Main is
       Ada_Mr.Helper.Put("Access Token", 40, 2);
       Ada_Mr.Helper.Put("IP address", 20, 2);
       Ada_Mr.Helper.Put("Listen on port", 20, 2);
+      Ada_Mr.Helper.Put("Updated at", 30, 2);
       Ada.Text_IO.New_Line;
       Ada.Text_IO.Put_Line("------------------------------------------------------------------------------------------------------------------");
       

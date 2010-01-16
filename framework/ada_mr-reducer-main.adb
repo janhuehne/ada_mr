@@ -43,11 +43,11 @@ package body Ada_Mr.Reducer.Main is
         
         
         -- set default configuration
-        Ada_Mr.Helper.Set_Default_Configuration(Ada_Mr.Helper.Mapper);
+        Ada_Mr.Helper.Set_Default_Configuration(Ada_Mr.Helper.Reducer);
         
         
         -- reading command line arguments
-        Ada_Mr.Helper.Parse_Command_Line_Arguments(Ada_Mr.Helper.Mapper);
+        Ada_Mr.Helper.Parse_Command_Line_Arguments(Ada_Mr.Helper.Reducer);
         
         
         -- print configuration
