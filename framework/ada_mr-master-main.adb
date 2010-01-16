@@ -310,10 +310,11 @@ package body Ada_Mr.Master.Main is
         exit when Ada_Mr.Master.Helper.Worker_Entry_Vectors."="(Cursor, Ada_Mr.Master.Helper.Worker_Entry_Vectors.No_Element);
         
         declare
-          Worker : Ada_Mr.Master.Helper.Worker_Record_Access := Ada_Mr.Master.Helper.Worker_Entry_Vectors.Element(Cursor);
+          Old_Worker : Ada_Mr.Master.Helper.Worker_Record_Access := Ada_Mr.Master.Helper.Worker_Entry_Vectors.Element(Cursor);
         begin
           
-          if Ada_Mr.Helper.Is_Equal(ASU.To_String(Worker.Identifier), New_Worker.Identifier) then
+          if Ada_Mr.Helper.Is_Equal(ASU.To_String(Old_Worker.Identifier), New_Worker.Identifier) then
+            Worker.Delete(Cursor);
             exit;
           end if;
         end;
@@ -322,9 +323,6 @@ package body Ada_Mr.Master.Main is
       end loop;
       
       
-      if Ada_Mr.Master.Helper.Worker_Entry_Vectors."/="(Cursor, Ada_Mr.Master.Helper.Worker_Entry_Vectors.No_Element) then
-        Worker.Delete(Cursor);
-      end if;
       Worker.Append(New_Worker);
     end Add;
     
