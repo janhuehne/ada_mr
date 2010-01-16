@@ -1,8 +1,4 @@
-with Ada.Text_IO;
 with Char_Job;
-with Ada_Mr.Xml;
-with Ada_Mr.Xml.Parser;
-with Ada_Mr.Helper;
 with Ada_Mr.Master.Main;
 
 procedure MR_Master_Count_Char is

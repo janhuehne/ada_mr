@@ -1,7 +1,5 @@
-with Ada.Text_IO;
 with Ada.Command_Line;
 with Char_Job;
-with Ada_Mr.Helper;
 with Ada_Mr.Mapper.Main;
 
 procedure MR_Mapper_Count_Char is

@@ -1,18 +1,16 @@
-with Ada.Text_IO;
 with Ada.Command_Line;
-
-with Ada_Mr.Helper;
-with Ada_Mr.Xml;
-with Ada_Mr.Xml.Parser;
-
 with Char_Job;
-
-
 with Ada_Mr.Reducer.Main;
 
 
 procedure MR_Reducer_Count_Char is
-  package Reducer_MR is new Ada_Mr.Reducer.Main(Char_Job.Merge_Jobs, Char_Job.Finalize);
+  package Job renames Char_Job;
+  
+  package Reducer_MR is new Ada_Mr.Reducer.Main(
+    Job.Merge_Job_Results, 
+    Char_Job.Finalize
+  );
+  
 begin
   
   declare

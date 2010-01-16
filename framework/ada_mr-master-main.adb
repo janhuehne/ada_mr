@@ -51,6 +51,7 @@ package body Ada_Mr.Master.Main is
         
         Ada_Mr.Logger.Put_Line("Splitting raw data", Ada_Mr.Logger.Info);
         Split_Raw_Data;
+        Ada_Mr.Logger.Put_Line("Splitting raw data done", Ada_Mr.Logger.Info);
         
         Ada_Mr.Logger.Put_Line("Importing jobs", Ada_Mr.Logger.Info);
         
@@ -146,13 +147,14 @@ package body Ada_Mr.Master.Main is
           end Send_Finalize;
         begin
           Reducer_Vector.Iterate(Send_Finalize'Access);
+          exit;
         end;
-        
-        Main_Task.Stop;
         
     --    return true;
       end if;
-    end loop;  
+    end loop;
+    
+    Main_Task.Stop;
   --  return false;
   end Observe;
 
