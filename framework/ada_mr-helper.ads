@@ -42,7 +42,7 @@ package Ada_Mr.Helper is
   
   function Trim(Input : String) return String;
 
-
+  function Sub_Str(Input : String; From : Integer; To : Integer) return String;
 
 ----------------------------------------------------
 -- ADA.TEXT_IO Helper                             --
@@ -70,7 +70,7 @@ package Ada_Mr.Helper is
   function Read_Configuration(Prefix : String; Key : String) return String;
   procedure Add_Configuration(Key : String; Value : String);
   procedure Add_Configuration(Prefix : String; Key : String; Value : String);
-
+  procedure Parse_Command_Line_Arguments(W_Type : Worker_Type);
 
 
 ----------------------------------------------------

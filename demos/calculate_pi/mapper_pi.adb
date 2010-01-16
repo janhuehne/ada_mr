@@ -18,7 +18,7 @@ begin
   declare
     C   : Mapper_MR.Mapper_Task_Access := new Mapper_MR.Mapper_Task;
   begin
-    C.Start(C, "mapper_config.xml");
+    C.Start(C);
   end;
   
 end MR_Mapper_Count_Char;

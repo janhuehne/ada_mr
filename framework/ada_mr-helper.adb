@@ -2,6 +2,7 @@ with Ada_Mr.Logger;
 with Ada.Strings.Fixed;
 with Ada_Mr.Crypt.Helper;
 with Ada_Mr.Xml.Parser;
+with Ada.Command_Line;
 
 package body Ada_Mr.Helper is
   
@@ -49,6 +50,26 @@ package body Ada_Mr.Helper is
   exception
     when others => return false;
   end Is_Equal;
+  
+  
+  function Sub_Str(Input : String; From : Integer; To : Integer) return String is
+    Left  : Integer := 0;
+    Right : Integer := 0;
+  begin
+    if Input'First <= From then
+      Left := From;
+    else
+      Left := Input'First;
+    end if;
+      
+    if Input'Last >= To then
+      Right := To;
+    else
+      Right := Input'Last;
+    end if;
+    
+    return Input(Left .. Right);
+  end Sub_Str;
   
   
   procedure Put(Str : String; Field_Length : Natural := 0; Space_Pos : Natural := 1) is
@@ -499,6 +520,37 @@ package body Ada_Mr.Helper is
       );
     end if;
   end Add_Configuration;
+  
+  
+  procedure Parse_Command_Line_Arguments(W_Type : Worker_Type) is
+  begin
+    if Ada.Command_Line.Argument_Count > 0 then
+      for I in 1..Ada.Command_Line.Argument_Count loop
+        declare 
+          Argument : String := Ada.Command_Line.Argument(I);
+        begin
+          
+          -- available for all worker types
+          if Starts_With(Argument, "--config_file=", true) then
+            Parse_Configuration(Ada_Mr.Helper.Sub_Str(Argument, 15, Argument'Last), W_Type);
+          else
+            Parse_Configuration(To_Lower(To_String(W_Type)) & "_config.xml", Mapper);
+          end if;
+          
+          -- only for mapper or reducer
+          if W_Type = Mapper or W_Type = Reducer then
+            if Starts_With(Argument, "--identifier=", true) then
+              Add_Configuration("identifier", Ada_Mr.Helper.Sub_Str(Argument, 14, Argument'Last));
+            end if;
+          end if;
+          
+        end;
+      end loop;
+    else
+      Logger.Put_Line("No command line arguments found.", Logger.Warn);
+    end if;
+  end Parse_Command_Line_Arguments;
+  
   
   
 end Ada_Mr.Helper;

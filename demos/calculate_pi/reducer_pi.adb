@@ -14,7 +14,7 @@ begin
   declare
     C : Reducer_MR.Reducer_Task_Access := new Reducer_MR.Reducer_Task;
   begin
-    C.Start(C, "reducer_config.xml");
+    C.Start(C);
   end;
   
 end Reducer_Pi;

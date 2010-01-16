@@ -39,14 +39,20 @@ package body Ada_Mr.Master.Main is
     
     loop
       select
-        accept Start(Self : Master_Task_Access; Config_File : String) do
+        accept Start(Self : Master_Task_Access) do
           Main_Task := Self;
-          
-          -- parse configuration
-          Ada_Mr.Helper.Set_Default_Configuration(Ada_Mr.Helper.Master);
-          Ada_Mr.Helper.Parse_Configuration(Config_File, Ada_Mr.Helper.Master);
         end Start;
         
+        
+        -- set default configuration
+        Ada_Mr.Helper.Set_Default_Configuration(Ada_Mr.Helper.Mapper);
+        
+        
+        -- reading command line arguments
+        Ada_Mr.Helper.Parse_Command_Line_Arguments(Ada_Mr.Helper.Mapper);
+        
+        
+        -- print configuration
         Ada_Mr.Helper.Print_Configuration;
         
         Ada_Mr.Logger.Put_Line("Splitting raw data", Ada_Mr.Logger.Info);

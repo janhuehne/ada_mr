@@ -18,7 +18,7 @@ begin
   declare
     M : Master_MR.Master_Task_Access := new Master_MR.Master_Task;
   begin
-    M.Start(M, "master_config.xml");
+    M.Start(M);
   end;
 
 end Master_Pi;

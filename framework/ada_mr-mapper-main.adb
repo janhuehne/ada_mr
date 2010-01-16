@@ -10,6 +10,8 @@ with Ada_Mr.Mapper.Helper;
 with Ada_Mr.Xml.Helper;
 with Ada_Mr.Xml.Parser;
 
+with Ada.Command_Line;
+
 package body Ada_Mr.Mapper.Main is
   
 ----------------------------------------------------
@@ -30,7 +32,7 @@ package body Ada_Mr.Mapper.Main is
     Ada.Text_IO.Put_Line(" / ____ \| |__| / ____ \     | |  | | | \ \    | |  | | (_| | |_) | |_) |  __/ |   ");
     Ada.Text_IO.Put_Line("/_/    \_\_____/_/    \_\    |_|  |_|_|  \_\   |_|  |_|\__,_| .__/| .__/ \___|_|   ");
     Ada.Text_IO.Put_Line("                                                            | |   | |              ");
-    Ada.Text_IO.Put_Line("                                                            |_|   |_|               ");
+    Ada.Text_IO.Put_Line("                                                            |_|   |_|              ");
 
     Ada.Text_IO.New_Line;
     Ada.Text_IO.New_Line;
@@ -38,23 +40,29 @@ package body Ada_Mr.Mapper.Main is
     
     loop
       select
-        accept Start(Self : Mapper_Task_Access; Config_File : String) do
+        accept Start(Self : Mapper_Task_Access) do
           Main_Task := Self;
-          
-          -- parse configuration
-          --Read_and_Parse_Config_File(Config_File);
-          Ada_Mr.Helper.Set_Default_Configuration(Ada_Mr.Helper.Mapper);
-          Ada_Mr.Helper.Parse_Configuration(Config_File, Ada_Mr.Helper.Mapper);
         end Start;
+        
+        
+        -- set default configuration
+        Ada_Mr.Helper.Set_Default_Configuration(Ada_Mr.Helper.Mapper);
+        
+        
+        -- reading command line arguments
+        Ada_Mr.Helper.Parse_Command_Line_Arguments(Ada_Mr.Helper.Mapper);
+        
         
         -- print configuration
         Ada_Mr.Helper.Print_Configuration;
+        
         
         -- start local server to accept incomming connections
         Server_Task.Start(
           GNAT.Sockets.Inet_Addr(Ada_Mr.Helper.Read_Configuration("LOCAL_SERVER-BIND_IP")),
           GNAT.Sockets.Port_Type'Value(Ada_Mr.Helper.Read_Configuration("LOCAL_SERVER-BIND_PORT"))
         );
+        
         
         -- runner task 
         Runner_Task.Start;

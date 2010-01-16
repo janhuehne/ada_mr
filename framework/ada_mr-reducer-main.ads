@@ -26,7 +26,7 @@ package Ada_Mr.Reducer.Main is
   type Reducer_Task_Access is access Reducer_Task;
   
   task type Reducer_Task is
-    entry Start(Self : Reducer_Task_Access; Config_File : String);
+    entry Start(Self : Reducer_Task_Access);
     entry Stop;
   end Reducer_Task;
 

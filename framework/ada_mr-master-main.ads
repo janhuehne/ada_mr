@@ -44,7 +44,7 @@ package Ada_Mr.Master.Main is
   type Master_Task_Access is access Master_Task;
   
   task type Master_Task is
-    entry Start(Self : Master_Task_Access; Config_File : String);
+    entry Start(Self : Master_Task_Access);
     entry Stop;
   end Master_Task;
   

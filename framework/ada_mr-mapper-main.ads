@@ -53,7 +53,7 @@ package Ada_Mr.Mapper.Main is
   type Mapper_Task_Access is access Mapper_Task;
   
   task type Mapper_Task is
-    entry Start(Self : Mapper_Task_Access; Config_File : String);
+    entry Start(Self : Mapper_Task_Access);
     entry Stop;
   end Mapper_Task;
 
