@@ -121,9 +121,10 @@ package body Char_Job is
   
   
   procedure Split_Raw_Data is
+    Complete_String : String := Ada_Mr.Helper.Read_Configuration("user", "text");
     First : Natural := Complete_String'First;
     Last  : Natural;
-    Step  : Natural := 10;
+    Step  : Natural := Natural'Value(Ada_Mr.Helper.Read_Configuration("user", "step"));
   begin
     loop
       Last := First + Step - 1;

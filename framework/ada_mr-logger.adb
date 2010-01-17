@@ -2,6 +2,7 @@ with Ada.Text_IO;
 
 with Ada.Calendar;
 with GNAT.Calendar.Time_IO;
+with Ada_Mr.Helper;
 
 package body Ada_Mr.Logger is
   
@@ -10,6 +11,13 @@ package body Ada_Mr.Logger is
     Output_Level := Level;
   end Set_Output_Level;
   
+  
+  procedure Set_Output_Level(Level : String) is
+  begin
+    Set_Output_Level(
+      From_String(Level)
+    );
+  end Set_Output_Level;
   
   procedure Put(Item : String; Level : Log_Level; Prefix : String := "") is
   begin
@@ -75,5 +83,19 @@ package body Ada_Mr.Logger is
       when Err => return "ERROR";
     end case;
   end Image;
+  
+  
+  function From_String(Level : String) return Log_Level is
+  begin
+    if Ada_Mr.Helper.Is_Equal("info", Level, true) then
+      return Info;
+    elsif Ada_Mr.Helper.Is_Equal("warn", Level, true) then
+      return Warn;
+    elsif Ada_Mr.Helper.Is_Equal("err", Level, true) or Ada_Mr.Helper.Is_Equal("error", Level, true) then
+      return Err;
+    else
+      return Err;
+    end if;
+  end From_String;
   
 end Ada_Mr.Logger;

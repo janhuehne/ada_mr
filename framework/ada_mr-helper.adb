@@ -491,6 +491,7 @@ package body Ada_Mr.Helper is
     -- default settings
     Add_Configuration("settings", "max_connection_tries", "5");
     Add_Configuration("settings", "timeout_connection_tries", "5");
+    Add_Configuration("settings", "log_level", "err");
   end Set_Default_Configuration;
   
   
@@ -550,6 +551,18 @@ package body Ada_Mr.Helper is
       Parse_Configuration(To_Lower(To_String(W_Type)) & "_config.xml", W_Type);
       Logger.Put_Line("No command line arguments found.", Logger.Warn);
     end if;
+    
+    -- readout config to set some package variables
+    -- logger
+    declare
+    begin
+      Logger.Set_Output_Level(
+        Read_Configuration("settings", "log_level")
+      );
+    exception
+      when others => null;
+    end;
+    
   end Parse_Command_Line_Arguments;
   
   
