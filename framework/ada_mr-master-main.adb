@@ -87,6 +87,44 @@ package body Ada_Mr.Master.Main is
       or
         accept Stop;
         Ada_Mr.Logger.Put_Line(" -> Please wait, while closing the client connections.", Ada_Mr.Logger.Info);
+        
+        -- sending exit command to all worker
+        declare
+          
+          procedure Send_Exit_Command(C : Ada_Mr.Master.Helper.Worker_Entry_Vectors.Cursor) is
+            Worker_Access : Ada_Mr.Master.Helper.Worker_Record_Access;
+          begin
+            Worker_Access :=  Ada_Mr.Master.Helper.Worker_Entry_Vectors.Element(C);
+            
+            declare
+              Xml_Command : String := Ada_Mr.Xml.Helper.Xml_Command(
+                G_T           => Ada_Mr.Xml.Helper.Master,
+                Command       => "exit",
+                Access_Token  => Worker_Access.Access_Token
+              );
+              
+              Response : String := Ada_Mr.Helper.Send(
+                Worker_Access.Ip,
+                Worker_Access.Port,
+                Xml_Command
+              );
+            begin
+              Logger.Put_Line(Response, Logger.Info);
+            end;
+          exception
+            when others =>
+              Logger.Put_Line("Worker """ & ASU.To_String(Worker_Access.Identifier) & """ could not shut down.", Logger.Err);
+          end;
+          
+          Worker_Vector : Ada_Mr.Master.Helper.Worker_Entry_Vectors.Vector;
+        begin
+          Worker_Vector.Append(Worker.Find_All_By_Type(Ada_Mr.Helper.Mapper));
+          Worker_Vector.Append(Worker.Find_All_By_Type(Ada_Mr.Helper.Reducer));
+          
+          Worker_Vector.Iterate(Send_Exit_Command'Access);
+        end;
+        
+        
         Ada_Mr.Master.Helper.Aborted.Set_Exit;
         Server_Task.Stop;
         Observer_Task.Stop;

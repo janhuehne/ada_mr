@@ -19,8 +19,9 @@ package body Ada_Mr.Reducer.Server is
   
   
   procedure Process_Request(S : Stream_Access; From : Ada_Mr.Helper.Worker_Type; Xml_Root : Ada_Mr.Xml.Node_Access) is
+    use Ada_Mr.Helper;
   begin
-    if Ada_Mr.Helper."="(From, Ada_Mr.Helper.Mapper) then
+    if From = Mapper then
       
       if Ada_Mr.Xml.Helper.Is_Command(Xml_Root, "job_result") then
       
@@ -32,7 +33,7 @@ package body Ada_Mr.Reducer.Server is
         );
       end if;
         
-    elsif Ada_Mr.Helper."="(From, Ada_Mr.Helper.Master) then
+    elsif From = Master then
       
       if Ada_Mr.Xml.Helper.Is_Command(Xml_Root, "finalize") then
         Finalize_Jobs;
@@ -41,8 +42,12 @@ package body Ada_Mr.Reducer.Server is
           S, 
           Ada_Mr.Xml.Helper.Create_System_Control(Ada_Mr.Xml.Helper.Reducer, "okay")
         );
-      end if;
       
+      elsif Ada_Mr.Xml.Helper.Is_Command(Xml_Root, "exit") then
+        String'Output(S, Ada_Mr.Xml.Helper.Create_System_Control(Ada_Mr.Xml.Helper.Mapper, "okay"));
+        Stop_Reducer;
+      end if;
+
     end if;
     
   exception
