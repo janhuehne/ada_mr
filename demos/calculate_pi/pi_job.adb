@@ -126,7 +126,7 @@ package body Pi_Job is
   procedure Finalize is
     Pi : Float;
   begin
-    Pi := 4.0 * Float(In_Circle_Count) / Float(Not_In_Circle_Count);
+    Pi := 4.0 * Float(In_Circle_Count) / Float(In_Circle_Count + Not_In_Circle_Count);
     
     Ada.Text_IO.Put_Line("Reducer result: ");
     Ada.Text_IO.Put_Line("In circle    : " & In_Circle_Count'Img);
