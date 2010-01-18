@@ -463,16 +463,15 @@ package body Ada_Mr.Helper is
   begin
     
     -- default local server
+    Add_Configuration("local_server", "bind_ip", GNAT.Sockets.Image(GNAT.Sockets.Addresses(GNAT.Sockets.Get_Host_By_Name(GNAT.Sockets.Host_Name), 1)));
+    
     if W_Type = Master then
-      Add_Configuration("local_server", "bind_ip", "127.0.0.1");
       Add_Configuration("local_server", "bind_port", "7000");
       
     elsif W_Type = Mapper then
-      Add_Configuration("local_server", "bind_ip", "127.0.0.1");
       Add_Configuration("local_server", "bind_port", "8000");
     
     elsif W_Type = Reducer then
-      Add_Configuration("local_server", "bind_ip", "127.0.0.1");
       Add_Configuration("local_server", "bind_port", "9000");
     end if;
     
