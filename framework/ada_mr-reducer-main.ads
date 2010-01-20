@@ -9,6 +9,7 @@ with Ada_Mr.Generics.Console;
 
 with Ada_Mr.Reducer.Server;
 with Ada_Mr.Reducer.Runner;
+with Ada_Mr.Generics.Runner;
 
 generic
   with procedure Merge_Jobs(Xml_Node : Ada_Mr.Xml.Node_Access);
@@ -37,10 +38,12 @@ package Ada_Mr.Reducer.Main is
 ----------------------------------------------------
 -- RESULT MERGE TASK                               -
 ----------------------------------------------------
-  task type Result_Merge_Task is
-    entry Start;
-    entry Stop;
-  end Result_Merge_Task;
+  procedure Merge_Mapper_Results;
+    
+  package Result_Merge is new Ada_Mr.Generics.Runner(
+    Merge_Mapper_Results
+  );
+
 
 
 

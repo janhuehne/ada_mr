@@ -17,7 +17,7 @@ package body Ada_Mr.Reducer.Main is
   task body Reducer_Task is
     Server_Task       : Server.Server.Server_Task;
     Runner_Task       : Runner.Runner.Runner_Task;
-    Result_Merge      : Result_Merge_Task;
+    Result_Merge_Task : Result_Merge.Runner_Task;
     
   begin
     Ada.Text_IO.New_Line;
@@ -64,14 +64,14 @@ package body Ada_Mr.Reducer.Main is
         Runner_Task.Start;
         
         -- start merging task to merge mapper results
-        Result_Merge.Start;
+        Result_Merge_Task.Start;
       or
         accept Stop;
         Ada_Mr.Logger.Put_Line("Stopping all reducer tasks", Ada_Mr.Logger.Info);
         Ada_Mr.Reducer.Helper.Aborted.Stop;
         Server_Task.Stop;
         Runner_Task.Stop;
-        Result_Merge.Stop;
+        Result_Merge_Task.Stop;
         
         exit;
       end select;
@@ -82,7 +82,7 @@ package body Ada_Mr.Reducer.Main is
       Ada_Mr.Reducer.Helper.Aborted.Stop;
       Server_Task.Stop;
       Runner_Task.Stop;
-      Result_Merge.Stop;
+      Result_Merge_Task.Stop;
   end Reducer_Task;
   
   
@@ -91,44 +91,31 @@ package body Ada_Mr.Reducer.Main is
     Main_Task.Stop;
   end Stop_Reducer_Task;
   
-----------------------------------------------------
--- RESULT MERGE TASK                               -
-----------------------------------------------------
-  task body Result_Merge_Task is
+  
+  procedure Merge_Mapper_Results is
   begin
     loop
-      select
-        accept Start;
-        Ada_Mr.Logger.Put_Line("Result Merge Task started!", Ada_Mr.Logger.Info);
+      exit when Ada_Mr.Reducer.Helper.Aborted.Check = true;
+      
+      declare
+        Cursor : Ada_Mr.Reducer.Helper.Xml_Node_Access_Vectors.Cursor := Ada_Mr.Reducer.Helper.Finished_Jobs_Queue.First;
+      begin
         loop
-          exit when Ada_Mr.Reducer.Helper.Aborted.Check = true;
+          exit when Ada_Mr.Reducer.Helper.Xml_Node_Access_Vectors."="(Cursor, Ada_Mr.Reducer.Helper.Xml_Node_Access_Vectors.No_Element);
           
           declare
-            Cursor : Ada_Mr.Reducer.Helper.Xml_Node_Access_Vectors.Cursor := Ada_Mr.Reducer.Helper.Finished_Jobs_Queue.First;
           begin
-            loop
-              exit when Ada_Mr.Reducer.Helper.Xml_Node_Access_Vectors."="(Cursor, Ada_Mr.Reducer.Helper.Xml_Node_Access_Vectors.No_Element);
-              
-              declare
-              begin
-                Merge_Jobs(Ada_Mr.Reducer.Helper.Xml_Node_Access_Vectors.Element(Cursor));
-                Ada_Mr.Reducer.Helper.Finished_Jobs_Queue.Delete(Cursor);
-              exception
-                when Error : others => Ada_Mr.Helper.Print_Exception(Error);
-              end;
-              
-              Ada_Mr.Reducer.Helper.Xml_Node_Access_Vectors.Next(Cursor);
-            end loop;
+            Merge_Jobs(Ada_Mr.Reducer.Helper.Xml_Node_Access_Vectors.Element(Cursor));
+            Ada_Mr.Reducer.Helper.Finished_Jobs_Queue.Delete(Cursor);
+          exception
+            when Error : others => Ada_Mr.Helper.Print_Exception(Error);
           end;
+          
+          Ada_Mr.Reducer.Helper.Xml_Node_Access_Vectors.Next(Cursor);
         end loop;
-      or 
-        accept Stop;
-        Ada_Mr.Logger.Put_Line("Terminating result merge task", Ada_Mr.Logger.Info);
-        exit;
-      end select;
+      end;
     end loop;
-    Ada_Mr.Logger.Put_Line("Result merge task terminated", Ada_Mr.Logger.Info);
-  end Result_Merge_Task;
+  end Merge_Mapper_Results;
   
   
   
