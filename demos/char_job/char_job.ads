@@ -1,3 +1,4 @@
+with Ada.Containers.Indefinite_Hashed_Maps;
 with Ada.Containers.Vectors;
 with Ada.Strings.Unbounded;
 with Ada_Mr.Helper;
@@ -14,7 +15,6 @@ package Char_Job is
   -- Job record definition
   type Char_Job is new Ada_Mr.Job.Object with record
     Computable_String : ASU.Unbounded_String;
-    Length            : Natural;
   end record;
   
   

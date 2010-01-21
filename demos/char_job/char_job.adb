@@ -5,6 +5,7 @@ with Ada_Mr.Logger;
 with Ada.Strings.Maps;
 with Ada_Mr.Xml.Helper;
 with Ada.Characters.Handling;
+with Ada_Mr.Logger;
 
 package body Char_Job is
   
@@ -40,58 +41,59 @@ package body Char_Job is
   overriding procedure Compute_Job(The_Job : Char_Job) is
     Computable_String : String := ASU.To_String(The_Job.Computable_String);
     Element_Cursor : Ada_Mr.Helper.String_Integer_Maps.Cursor;
-    
-    function Special_Char(Input : String) return String is
-    begin
---      if Input = " " or Input = "." or Input = "," or Input = ";" then
---        return "SZ";
---      else
-        return Input;
---      end if;
-    end;
+    Ascii_Code : Integer;
   begin
     Ada_Mr.Logger.Put_Line("Analysing: " & Computable_String, Ada_Mr.Logger.Info);
     
     for I in Computable_String'First .. Computable_String'Last loop
-      Element_Cursor := Result_Hash.Find(Special_Char(Computable_String(I..I)));
+      Ada_Mr.Logger.Put_Line(Character'Pos(Computable_String(I))'Img, Ada_Mr.Logger.Info);
+      Ascii_Code := Character'Pos(Ada.Characters.Handling.To_Upper(Computable_String(I)));
+      Element_Cursor := Result_Hash.Find(Ada_Mr.Helper.Trim(Ascii_Code'Img));
+      
       if Ada_Mr.Helper.String_Integer_Maps."/="(Element_Cursor, Ada_Mr.Helper.String_Integer_Maps.No_Element) then
         Result_Hash.Replace_Element(
-          Element_Cursor, 
+          Element_Cursor,
           Ada_Mr.Helper.String_Integer_Maps.Element(Element_Cursor) + 1
         );
       else
-        Result_Hash.Insert(Special_Char(Computable_String(I..I)), 1);
+        Result_Hash.Insert(Ada_Mr.Helper.Trim(Ascii_Code'Img), 1);
       end if;
     end loop;
     
   exception
-    when Error : others => raise Ada_Mr.Helper.Compute_Job_Error;
+    when Error : others => 
+      Ada_Mr.Helper.Print_Exception(Error);
+      raise Ada_Mr.Helper.Compute_Job_Error;
   end Compute_Job;
   
   
   procedure Merge_Job_Results(Xml_Node : Ada_Mr.Xml.Node_Access) is
     Cursor : Ada_Mr.Xml.Node_Access_Vector.Cursor := Xml_Node.Children.First;
-    Char   : String(1..1);
+    Char   : Character;
     Count  : Natural;
   begin
     loop
       exit when Ada_Mr.Xml.Node_Access_Vector."="(Cursor, Ada_Mr.Xml.Node_Access_Vector.No_Element);
       
       declare
-        Value : String := ASU.To_String(Ada_Mr.Xml.Node_Access_Vector.Element(Cursor).Value);
         Map_Cursor : Ada_Mr.Helper.String_Integer_Maps.Cursor;
       begin
-        Char  := Ada.Characters.Handling.To_Upper(Value(2..2));
-        Count := Natural'Value(Value(3 .. Value'Last - 1));
+        Char := Character'Val(
+            Integer'Value(
+              ASU.To_String(Ada_Mr.Xml.Node_Access_Vector.Element(Cursor).Tag)
+            )
+          );
+        
+        Count := Natural'Value(ASU.To_String(Ada_Mr.Xml.Node_Access_Vector.Element(Cursor).Value));
         
         Map_Cursor := Ada_Mr.Helper.String_Integer_Maps.Find(
           Result_Hash,
-          Char
+          Character'Image(Char)
         );
         
         if Ada_Mr.Helper.String_Integer_Maps."="(Map_Cursor, Ada_Mr.Helper.String_Integer_Maps.No_Element) then
           Result_Hash.Insert(
-            Char,
+            Character'Image(Char),
             Count
           );
         else
@@ -146,7 +148,6 @@ package body Char_Job is
       begin
         Job.Job_Id := Ada_Mr.Job.Get_Next_Job_Id;
         Job.Computable_String := ASU.To_Unbounded_String(Complete_String(First .. Last));
-        Job.Length := Last - First + 1;
         
         Calculated_Jobs.Append(Job);
       end;
@@ -177,10 +178,9 @@ package body Char_Job is
       Result_String : Ada.Strings.Unbounded.Unbounded_String;
     begin
       while Ada_Mr.Helper.String_Integer_Maps.Has_Element(Result_Cursor) loop
-        Ada.Strings.Unbounded.Append(Result_String, "<rs>#");
-        Ada.Strings.Unbounded.Append(Result_String, Ada_Mr.Helper.String_Integer_Maps.Key(Result_Cursor));
+        Ada.Strings.Unbounded.Append(Result_String, "<" & Ada_Mr.Helper.String_Integer_Maps.Key(Result_Cursor) & ">");
         Ada.Strings.Unbounded.Append(Result_String, Ada_Mr.Helper.Trim(Ada_Mr.Helper.String_Integer_Maps.Element(Result_Cursor)'Img));
-        Ada.Strings.Unbounded.Append(Result_String, "#</rs>");
+        Ada.Strings.Unbounded.Append(Result_String, "</" & Ada_Mr.Helper.String_Integer_Maps.Key(Result_Cursor) & ">");
         
         Ada_Mr.Helper.String_Integer_Maps.Next(Result_Cursor);
       end loop;
