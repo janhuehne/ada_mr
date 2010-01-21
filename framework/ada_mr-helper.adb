@@ -463,7 +463,8 @@ package body Ada_Mr.Helper is
   begin
     
     -- default local server
-    Add_Configuration("local_server", "bind_ip", GNAT.Sockets.Image(GNAT.Sockets.Addresses(GNAT.Sockets.Get_Host_By_Name(GNAT.Sockets.Host_Name), 1)));
+    --Add_Configuration("local_server", "bind_ip", GNAT.Sockets.Image(GNAT.Sockets.Addresses(GNAT.Sockets.Get_Host_By_Name(GNAT.Sockets.Host_Name), 1)));
+    Add_Configuration("local_server", "bind_ip", "127.0.0.1");
     
     if W_Type = Master then
       Add_Configuration("local_server", "bind_port", "7000");
@@ -479,6 +480,7 @@ package body Ada_Mr.Helper is
     -- default master
     if W_Type = Mapper or W_Type = Reducer then
       Add_Configuration("master", "ip", "127.0.0.1");
+      --Add_Configuration("master", "ip", GNAT.Sockets.Image(GNAT.Sockets.Addresses(GNAT.Sockets.Get_Host_By_Name(GNAT.Sockets.Host_Name), 1)));
       Add_Configuration("master", "port", "7000");
     end if;
     
