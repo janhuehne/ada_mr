@@ -12,7 +12,7 @@ package Char_Job is
   
   
   -- Job record definition
-  type Char_Job is new Ada_Mr.Job.Job with record
+  type Char_Job is new Ada_Mr.Job.Object with record
     Computable_String : ASU.Unbounded_String;
     Length            : Natural;
   end record;

@@ -11,7 +11,7 @@ package Pi_Job is
   package Float_Functions is new Ada.Numerics.Generic_Elementary_Functions(Float);
   
   -- Job record definition
-  type Pi_Job is new Ada_Mr.Job.Job with record
+  type Pi_Job is new Ada_Mr.Job.Object with record
     Random_Inital_Value   : Natural;
     Pairs_Per_Map_Process : Natural := 1;
   end record;
