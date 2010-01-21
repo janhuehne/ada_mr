@@ -531,21 +531,33 @@ package body Ada_Mr.Helper is
         declare 
           Argument : String := Ada.Command_Line.Argument(I);
         begin
-          
-          -- available for all worker types
-          if Starts_With(Argument, "--config_file=", true) then
-            Parse_Configuration(Ada_Mr.Helper.Sub_Str(Argument, 15, Argument'Last), W_Type);
-          else
-            Parse_Configuration(To_Lower(To_String(W_Type)) & "_config.xml", W_Type);
+          if Starts_With(Argument, "--", true) then
+            
+            declare
+              Input : String := Argument(3 .. Argument'Last);
+            begin
+              -- available for all worker types
+              if Starts_With(Argument, "config_file=", true) then
+                Parse_Configuration(Ada_Mr.Helper.Sub_Str(Argument, 13, Argument'Last), W_Type);
+              else
+                Parse_Configuration(To_Lower(To_String(W_Type)) & "_config.xml", W_Type);
+              end if;
+              
+              declare
+                Dividor : Natural := Ada.Strings.Fixed.Index(Argument, "=");
+                Key     : String  := Input(Input'First .. Dividor-1);
+                Value   : String  := Input(Dividor+1 .. Input'Last);
+              begin
+                if Starts_With(Key, "identifier", true) then
+                  if W_Type = Mapper or W_Type = Reducer then
+                    Add_Configuration(Key, Value);
+                  end if;
+                else
+                  Add_Configuration(Key, Value);
+                end if;
+              end;
+            end;
           end if;
-          
-          -- only for mapper or reducer
-          if W_Type = Mapper or W_Type = Reducer then
-            if Starts_With(Argument, "--identifier=", true) then
-              Add_Configuration("identifier", Ada_Mr.Helper.Sub_Str(Argument, 14, Argument'Last));
-            end if;
-          end if;
-          
         end;
       end loop;
     else
