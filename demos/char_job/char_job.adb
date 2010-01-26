@@ -65,7 +65,7 @@ package body Char_Job is
   end Compute_Job;
   
   
-  procedure Merge_Job_Results(Xml_Node : Ada_Mr.Xml.Node_Access) is
+  procedure Merge_Job_Results(Xml_Node : Ada_Mr.Xml.Node_Access; Stop_System : out Boolean) is
     Cursor : Ada_Mr.Xml.Node_Access_Vector.Cursor := Xml_Node.Children.First;
     Char   : Character;
     Count  : Natural;
