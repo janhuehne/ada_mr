@@ -183,7 +183,7 @@ package body Char_Job is
     end Job_Result_To_Xml;
     
   begin
-    Ada_Mr.Helper.String_String_Maps.Insert(Mapping, "Reducer_01", Job_Result_To_Xml);
+    Ada_Mr.Helper.String_String_Maps.Insert(Mapping, "Reducer_1", Job_Result_To_Xml);
     
     return Mapping;
   end Split_Result_For_Different_Reducer;
