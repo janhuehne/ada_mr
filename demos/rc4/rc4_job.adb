@@ -152,7 +152,6 @@ package body Rc4_Job is
         exit when Key_Found = true;
       end loop;
       
-      exit;
       exit when Key_Found = true;
     end loop;
   end Compute_Job;
