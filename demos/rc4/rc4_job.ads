@@ -43,7 +43,7 @@ package Rc4_Job is
   
   
   -- merge job results
-  procedure Merge_Job_Results(Xml_Node : Ada_Mr.Xml.Node_Access);
+  procedure Merge_Job_Results(Xml_Node : Ada_Mr.Xml.Node_Access; Stop_System : out Boolean);
   
   
   procedure Finalize;
@@ -67,5 +67,5 @@ package Rc4_Job is
 private
 
   function Byte_Array_To_Xml(Byte_Array : Rc_4.Unsigned_Byte_Array) return String ;
-  function Byte_Array_From_Xml(Xml_Node : Ada_Mr.Xml.Node_Access) return Rc_4.Unsigned_Byte_Array;
+  procedure Byte_Array_From_Xml(Xml_Node : Ada_Mr.Xml.Node_Access; Byte_Array : out Rc_4.Unsigned_Byte_Array);
 end Rc4_Job;

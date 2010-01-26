@@ -1,6 +1,6 @@
 with Ada.Text_IO;
 with Ada_Mr.Xml.Helper;
-
+with Ada_Mr.Logger;
 package body Rc4_Job is
   
   overriding function To_Xml(The_Job : Rc4_Job) return String is
@@ -20,12 +20,16 @@ package body Rc4_Job is
     J : Rc4_Job;
   begin
     J.Job_Id              := Integer'Value(Ada_Mr.Xml.Get_Value(Xml_Node, "job_id"));
-    J.Plain_Text          := Byte_Array_From_Xml(Ada_Mr.Xml.Find_Child_With_Tag(Xml_Node, "plain_text"));
-    J.Cipher_Text         := Byte_Array_From_Xml(Ada_Mr.Xml.Find_Child_With_Tag(Xml_Node, "cipher_text"));
+    
+    Byte_Array_From_Xml(Ada_Mr.Xml.Find_Child_With_Tag(Xml_Node, "plain_text"), J.Plain_Text);
+    Byte_Array_From_Xml(Ada_Mr.Xml.Find_Child_With_Tag(Xml_Node, "cipher_text"), J.Cipher_Text);
+    
     J.Start_Most_Sig_Byte := Rc_4.Unsigned_Byte(Integer'Value(Ada_Mr.Xml.Get_Value(Xml_Node, "start_most_sig_byte")));
     J.Most_Sig_Byte_Range := Natural'Value(Ada_Mr.Xml.Get_Value(Xml_Node, "most_sig_byte_range"));
     
     return J;
+  exception
+    when Error : others => Ada_Mr.Helper.Print_Exception(Error);
   end From_Xml;
   
   
@@ -42,6 +46,12 @@ package body Rc4_Job is
     Most_Sig_Byte_Range : Natural := Natural'Value(Ada_Mr.Helper.Read_Configuration("user", "most_sig_byte_range"));
   begin
     Random_Key := Rc_4.Random_Key(In_Key);
+    
+    Rc_4.Print_Key(Random_Key);
+--    Random_Key(0) := 0;
+--    Random_Key(1) := 0;
+--    Random_Key(2) := 200;
+--    Random_Key(3) := 0;
     
     Rc_4.Init_RC4(Random_Key, S_Box);
     
@@ -109,6 +119,8 @@ package body Rc4_Job is
     Cipher_Text : Rc_4.Unsigned_Byte_Array(1 .. 10);
     Key_Found   : Boolean := false;
   begin
+    Ada_Mr.Logger.Put_Line("Starting compute job", Ada_Mr.Logger.Info);
+    
     for I in Natural(The_Job.Start_Most_Sig_Byte) .. (Natural(The_Job.Start_Most_Sig_Byte) + The_Job.Most_Sig_Byte_Range) loop
       Test_Key(0) := Rc_4.Unsigned_Byte(I);
       for J in Rc_4.Unsigned_Byte'Range loop
@@ -151,7 +163,7 @@ package body Rc4_Job is
     Mapping : Ada_Mr.Helper.String_String_Maps.Map;
   begin
     Mapping.Insert(
-      "Reducer_01", 
+      "Reducer_1", 
       "<key>" & Byte_Array_To_Xml(Found_Key) & "</key>"
     );
     
@@ -159,14 +171,16 @@ package body Rc4_Job is
   end Split_Result_For_Different_Reducer;
   
   
-  procedure Merge_Job_Results(Xml_Node : Ada_Mr.Xml.Node_Access) is
+  procedure Merge_Job_Results(Xml_Node : Ada_Mr.Xml.Node_Access; Stop_System : out Boolean) is
   begin
-    Found_Key := Byte_Array_From_Xml(Ada_Mr.Xml.Find_Child_With_Tag(Xml_Node, "key")); 
+    Byte_Array_From_Xml(Ada_Mr.Xml.Find_Child_With_Tag(Xml_Node, "key"), Found_Key);
+    Stop_System := True;
   end Merge_Job_Results;
   
   
   procedure Finalize is
   begin
+    Ada.Text_IO.Put_Line("A possible key found:");
     Rc_4.Print_Key(Found_Key);
   end Finalize;
   
@@ -183,17 +197,16 @@ package body Rc4_Job is
   end Byte_Array_To_Xml;
   
   
-  function Byte_Array_From_Xml(Xml_Node : Ada_Mr.Xml.Node_Access) return Rc_4.Unsigned_Byte_Array is
+  procedure Byte_Array_From_Xml(Xml_Node : Ada_Mr.Xml.Node_Access; Byte_Array : out Rc_4.Unsigned_Byte_Array) is
     Cursor  : Ada_Mr.Xml.Node_Access_Vector.Cursor := Xml_Node.Children.First;
-    Tmp     : Rc_4.Unsigned_Byte_Array(1 .. 10);
   begin
     loop
       exit when Ada_Mr.Xml.Node_Access_Vector."="(Cursor, Ada_Mr.Xml.Node_Access_Vector.No_Element);
       
-      Tmp(Integer'Value(ASU.To_String(Ada_Mr.Xml.Node_Access_Vector.Element(Cursor).Tag))) := 
+      Byte_Array(Integer'Value(ASU.To_String(Ada_Mr.Xml.Node_Access_Vector.Element(Cursor).Tag))) := 
         Rc_4.Unsigned_Byte(Integer'Value(ASU.To_String(Ada_Mr.Xml.Node_Access_Vector.Element(Cursor).Value)));
+      
+      Ada_Mr.Xml.Node_Access_Vector.Next(Cursor);
     end loop;
-    
-    return Tmp;
   end Byte_Array_From_Xml;
 end Rc4_Job;
