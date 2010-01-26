@@ -1,6 +1,8 @@
 with Ada.Text_IO;
 with Ada_Mr.Xml.Helper;
 with Ada_Mr.Logger;
+with Ada.Calendar;
+with GNAT.Calendar.Time_IO;
 package body Rc4_Job is
   
   overriding function To_Xml(The_Job : Rc4_Job) return String is
@@ -119,16 +121,19 @@ package body Rc4_Job is
     Cipher_Text : Rc_4.Unsigned_Byte_Array(1 .. 10);
     Key_Found   : Boolean := false;
   begin
-    Ada_Mr.Logger.Put_Line("Starting compute job", Ada_Mr.Logger.Info);
-    
     for I in Natural(The_Job.Start_Most_Sig_Byte) .. (Natural(The_Job.Start_Most_Sig_Byte) + The_Job.Most_Sig_Byte_Range) loop
       Test_Key(0) := Rc_4.Unsigned_Byte(I);
+      
       for J in Rc_4.Unsigned_Byte'Range loop
         Test_Key(1) := J;
         for K in Rc_4.Unsigned_Byte'Range loop
+          Rc_4.Print_Key(Test_Key);
+          
           Test_Key(2) := K;
           for L in Rc_4.Unsigned_Byte'Range loop
             Test_Key(3) := L;
+            
+            
             
             X := 0;
             Y := 0;
@@ -153,7 +158,8 @@ package body Rc4_Job is
         
         exit when Key_Found = true;
       end loop;
-        
+      
+      exit;
       exit when Key_Found = true;
     end loop;
   end Compute_Job;
