@@ -179,9 +179,12 @@ package body Rc4_Job is
     Byte_Array_From_Xml(Ada_Mr.Xml.Find_Child_With_Tag(Xml_Node, "key"), Key);
     
     if Rc_4."/="(Key, Null_Key) then
-      Rc_4.Print_Key(Key);
+      Rc_4.Print_Key(Key);  
       Found_Key := Key;
       Stop_System := True;
+    else
+      Ada_Mr.Logger.Put_Line("Nix TRUE!", Ada_Mr.Logger.Warn);
+      Stop_System := False;
     end if;
   end Merge_Job_Results;
   
