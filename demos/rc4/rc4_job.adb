@@ -123,12 +123,11 @@ package body Rc4_Job is
   begin
     for I in Natural(The_Job.Start_Most_Sig_Byte) .. (Natural(The_Job.Start_Most_Sig_Byte) + The_Job.Most_Sig_Byte_Range) loop
       Test_Key(0) := Rc_4.Unsigned_Byte(I);
-      
+      Rc_4.Print_Key(Test_Key);
       for J in Rc_4.Unsigned_Byte'Range loop
         Test_Key(1) := J;
+        
         for K in Rc_4.Unsigned_Byte'Range loop
-          Rc_4.Print_Key(Test_Key);
-          
           Test_Key(2) := K;
           for L in Rc_4.Unsigned_Byte'Range loop
             Test_Key(3) := L;
