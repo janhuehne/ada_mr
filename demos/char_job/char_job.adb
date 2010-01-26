@@ -46,7 +46,7 @@ package body Char_Job is
     Ada_Mr.Logger.Put_Line("Analysing: " & Computable_String, Ada_Mr.Logger.Info);
     
     for I in Computable_String'First .. Computable_String'Last loop
-      Ada_Mr.Logger.Put_Line(Character'Pos(Computable_String(I))'Img, Ada_Mr.Logger.Info);
+--      Ada_Mr.Logger.Put_Line(Character'Pos(Computable_String(I))'Img, Ada_Mr.Logger.Info);
       Ascii_Code := Character'Pos(Ada.Characters.Handling.To_Upper(Computable_String(I)));
       Element_Cursor := Result_Hash.Find(Ada_Mr.Helper.Trim(Ascii_Code'Img));
       
@@ -59,10 +59,8 @@ package body Char_Job is
         Result_Hash.Insert(Ada_Mr.Helper.Trim(Ascii_Code'Img), 1);
       end if;
     end loop;
-    
   exception
     when Error : others => 
-      Ada_Mr.Helper.Print_Exception(Error);
       raise Ada_Mr.Helper.Compute_Job_Error;
   end Compute_Job;
   
@@ -78,12 +76,7 @@ package body Char_Job is
       declare
         Map_Cursor : Ada_Mr.Helper.String_Integer_Maps.Cursor;
       begin
-        Char := Character'Val(
-            Integer'Value(
-              ASU.To_String(Ada_Mr.Xml.Node_Access_Vector.Element(Cursor).Tag)
-            )
-          );
-        
+        Char  := Character'Val(Integer'Value(ASU.To_String(Ada_Mr.Xml.Node_Access_Vector.Element(Cursor).Tag)));
         Count := Natural'Value(ASU.To_String(Ada_Mr.Xml.Node_Access_Vector.Element(Cursor).Value));
         
         Map_Cursor := Ada_Mr.Helper.String_Integer_Maps.Find(
@@ -106,7 +99,6 @@ package body Char_Job is
       
       Ada_Mr.Xml.Node_Access_Vector.Next(Cursor);
     end loop;
-    
   end Merge_Job_Results;
   
   

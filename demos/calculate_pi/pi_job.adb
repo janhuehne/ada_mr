@@ -35,9 +35,14 @@ package body Pi_Job is
     Number_Of_Jobs : Natural;
     Pairs_Per_Map_Process : Natural := 1;
   begin
-    Number_Of_Jobs := 40;
+    begin
+      Number_Of_Jobs := Natural'Value(
+        Ada_Mr.Helper.Read_Configuration("user", "jobs")
+      );
+    exception
+      when others => null;
+    end;
     
-    declare
     begin
       Pairs_Per_Map_Process := Natural'Value(
         Ada_Mr.Helper.Read_Configuration("user", "pairs_per_map_process")

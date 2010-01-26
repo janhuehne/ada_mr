@@ -1,4 +1,3 @@
-with Ada.Command_Line;
 with Char_Job;
 with Ada_Mr.Reducer.Main;
 
