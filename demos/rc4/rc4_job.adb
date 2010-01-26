@@ -178,9 +178,15 @@ package body Rc4_Job is
   
   
   procedure Merge_Job_Results(Xml_Node : Ada_Mr.Xml.Node_Access; Stop_System : out Boolean) is
+    Key      : Rc_4.Key_Type;
+    Null_Key : Rc_4.Key_Type := (others => 0);
   begin
-    Byte_Array_From_Xml(Ada_Mr.Xml.Find_Child_With_Tag(Xml_Node, "key"), Found_Key);
-    Stop_System := True;
+    Byte_Array_From_Xml(Ada_Mr.Xml.Find_Child_With_Tag(Xml_Node, "key"), Key);
+    
+    if Rc_4."/="(Key, Null_Key) then
+      Found_Key := Key;
+      Stop_System := True;
+    end if;
   end Merge_Job_Results;
   
   
