@@ -73,6 +73,13 @@ package body Ada_Mr.Mapper.Main is
         Runner_Task.Stop;
         Server_Task.Stop;
         exit;
+      or 
+        accept Abort_It;
+        Ada_Mr.Logger.Put_Line("Depending tasks will be aborted", Ada_Mr.Logger.Info);
+        Ada_Mr.Mapper.Helper.Aborted.Stop;
+        abort Runner_Task;
+        Server_Task.Stop;
+        exit;
       end select;
     end loop;
   exception
@@ -88,6 +95,12 @@ package body Ada_Mr.Mapper.Main is
   begin
     Main_Task.Stop;
   end Stop_Mapper_Task;
+  
+  
+  procedure Abort_Mapper_Task is
+  begin
+    Main_Task.Abort_It;
+  end Abort_Mapper_Task;
   
 ----------------------------------------------------
 -- GENERIC CONSOLE METHODS                        --

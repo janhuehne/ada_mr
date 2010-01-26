@@ -63,7 +63,7 @@ package body Ada_Mr.Master.Server is
         begin
           Worker := Find_Worker_By_Access_Token_And_Type(
             Ada_Mr.Xml.Get_Value(Xml_Root, "access_token"),
-            Ada_Mr.Helper.Mapper
+            From
           );
           
           
@@ -155,6 +155,14 @@ package body Ada_Mr.Master.Server is
             else
               Ada.Exceptions.Raise_Exception(Ada_Mr.Helper.Unknown_Command'Identity, "The command """ & Ada_Mr.Xml.Get_Value(Xml_Root, "command") & """is not supported from a mapper.");
             end if;
+          
+          elsif From = Reducer then
+            
+            if Ada_Mr.Xml.Helper.Is_Command(Xml_Root, "stop_map_reduce_system") then
+              Ada_Mr.Master.Helper.Stop_Map_Reduce_System := True;
+              String'Output(S, Ada_Mr.Xml.Helper.Create_System_Control(Ada_Mr.Xml.Helper.Master, "okay"));
+            end if;
+          
           end if;
           -- End Handle Mapper requests -->
           
@@ -166,99 +174,7 @@ package body Ada_Mr.Master.Server is
       end if;
       
     end if;
-    
---    if Ada_Mr.Xml.Helper.Is_Mapper_Request(Xml_Root) then
---      if Ada_Mr.Xml.Helper.Is_Command(Xml_Root, "job_request") then
---        
---        declare
---          Worker : Ada_Mr.Master.Helper.Worker_Record_Access;
---        begin
---          Worker := Find_Worker_By_Access_Token_And_Type(
---            Ada_Mr.Xml.Get_Value(Xml_Root, "access_token"),
---            Ada_Mr.Master.Helper.Mapper
---          );
---          Ada_Mr.Logger.Put_Line(ASU.To_String(Worker.Identifier) & ": Job request", Ada_Mr.Logger.Info);
---          
---          declare
---            Job_Entry : Job_Entry_Record_Access;
---          begin
---            Job_Entry := Get_Next_Pending_Job;
---            
---            String'Output(S, Ada_Mr.Xml.Helper.Xml_Command(
---              G_T     => Ada_Mr.Xml.Helper.Master, 
---              Command => "new_job", 
---              Details => Job_Entry_To_Xml(Job_Entry)
---            ));
---          exception
---            when Ada_Mr.Master.Helper.No_Job_Found =>
---              String'Output(S, Ada_Mr.Xml.Helper.Xml_Command(
---                G_T     => Ada_Mr.Xml.Helper.Master, 
---                Command => "sleep", 
---                Details => "<seconds>10</seconds>"
---              ));
---            when Error : others => 
---              Ada_Mr.Helper.Print_Exception(Error);
---              --Change_Job_State(Job_Entry, Ada_Mr.Master.Helper.Pending);
---          end;
---        exception 
---          when Error : Ada_Mr.Master.Helper.No_Worker_Found =>
---            Ada_Mr.Xml.Helper.Send_Error(S, Ada_Mr.Xml.Helper.Master, Error);
---        end;
---      
---      elsif Ada_Mr.Xml.Helper.Is_Command(Xml_Root, "change_job_state") then
---        declare
---          Worker : Ada_Mr.Master.Helper.Worker_Record_Access;
---        begin
---          Worker := Find_Worker_By_Access_Token_And_Type(
---            Ada_Mr.Xml.Get_Value(Xml_Root, "access_token"),
---            Ada_Mr.Master.Helper.Mapper
---          );
---          
---          declare
---            Details   : Ada_Mr.Xml.Node_Access := Ada_Mr.Xml.Find_Child_With_Tag(Xml_Root, "details");
---            Job_Entry : Job_Entry_Record_Access := Get_Job_By_Id(Integer'Value(Ada_Mr.Xml.Get_Value(Details, "job_id")));
---            Job_State : Ada_Mr.Master.Helper.Job_State := Ada_Mr.Master.Helper.From_String(Ada_Mr.Xml.Get_Value(Details, "job_state"));
---            Message   : String := Ada_Mr.Xml.Get_Value_Or_Empty(Details, "message");
---          begin
---            
---            Change_Job_State(Job_Entry, Job_State, Message);
---            
---            Ada_Mr.Logger.Put_Line(ASU.To_String(Worker.Identifier) & ": Job state changed (Job_Id: " & Ada_Mr.Xml.Get_Value(Details, "job_id") & "; State: " & Ada_Mr.Xml.Get_Value(Details, "job_state") & "; Message: " & Message & ")", Ada_Mr.Logger.Info);
---            
---            String'Output(S, Ada_Mr.Xml.Helper.Create_System_Control(Ada_Mr.Xml.Helper.Master, "okay"));
---          end;
---        exception 
---          when Error : Ada_Mr.Master.Helper.No_Worker_Found =>
---            Ada_Mr.Xml.Helper.Send_Error(S, Ada_Mr.Xml.Helper.Master, Error);
---        end;
---      
---      elsif Ada_Mr.Xml.Helper.Is_Command(Xml_Root, "job_done") then
---        declare
---          Worker : Ada_Mr.Master.Helper.Worker_Record_Access;
---        begin
---          Worker := Find_Worker_By_Access_Token_And_Type(
---            Ada_Mr.Xml.Get_Value(Xml_Root, "access_token"),
---            Ada_Mr.Master.Helper.Mapper
---          );
---          Ada_Mr.Logger.Put_Line(ASU.To_String(Worker.Identifier) & ": Job done", Ada_Mr.Logger.Info);
---          
---          declare
---            Details   : Ada_Mr.Xml.Node_Access := Ada_Mr.Xml.Find_Child_With_Tag(Xml_Root, "details");
---            Job_Entry : Job_Entry_Record_Access := Get_Job_By_Id(Integer'Value(Ada_Mr.Xml.Get_Value(Details, "job_id")));
---          begin
---            Change_Job_State(Job_Entry, Ada_Mr.Master.Helper.Done);
---            String'Output(S, Ada_Mr.Xml.Helper.Create_System_Control(Ada_Mr.Xml.Helper.Master, "okay"));
---          end;
---        exception 
---          when Error : Ada_Mr.Master.Helper.No_Worker_Found =>
---            Ada_Mr.Xml.Helper.Send_Error(S, Ada_Mr.Xml.Helper.Master, Error);
---        end;
---            
---      else
---        Ada.Exceptions.Raise_Exception(Ada_Mr.Helper.Unknown_Command'Identity, "The command """ & Ada_Mr.Xml.Get_Value(Xml_Root, "command") & """is not supported."); 
---      end if;
---      
---    end if;
+ 
   exception
     when Error : others => 
       Ada_Mr.Helper.Print_Exception(Error);

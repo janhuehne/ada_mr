@@ -12,7 +12,7 @@ with Ada_Mr.Reducer.Runner;
 with Ada_Mr.Generics.Runner;
 
 generic
-  with procedure Merge_Jobs(Xml_Node : Ada_Mr.Xml.Node_Access);
+  with procedure Merge_Jobs(Xml_Node : Ada_Mr.Xml.Node_Access; Stop_System : out Boolean);
   with procedure Finalize_Jobs;
   
 package Ada_Mr.Reducer.Main is

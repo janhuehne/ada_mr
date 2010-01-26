@@ -99,8 +99,10 @@ package body Ada_Mr.Mapper.Runner is
             Ada_Mr.Logger.Put_Line("New job received", Ada_Mr.Logger.Info);
             
             declare
-              Job : My_Job := From_Xml(Ada_Mr.Xml.Find_Child_With_Tag(Xml_Tree, "details"));
+              Job : My_Job;
             begin
+              Job := From_Xml(Ada_Mr.Xml.Find_Child_With_Tag(Xml_Tree, "details"));
+              
               Ada_Mr.Logger.Put_Line("Computing job", Ada_Mr.Logger.Info);
               Compute_Job(Job);
               Ada_Mr.Logger.Put_Line("Job computed", Ada_Mr.Logger.Info);
@@ -231,7 +233,9 @@ package body Ada_Mr.Mapper.Runner is
                 when Error : others =>
                   Ada_Mr.Logger.Put_Line("Master unreachable! Job failed!", Ada_Mr.Logger.Err);
               end;
-             
+            exception
+              when Error : others =>
+                Ada_Mr.Helper.Print_Exception(Error);
             end;
             
           elsif Ada_Mr.Xml.Helper.Is_Command(Xml_Tree, "sleep") then

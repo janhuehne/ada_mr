@@ -6,6 +6,10 @@ use Ada_Mr.Helper;
 with Ada_Mr.Logger;
 with Ada_Mr.Reducer.Helper;
 
+with Ada_Mr.Xml;
+with Ada_Mr.Xml.Helper;
+with Ada_Mr.Xml.Parser;
+
 with GNAT.Sockets;
 with Ada.Exceptions;
 
@@ -93,19 +97,22 @@ package body Ada_Mr.Reducer.Main is
   
   
   procedure Merge_Mapper_Results is
+    Stop_Map_Reduce_System : Boolean := False;
   begin
     loop
+      exit when Stop_Map_Reduce_System = True;
       exit when Ada_Mr.Reducer.Helper.Aborted.Check = true;
       
       declare
         Cursor : Ada_Mr.Reducer.Helper.Xml_Node_Access_Vectors.Cursor := Ada_Mr.Reducer.Helper.Finished_Jobs_Queue.First;
       begin
         loop
+          exit when Stop_Map_Reduce_System = True;
           exit when Ada_Mr.Reducer.Helper.Xml_Node_Access_Vectors."="(Cursor, Ada_Mr.Reducer.Helper.Xml_Node_Access_Vectors.No_Element);
           
           declare
           begin
-            Merge_Jobs(Ada_Mr.Reducer.Helper.Xml_Node_Access_Vectors.Element(Cursor));
+            Merge_Jobs(Ada_Mr.Reducer.Helper.Xml_Node_Access_Vectors.Element(Cursor), Stop_Map_Reduce_System);
             Ada_Mr.Reducer.Helper.Finished_Jobs_Queue.Delete(Cursor);
           exception
             when Error : others => Ada_Mr.Helper.Print_Exception(Error);
@@ -115,6 +122,30 @@ package body Ada_Mr.Reducer.Main is
         end loop;
       end;
     end loop;
+    
+    
+    if Stop_Map_Reduce_System = True then
+      Ada_Mr.Logger.Put_Line("Stop the complete map reduce system", Ada_Mr.Logger.Info);
+      
+      declare
+        Response : String := Ada_Mr.Helper.Send(
+          GNAT.Sockets.Inet_Addr(Ada_Mr.Helper.Read_Configuration("MASTER-IP")),
+          GNAT.Sockets.Port_Type'Value(Ada_Mr.Helper.Read_Configuration("MASTER-PORT")),
+          Ada_Mr.Xml.Helper.Xml_Command(
+            G_T          => Ada_Mr.Xml.Helper.Reducer,
+            Command      => "stop_map_reduce_system",
+            Access_Token => Ada_Mr.Helper.Read_Configuration("ACCESS_TOKEN")
+          ),
+          Natural'Value(Ada_Mr.Helper.Read_Configuration("SETTINGS", "MAX_CONNECTION_TRIES")),
+          Natural'Value(Ada_Mr.Helper.Read_Configuration("SETTINGS", "TIMEOUT_CONNECTION_TRIES"))
+        );
+        
+        Xml_Tree : Ada_Mr.Xml.Node_Access := Ada_Mr.Xml.Helper.Get_Verified_Content(Ada_Mr.Xml.Parser.Parse(Content => Response));
+      begin
+        null;
+      end;
+      
+    end if;
   end Merge_Mapper_Results;
   
   

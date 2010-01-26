@@ -92,4 +92,7 @@ package Ada_Mr.Master.Helper is
   No_Worker_Found : Exception;
   Unknown_Job_State : Exception;
   
+  
+  Stop_Map_Reduce_System : Boolean := False;
+  
 end Ada_Mr.Master.Helper;

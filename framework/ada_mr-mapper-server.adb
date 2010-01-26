@@ -23,10 +23,24 @@ package body Ada_Mr.Mapper.Server is
     if From = Master then
       
       if Ada_Mr.Xml.Helper.Is_Command(Xml_Root, "exit") then
+        
+        declare
+          Details : Ada_Mr.Xml.Node_Access;
+        begin
+          Details := Ada_Mr.Xml.Find_Child_With_Tag(Xml_Root, "details");
+          
+          if Boolean'Value(Ada_Mr.Xml.Get_Value(Details, "abort")) = true then
+            Abort_Mapper;
+          else
+            Stop_Mapper;
+          end if;
+          
+        exception
+          when others => Stop_Mapper;
+        end;
+        
         String'Output(S, Ada_Mr.Xml.Helper.Create_System_Control(Ada_Mr.Xml.Helper.Mapper, "okay"));
-        Stop_Mapper;
       end if;
-      
     end if;
       
   exception

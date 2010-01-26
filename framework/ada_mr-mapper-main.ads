@@ -28,7 +28,7 @@ package Ada_Mr.Mapper.Main is
   package ASU renames Ada.Strings.Unbounded;
 
   procedure Stop_Mapper_Task;
-
+  procedure Abort_Mapper_Task;
 
 
 ----------------------------------------------------
@@ -55,6 +55,7 @@ package Ada_Mr.Mapper.Main is
   task type Mapper_Task is
     entry Start(Self : Mapper_Task_Access);
     entry Stop;
+    entry Abort_It;
   end Mapper_Task;
 
 
@@ -77,7 +78,8 @@ package Ada_Mr.Mapper.Main is
 -- SERVER PACKAGE                                 --
 ----------------------------------------------------
   package Server is new Ada_Mr.Mapper.Server(
-    Stop_Mapper_Task
+    Stop_Mapper_Task,
+    Abort_Mapper_Task
   );
 
 

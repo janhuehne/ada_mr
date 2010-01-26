@@ -9,7 +9,8 @@ with Ada_Mr.Xml;
 
 generic
   with procedure Stop_Mapper;
-
+  with procedure Abort_Mapper;
+  
 package Ada_Mr.Mapper.Server is
   
   package ASU renames Ada.Strings.Unbounded;

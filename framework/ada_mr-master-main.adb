@@ -100,7 +100,8 @@ package body Ada_Mr.Master.Main is
               Xml_Command : String := Ada_Mr.Xml.Helper.Xml_Command(
                 G_T           => Ada_Mr.Xml.Helper.Master,
                 Command       => "exit",
-                Access_Token  => Worker_Access.Access_Token
+                Access_Token  => Worker_Access.Access_Token,
+                Details       => "<abort>" & Ada_Mr.Master.Helper.Stop_Map_Reduce_System'Img & "</abort>"
               );
               
               Response : String := Ada_Mr.Helper.Send(
@@ -168,7 +169,7 @@ package body Ada_Mr.Master.Main is
     loop
       exit when Exit_Observer;
       
-      if Jobs.Count_By_State(Ada_Mr.Master.Helper.Done) = Jobs.Count then
+      if Jobs.Count_By_State(Ada_Mr.Master.Helper.Done) = Jobs.Count or Ada_Mr.Master.Helper.Stop_Map_Reduce_System = True then
       
         Ada_Mr.Logger.Put_Line("All jobs done", Ada_Mr.Logger.Info);
         
