@@ -109,13 +109,17 @@ package Ada_Mr.Master.Main is
 -- PROTECTED TYPE TO HANDLE JOBS                   -
 ----------------------------------------------------
   protected Worker is
-    procedure Add(New_Worker : Ada_Mr.Master.Helper.Worker_Record_Access);
+    procedure Add(New_Worker : in out Ada_Mr.Master.Helper.Worker_Record_Access);
+    function Exists_Identifier(Identifier : String) return Boolean;
     function Find_By_Identifier(Identifier : String) return Ada_Mr.Master.Helper.Worker_Record_Access;
     function Find_By_Access_Token_And_Type(Access_Token : String; W_Type : Ada_Mr.Helper.Worker_Type) return Ada_Mr.Master.Helper.Worker_Record_Access;
     function Find_All_By_Type(W_Type : Ada_Mr.Helper.Worker_Type) return Ada_Mr.Master.Helper.Worker_Entry_Vectors.Vector;
     procedure Print;
   private
     Worker : Ada_Mr.Master.Helper.Worker_Entry_Vectors.Vector;
+    
+    Mapper_Counter  : Natural := 1;
+    Reducer_Counter : Natural := 1;
   end Worker;
   
   

@@ -334,9 +334,39 @@ package body Ada_Mr.Master.Main is
   
   protected body Worker is
   
-    procedure Add(New_Worker : Ada_Mr.Master.Helper.Worker_Record_Access) is
+    procedure Add(New_Worker : in out Ada_Mr.Master.Helper.Worker_Record_Access) is
       Cursor : Ada_Mr.Master.Helper.Worker_Entry_Vectors.Cursor := Worker.First;
+      
+      function Create_Identifier return ASU.Unbounded_String is
+        Identifier : ASU.Unbounded_String;
+      begin
+        loop
+          Identifier := ASU.To_Unbounded_String("");
+          ASU.Append(Identifier, Ada_Mr.Helper.To_String(New_Worker.W_Type) & "_");
+          
+          case New_Worker.W_Type is
+            when Mapper  => 
+              ASU.Append(Identifier, Ada_Mr.Helper.Trim(Mapper_Counter'Img));
+              Mapper_Counter := Mapper_Counter + 1;
+            
+            when Reducer => 
+              ASU.Append(Identifier, Ada_Mr.Helper.Trim(Reducer_Counter'Img));
+              Reducer_Counter := Reducer_Counter + 1;
+            
+            when others  => null;
+          end case;
+          
+          exit when not Exists_Identifier(ASU.To_String(Identifier));
+        end loop;
+        
+        return Identifier;
+      end Create_Identifier;
+      
     begin
+      if ASU.To_String(New_Worker.Identifier) = "" then
+        New_Worker.Identifier := Create_Identifier;
+      end if;
+      
       New_Worker.Access_Token := Ada_Mr.Crypt.Helper.Create_Access_Token(
         ASU.To_String(New_Worker.Identifier),
         Ada_Mr.Helper.To_String(New_Worker.W_Type)
@@ -385,6 +415,16 @@ package body Ada_Mr.Master.Main is
       
       Ada.Exceptions.Raise_Exception(Ada_Mr.Master.Helper.No_Worker_Found'Identity, "No worker found");
     end Find_By_Identifier;
+    
+    
+    function Exists_Identifier(Identifier : String) return Boolean is
+      Worker : Ada_Mr.Master.Helper.Worker_Record_Access;
+    begin
+      Worker := Find_By_Identifier(Identifier);
+      return true;
+    exception
+      when Error : Ada_Mr.Master.Helper.No_Worker_Found => return false;
+    end Exists_Identifier;
     
     
     function Find_By_Access_Token_And_Type(Access_Token : String; W_Type : Ada_Mr.Helper.Worker_Type) return Ada_Mr.Master.Helper.Worker_Record_Access is

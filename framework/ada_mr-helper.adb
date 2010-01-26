@@ -300,7 +300,7 @@ package body Ada_Mr.Helper is
       Ada_Mr.Logger.Put_Line("Parsing configuration file", Ada_Mr.Logger.Info);
       Config_Xml := Ada_Mr.Xml.Parser.Parse(File_Name => Config_File);
     else
-      Ada_Mr.Logger.Put_Line("No configuration file found", Ada_Mr.Logger.Err);
+      Ada_Mr.Logger.Put_Line("No configuration file found.", Ada_Mr.Logger.Warn);
       raise Configuration_File_Error;
     end if;
     
@@ -310,7 +310,11 @@ package body Ada_Mr.Helper is
     if W_Type = Mapper or W_Type = Reducer then
       
       -- identifier
-      Add_Configuration("identifier",  Ada_Mr.Xml.Get_Value(Config_Xml, "identifier"));
+      begin
+        Add_Configuration("identifier",  Ada_Mr.Xml.Get_Value(Config_Xml, "identifier"));
+      exception
+        when Error : others => null;
+      end;
       
       -- master configutation
       declare
@@ -409,7 +413,7 @@ package body Ada_Mr.Helper is
     Ada_Mr.Logger.Put_Line("Configuration file successfully parsed", Ada_Mr.Logger.Info);
   exception
     when Error : others => 
-      Ada_Mr.Helper.Print_Exception(Error);
+--      Ada_Mr.Helper.Print_Exception(Error);
       Ada.Exceptions.Raise_Exception(Configuration_File_Error'Identity, "There is a problem with the configuration file.");
   end;
   
@@ -457,6 +461,22 @@ package body Ada_Mr.Helper is
       when Error : Constraint_Error =>
         Ada.Exceptions.Raise_Exception(Configuration_Param_Not_Found'Identity, "Key """ & Key & """ not found in the configuration");
   end Read_Configuration;
+  
+  
+  function Read_Configuration_Or_Null(Key : String) return String is
+  begin
+    return Read_Configuration(Key);
+  exception
+    when Error : others => return "";
+  end Read_Configuration_Or_Null;
+  
+  
+  function Read_Configuration_Or_Null(Prefix : String; Key : String) return String is
+  begin
+    return Read_Configuration(Prefix & "-" & Key);
+  exception
+    when Error : others => return "";
+  end Read_Configuration_Or_Null;
   
   
   procedure Set_Default_Configuration(W_Type : Worker_Type) is
@@ -537,11 +557,15 @@ package body Ada_Mr.Helper is
               Input : String := Argument(3 .. Argument'Last);
             begin
               -- available for all worker types
-              if Starts_With(Argument, "config_file=", true) then
-                Parse_Configuration(Ada_Mr.Helper.Sub_Str(Argument, 13, Argument'Last), W_Type);
-              else
-                Parse_Configuration(To_Lower(To_String(W_Type)) & "_config.xml", W_Type);
-              end if;
+              begin
+                if Starts_With(Argument, "config_file=", true) then
+                  Parse_Configuration(Ada_Mr.Helper.Sub_Str(Argument, 13, Argument'Last), W_Type);
+                else
+                  Parse_Configuration(To_Lower(To_String(W_Type)) & "_config.xml", W_Type);
+                end if;
+              exception
+                when Error : others => null;
+              end;
               
               declare
                 Dividor : Natural := Ada.Strings.Fixed.Index(Argument, "=");
@@ -561,7 +585,11 @@ package body Ada_Mr.Helper is
         end;
       end loop;
     else
-      Parse_Configuration(To_Lower(To_String(W_Type)) & "_config.xml", W_Type);
+      begin
+        Parse_Configuration(To_Lower(To_String(W_Type)) & "_config.xml", W_Type);
+      exception
+        when Error : others => Ada_Mr.Helper.Print_Exception(Error);
+      end;
       Logger.Put_Line("No command line arguments found.", Logger.Warn);
     end if;
     

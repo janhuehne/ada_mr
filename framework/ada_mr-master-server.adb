@@ -47,7 +47,7 @@ package body Ada_Mr.Master.Server is
           String'Output(S, Ada_Mr.Xml.Helper.Xml_Command(
             G_T     => Ada_Mr.Xml.Helper.Master,
             Command => "new_access_token",
-            Details => "<access_token>" & Worker_Entry.Access_Token & "</access_token>"
+            Details => "<identifier>" & ASU.To_String(Worker_Entry.Identifier) & "</identifier><access_token>" & Worker_Entry.Access_Token & "</access_token>"
           ));
           
           Ada_Mr.Logger.Put_Line("New worker """ & ASU.To_String(Worker_Entry.Identifier) & """ initialized with access token: " & Worker_Entry.Access_Token, Ada_Mr.Logger.Info);

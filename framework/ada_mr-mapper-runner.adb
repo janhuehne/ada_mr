@@ -32,7 +32,7 @@ package body Ada_Mr.Mapper.Runner is
           Master_Port,
           Ada_Mr.Xml.Helper.Create_Initialization(
             Ada_Mr.Xml.Helper.Mapper, 
-            Ada_Mr.Helper.Read_Configuration("IDENTIFIER"), 
+            Ada_Mr.Helper.Read_Configuration_Or_Null("IDENTIFIER"), 
             GNAT.Sockets.Inet_Addr(Ada_Mr.Helper.Read_Configuration("LOCAL_SERVER", "BIND_IP")),
             GNAT.Sockets.Port_Type'Value(Ada_Mr.Helper.Read_Configuration("LOCAL_SERVER", "BIND_PORT"))
           ),

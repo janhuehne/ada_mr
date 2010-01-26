@@ -14,7 +14,7 @@ with Ada_Mr.Helper;
 generic
   type My_Job is private;
   type Job_Entry_Record_Access is private;
-  with procedure Add_Worker(New_Worker : Ada_Mr.Master.Helper.Worker_Record_Access);
+  with procedure Add_Worker(New_Worker : in out Ada_Mr.Master.Helper.Worker_Record_Access);
   with function Find_Worker_By_Identifier(Identifier : String) return Ada_Mr.Master.Helper.Worker_Record_Access;
   with function Find_Worker_By_Access_Token_And_Type(Access_Token : String; W_Type : Ada_Mr.Helper.Worker_Type) return Ada_Mr.Master.Helper.Worker_Record_Access;
   with function Get_Job_By_Id(Id : Natural) return Job_Entry_Record_Access;

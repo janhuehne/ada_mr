@@ -68,6 +68,8 @@ package Ada_Mr.Helper is
   procedure Set_Default_Configuration(W_Type : Worker_Type);
   function Read_Configuration(Key : String) return String;
   function Read_Configuration(Prefix : String; Key : String) return String;
+  function Read_Configuration_Or_Null(Key : String) return String;
+  function Read_Configuration_Or_Null(Prefix : String; Key : String) return String;
   procedure Add_Configuration(Key : String; Value : String);
   procedure Add_Configuration(Prefix : String; Key : String; Value : String);
   procedure Parse_Command_Line_Arguments(W_Type : Worker_Type);
