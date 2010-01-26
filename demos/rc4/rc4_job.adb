@@ -132,8 +132,6 @@ package body Rc4_Job is
           for L in Rc_4.Unsigned_Byte'Range loop
             Test_Key(3) := L;
             
-            
-            
             X := 0;
             Y := 0;
             
