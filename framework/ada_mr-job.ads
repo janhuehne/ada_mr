@@ -33,7 +33,7 @@ package Ada_Mr.Job is
   function Split_Result_For_Different_Reducer return Ada_Mr.Helper.String_String_Maps.Map is abstract;
   
   -- Procedure to merge pending job results
-  procedure Merge_Job_Results(Xml_Node : Ada_Mr.Xml.Node_Access) is abstract;
+  procedure Merge_Job_Results(Xml_Node : Ada_Mr.Xml.Node_Access; Stop_System : out Boolean) is abstract;
   
   -- Procedure called by the reducer to handle the job result
   procedure Finalize is abstract;
