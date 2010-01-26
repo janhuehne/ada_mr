@@ -20,7 +20,7 @@ package body Ada_Mr.Mapper.Main is
   task body Mapper_Task is
     Runner_Task   : Runner.Runner.Runner_Task;
     Server_Task   : Server.Server.Server_Task;
-    
+    Ping_Task     : Ping.Runner_Task;
   begin
     Ada.Text_IO.New_Line;
     Ada.Text_IO.New_Line;
@@ -66,12 +66,16 @@ package body Ada_Mr.Mapper.Main is
         
         -- runner task 
         Runner_Task.Start;
+        
+        -- ping task
+        Ping_Task.Start;
       or
         accept Stop;
         Ada_Mr.Logger.Put_Line("Depending tasks will be terminted", Ada_Mr.Logger.Info);
         Ada_Mr.Mapper.Helper.Aborted.Stop;
         Runner_Task.Stop;
         Server_Task.Stop;
+        abort Ping_Task;
         exit;
       or 
         accept Abort_It;
@@ -79,6 +83,7 @@ package body Ada_Mr.Mapper.Main is
         Ada_Mr.Mapper.Helper.Aborted.Stop;
         abort Runner_Task;
         Server_Task.Stop;
+        abort Ping_Task;
         exit;
       end select;
     end loop;
@@ -101,6 +106,39 @@ package body Ada_Mr.Mapper.Main is
   begin
     Main_Task.Abort_It;
   end Abort_Mapper_Task;
+  
+  
+  procedure Ping_Master is
+    Master_Ip   : GNAT.Sockets.Inet_Addr_Type;
+    Master_Port : GNAT.Sockets.Port_Type;
+  begin
+    Master_Ip   := GNAT.Sockets.Inet_Addr(Ada_Mr.Helper.Read_Configuration("MASTER-IP"));
+    Master_Port := GNAT.Sockets.Port_Type'Value(Ada_Mr.Helper.Read_Configuration("MASTER-PORT"));
+    
+    loop
+      exit when Ada_Mr.Mapper.Helper.Aborted.Check = True;
+      
+      delay Duration(600);
+      
+      declare
+        Response : String := Ada_Mr.Helper.Send(
+          Master_Ip,
+          Master_Port,
+          Ada_Mr.Xml.Helper.Xml_Command(
+            G_T          => Ada_Mr.Xml.Helper.Mapper,
+            Command      => "ping",
+            Access_Token => Ada_Mr.Helper.Read_Configuration("ACCESS_TOKEN")
+          )
+        );
+        
+        --Xml_Tree : Ada_Mr.Xml.Node_Access := Ada_Mr.Xml.Helper.Get_Verified_Content(Ada_Mr.Xml.Parser.Parse(Content => Response));
+      begin
+        null;
+      end;
+      
+    end loop;
+  end Ping_Master;
+  
   
 ----------------------------------------------------
 -- GENERIC CONSOLE METHODS                        --

@@ -1,6 +1,7 @@
 -- System libs
 with Ada.Exceptions;
 with Ada.Text_IO;
+with Ada.Calendar;
 
 -- Project libs
 with Ada_Mr.Xml;
@@ -151,7 +152,9 @@ package body Ada_Mr.Master.Server is
                 when Error : Ada_Mr.Master.Helper.No_Worker_Found =>
                   Ada_Mr.Xml.Helper.Send_Error(S, Ada_Mr.Xml.Helper.Master, Error);
               end;
-              
+            elsif Ada_Mr.Xml.Helper.Is_Command(Xml_Root, "ping") then
+              Worker.Updated_At := Ada.Calendar.Clock;
+              String'Output(S, Ada_Mr.Xml.Helper.Create_System_Control(Ada_Mr.Xml.Helper.Master, "okay"));
             else
               Ada.Exceptions.Raise_Exception(Ada_Mr.Helper.Unknown_Command'Identity, "The command """ & Ada_Mr.Xml.Get_Value(Xml_Root, "command") & """is not supported from a mapper.");
             end if;

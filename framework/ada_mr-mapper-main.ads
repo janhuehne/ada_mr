@@ -5,7 +5,7 @@ with GNAT.Sockets;
 with Ada_Mr.Mapper.Runner;
 with Ada_Mr.Mapper.Server;
 with Ada_Mr.Xml;
-
+with Ada_Mr.Generics.Runner;
 
 
 --with Ada_Mr.Generics.Console;
@@ -61,17 +61,14 @@ package Ada_Mr.Mapper.Main is
 
 
 ----------------------------------------------------
--- GENERIC OBSERVER TASK                          --
+-- PING                                           --
 ----------------------------------------------------
---  function Exit_Observer return Boolean;
---  function Observe(To_Controll : Mapper_Task_Access) return Boolean;
-  
---  package Observer is new Ada_Mr.Generics.Observer(
---    Mapper_Task_Access,
---    Exit_Observer,
---    Observe
---  );
 
+  procedure Ping_Master;
+  
+  package Ping is new Ada_Mr.Generics.Runner(
+    Ping_Master
+  );
 
 
 ----------------------------------------------------
