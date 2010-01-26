@@ -30,8 +30,6 @@ package body Rc4_Job is
     J.Most_Sig_Byte_Range := Natural'Value(Ada_Mr.Xml.Get_Value(Xml_Node, "most_sig_byte_range"));
     
     return J;
-  exception
-    when Error : others => Ada_Mr.Helper.Print_Exception(Error);
   end From_Xml;
   
   
