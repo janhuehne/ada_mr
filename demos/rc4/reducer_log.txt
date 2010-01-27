@@ -1,0 +1,27 @@
+
+
+          _____               __  __ _____      _____          _                     
+    /\   |  __ \   /\        |  \/  |  __ \    |  __ \        | |                    
+   /  \  | |  | | /  \ ______| \  / | |__) |   | |__) |___  __| |_   _  ___ ___ _ __ 
+  / /\ \ | |  | |/ /\ \______| |\/| |  _  /    |  _  // _ \/ _` | | | |/ __/ _ \ '__|
+ / ____ \| |__| / ____ \     | |  | | | \ \    | | \ \  __/ (_| | |_| | (__  __/ |   
+/_/    \_\_____/_/    \_\    |_|  |_|_|  \_\   |_|  \_\___|\__,_|\__,_|\___\___|_|   
+
+
+
+
+
+**************************************
+Configuration parameter
+--------------------------------------
+LOCAL_SERVER-BIND_IP                    127.0.0.1                                                   
+SETTINGS-TIMEOUT_CONNECTION_TRIES       5                                                           
+MASTER-IP                               127.0.0.1                                                   
+SETTINGS-MAX_CONNECTION_TRIES           5                                                           
+CRYPTO-HMAC                             Default_Not_Secure                                          
+MASTER-PORT                             7000                                                        
+LOCAL_SERVER-BIND_PORT                  9000                                                        
+SETTINGS-LOG_LEVEL                      err                                                         
+
+
+[2010-01-26 17:42:27][ERR] Ada MR Master is not reachable (ADA_MR.HELPER.INITIALISATION_FAILED)
