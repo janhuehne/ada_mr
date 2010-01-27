@@ -1,12 +1,24 @@
 <?xml version="1.0" ?>
 <adamr-master-config>
-  <!-- master details -->
-  <bind_ip>127.0.0.1</bind_ip>
-  <bind_port>7000</bind_port>
   
-  <reducer>
-    <ip>127.0.0.1</ip>
-    <port>9000</port>
-  </reducer>
+  <local_server>
+    <bind_ip></bind_ip>
+    <bind_port></bind_port>
+  </local_server>
+  
+  
+  <crypto>
+    <hmac></hmac>
+  </crypto>
+  
+  
+  <settings>
+    <max_connection_tries></max_connection_tries>
+    <timeout_connection_tries></timeout_connection_tries>
+    <log_level></log_level>
+  </settings>
+  
+  
+  <user></user>
   
 </adamr-master-config>

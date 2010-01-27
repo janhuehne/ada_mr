@@ -1,16 +1,33 @@
 <?xml version="1.0" ?>
 <adamr-reducer-config>
-  <!-- mapper details -->
-  <identifier>Reducer_01</identifier>
+  
+  <identifier></identifier>
+  
   
   <local_server>
-    <bind_ip>127.0.0.1</bind_ip>
-    <bind_port>9000</bind_port>
+    <bind_ip></bind_ip>
+    <bind_port></bind_port>
   </local_server>
   
+  
   <master>
-    <ip>127.0.0.1</ip>
-    <port>7000</port>
+    <ip></ip>
+    <port></port>
   </master>
+  
+  
+  <crypto>
+    <hmac></hmac>
+  </crypto>
+  
+  
+  <settings>
+    <max_connection_tries></max_connection_tries>
+    <timeout_connection_tries></timeout_connection_tries>
+    <log_level></log_level>
+  </settings>
+  
+  
+  <user></user>
   
 </adamr-reducer-config>
