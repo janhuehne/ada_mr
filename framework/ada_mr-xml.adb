@@ -73,6 +73,8 @@ package body Ada_Mr.Xml is
     end if;
     
     return ASU.To_String(Result);
+  exception
+    when others => return "";
   end Node_Content_To_String;
   
   
