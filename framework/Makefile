@@ -32,6 +32,8 @@ install-shared:
 	ln -s $(INSTDIR) $(LIBDIR)/libadamr
 	cp libadamr.a.$(VER) $(LIBDIR)/
 	ln -s $(LIBDIR)/libadamr.a.$(VER) $(LIBDIR)/libadamr.a
+	ldconfig
 
 uninstall-shared:
 	$(DELDIR) $(LIBDIR)/libadamr*
+	ldconfig

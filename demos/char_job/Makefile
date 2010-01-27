@@ -21,7 +21,7 @@ BLIBS=-aO./ -aO/usr/local/lib/libadacrypt -aO/usr/local/lib/libadamr -I- -x
 
 LL=gnatlink
 LFLAGS=#-s -z combreloc -dy  -x -X -O3
-LLIBS=-ladacrypt -ladamr -mmacosx-version-min=10.5.0 -L/Developer/SDKs/MacOSX10.5.sdk/usr/lib
+LLIBS=-ladacrypt -ladamr -ladacrypt -mmacosx-version-min=10.5.0 -L/Developer/SDKs/MacOSX10.5.sdk/usr/lib
 
 
 mapper:
