@@ -47,6 +47,8 @@ package body Rc4_Job is
   begin
     Random_Key := Rc_4.Random_Key(In_Key);
     
+    Random_Key(0) := 3;
+    
     Rc_4.Print_Key(Random_Key);
     
     Rc_4.Init_RC4(Random_Key, S_Box);
@@ -69,7 +71,7 @@ package body Rc4_Job is
         Job.Job_Id              := Ada_Mr.Job.Get_Next_Job_Id;
         Job.Plain_Text          := Plain_Text;
         Job.Cipher_Text         := Cipher_Text;
-        Job.Start_Most_Sig_Byte := Rc_4.Unsigned_Byte((I * Most_Sig_Byte_Range) mod 255);
+        Job.Start_Most_Sig_Byte := Rc_4.Unsigned_Byte(I * Most_Sig_Byte_Range);
         
         if Integer(Job.Start_Most_Sig_Byte) + Most_Sig_Byte_Range - 1 > 255 then
           Job.Most_Sig_Byte_Range := 255 - Integer(Job.Start_Most_Sig_Byte);
@@ -120,9 +122,6 @@ package body Rc4_Job is
       
       for J in Rc_4.Unsigned_Byte'Range loop
         Test_Key(1) := J;
-        
-        Rc_4.Print_Key(Test_Key);
-        
         for K in Rc_4.Unsigned_Byte'Range loop
           Test_Key(2) := K;
           for L in Rc_4.Unsigned_Byte'Range loop
@@ -176,11 +175,10 @@ package body Rc4_Job is
     Byte_Array_From_Xml(Ada_Mr.Xml.Find_Child_With_Tag(Xml_Node, "key"), Key);
     
     if Rc_4."/="(Key, Null_Key) then
-      Rc_4.Print_Key(Key);  
+      Rc_4.Print_Key(Key);
       Found_Key := Key;
       Stop_System := True;
     else
-      Ada_Mr.Logger.Put_Line("Nix TRUE!", Ada_Mr.Logger.Warn);
       Stop_System := False;
     end if;
   end Merge_Job_Results;
