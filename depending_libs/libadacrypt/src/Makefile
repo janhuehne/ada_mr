@@ -41,7 +41,7 @@ install_shared :
 	mkdir -p $(LIBDIR)
 	cp crypto*.ads crypto*.ali $(INSTDIR)/
 	ln -s $(INSTDIR) $(LIBDIR)/libadacrypt
-	chmod 444 $(LIBDIR)/libadacrypt/
+	chmod 444 $(LIBDIR)/libadacrypt/*
 	cp libadacrypt.a.$(VER) $(LIBDIR)/
 	ln -s $(LIBDIR)/libadacrypt.a.$(VER) $(LIBDIR)/libadacrypt.a
 	ldconfig
