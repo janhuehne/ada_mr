@@ -47,8 +47,6 @@ package body Rc4_Job is
   begin
     Random_Key := Rc_4.Random_Key(In_Key);
     
-    Random_Key(0) := 3;
-    
     Rc_4.Print_Key(Random_Key);
     
     Rc_4.Init_RC4(Random_Key, S_Box);
@@ -115,8 +113,8 @@ package body Rc4_Job is
     S_Box       : Rc_4.S_Box;
     X, Y        : Natural;
     Cipher_Text : Rc_4.Unsigned_Byte_Array(1 .. 10);
-    Key_Found   : Boolean := false;
   begin
+    Key_Found := False;
     for I in Natural(The_Job.Start_Most_Sig_Byte) .. (Natural(The_Job.Start_Most_Sig_Byte) + The_Job.Most_Sig_Byte_Range) loop
       Test_Key(0) := Rc_4.Unsigned_Byte(I);
       
@@ -157,30 +155,24 @@ package body Rc4_Job is
   
   
   function Split_Result_For_Different_Reducer return Ada_Mr.Helper.String_String_Maps.Map is
-    Mapping : Ada_Mr.Helper.String_String_Maps.Map;
+    Mapping  : Ada_Mr.Helper.String_String_Maps.Map;
   begin
-    Mapping.Insert(
-      "Reducer_1", 
-      "<key>" & Byte_Array_To_Xml(Found_Key) & "</key>"
-    );
+    
+    if Key_Found = True then
+      Mapping.Insert(
+        "Reducer_1", 
+        "<key>" & Byte_Array_To_Xml(Found_Key) & "</key>"
+      );
+    end if;
     
     return Mapping;
   end Split_Result_For_Different_Reducer;
   
   
   procedure Merge_Job_Results(Xml_Node : Ada_Mr.Xml.Node_Access; Stop_System : out Boolean) is
-    Key      : Rc_4.Key_Type;
-    Null_Key : Rc_4.Key_Type := (others => 0);
   begin
-    Byte_Array_From_Xml(Ada_Mr.Xml.Find_Child_With_Tag(Xml_Node, "key"), Key);
-    
-    if Rc_4."/="(Key, Null_Key) then
-      Rc_4.Print_Key(Key);
-      Found_Key := Key;
-      Stop_System := True;
-    else
-      Stop_System := False;
-    end if;
+    Byte_Array_From_Xml(Ada_Mr.Xml.Find_Child_With_Tag(Xml_Node, "key"), Found_Key);
+    Stop_System := True;
   end Merge_Job_Results;
   
   

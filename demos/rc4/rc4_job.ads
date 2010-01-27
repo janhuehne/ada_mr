@@ -62,7 +62,7 @@ package Rc4_Job is
   -- Precalculated jobs
   Calculated_Jobs : Job_Vector.Vector;
   
-  
+  Key_Found : Boolean := False;
   Found_Key : Rc_4.Key_Type;
 private
 
