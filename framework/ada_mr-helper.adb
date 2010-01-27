@@ -351,8 +351,18 @@ package body Ada_Mr.Helper is
     begin
       Local_Server_Details := Ada_Mr.Xml.Find_Child_With_Tag(Config_Xml, "local_server");
       
-      Add_Configuration("local_server", "bind_ip", Ada_Mr.Xml.Get_Value(Local_Server_Details, "bind_ip"));
-      Add_Configuration("local_server", "bind_port", Ada_Mr.Xml.Get_Value(Local_Server_Details, "bind_port"));
+      begin
+        Add_Configuration("local_server", "bind_ip", Ada_Mr.Xml.Get_Value(Local_Server_Details, "bind_ip"));
+      exception
+        when others => Ada_Mr.Logger.Put_Line("No local server ip found. Using defaults.", Ada_Mr.Logger.Warn);
+      end;
+      
+      begin
+        Add_Configuration("local_server", "bind_port", Ada_Mr.Xml.Get_Value(Local_Server_Details, "bind_port"));
+      exception
+        when others => Ada_Mr.Logger.Put_Line("No local server port found. Using defaults.", Ada_Mr.Logger.Warn);
+      end;
+      
     exception
       when Error : Constraint_Error =>
         Ada_Mr.Logger.Put_Line("No local server settings found. Using defaults.", Ada_Mr.Logger.Warn);
