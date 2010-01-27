@@ -322,8 +322,17 @@ package body Ada_Mr.Helper is
       begin
         Master_Details := Ada_Mr.Xml.Find_Child_With_Tag(Config_Xml, "master");
         
-        Add_Configuration("master", "ip", Ada_Mr.Xml.Get_Value(Master_Details, "ip"));
-        Add_Configuration("master", "port", Ada_Mr.Xml.Get_Value(Master_Details, "port"));
+        begin
+          Add_Configuration("master", "ip", Ada_Mr.Xml.Get_Value(Master_Details, "ip"));
+        exception
+          when others => Ada_Mr.Logger.Put_Line("No master ip found. Using defaults.", Ada_Mr.Logger.Warn);
+        end;
+        
+        begin
+          Add_Configuration("master", "port", Ada_Mr.Xml.Get_Value(Master_Details, "port"));
+        exception
+          when others => Ada_Mr.Logger.Put_Line("No master port found. Using defaults.", Ada_Mr.Logger.Warn);
+        end;
         
       exception
         when Error : Constraint_Error =>
