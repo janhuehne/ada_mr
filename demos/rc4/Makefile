@@ -1,26 +1,26 @@
-CC=gnat compile
-CFLAGS=-gnato -O3 
-CLIBS=-I../../framework/  -I/usr/local/lib/libadacrypt-dev-0.1.0/ -I../../lib/simple_xml
+VER=1.0.0
 
-BIND=gnat bind
-BFLAGS=-shared
-BLIBS=-aO./  -aO/usr/local/lib/libadacrypt-dev-0.1.0/ -I- -x
+PROJECT=rc4
+
+DEL=rm -f
+DELDIR= rm -rf
+
+CC=gnatmake
+CFLAGS=-largs -L/Developer/SDKs/MacOSX10.5.sdk/usr/lib -mmacosx-version-min=10.5.0 -shared-libgcc -ladacrypt -ladamr -ladacrypt
+LIBS=-I/usr/local/lib/libadamr -I/usr/local/lib/libadacrypt
 
 
-LINK=gnat link
-LFLAGS=-s -z combreloc -dy  -x -X -O3
-LLIBS=-I/usr/local/lib/libadacrypt-dev-0/ -ladacrypt 
+master:
+	$(CC) $(LIBS) master_$(PROJECT).adb $(CFLAGS)
+	$(DEL) *.o *.ali
 
-all : mapper_rc4.o
-
-mapper_rc4.o:
-	$(CC)   $(CFLAGS) $(CLIBS) mapper_rc4.adb
-	$(BIND) $(BFLAGS) $(BLIBS) mapper_rc4.ali
-	$(LINK) $(LFLAGS) $(LLIBS) mapper_rc4.ali
-
-.PHONY : clean
-.SILENT : clean
+mapper:
+	$(CC) $(LIBS) mapper_$(PROJECT).adb $(CFLAGS)
+	$(DEL) *.o *.ali
+	
+reducer:
+	$(CC) $(LIBS) reducer_$(PROJECT).adb $(CFLAGS)
+	$(DEL) *.o *.ali
 
 clean:
-	rm -f mapper_rc4 *.o *.ali
-
+	$(DEL) *.o *.ali master_$(PROJECT) mapper_$(PROJECT) reducer_$(PROJECT)
