@@ -9,3 +9,4 @@ mr_reducer_count_char
 *.xml~
 *.log
 *.txt
+*.a*
