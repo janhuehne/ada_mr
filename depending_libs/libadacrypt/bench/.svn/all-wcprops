@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/svnroot/libadacrypt-dev/!svn/ver/4/bench
+END
+bench-big_numbers.ads
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svnroot/libadacrypt-dev/!svn/ver/4/bench/bench-big_numbers.ads
+END
+bench.ads
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svnroot/libadacrypt-dev/!svn/ver/4/bench/bench.ads
+END
+aclbench.adb
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svnroot/libadacrypt-dev/!svn/ver/4/bench/aclbench.adb
+END
+Makefile
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svnroot/libadacrypt-dev/!svn/ver/4/bench/Makefile
+END
+bench-big_numbers.adb
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svnroot/libadacrypt-dev/!svn/ver/4/bench/bench-big_numbers.adb
+END

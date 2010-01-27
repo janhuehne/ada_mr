@@ -1,0 +1,51 @@
+This is BibTeX, Version 0.99c (Web2C 7.4.5)
+The top-level auxiliary file: acldoku_en.aux
+A level-1 auxiliary file: aclintro_en.aux
+A level-1 auxiliary file: acl.crypto.aux
+A level-1 auxiliary file: acl.crypto.types.aux
+A level-1 auxiliary file: acl.crypto.random.aux
+A level-1 auxiliary file: acl.crypto.symmetric.aux
+A level-1 auxiliary file: acl.crypto.symmetric.algorithm.aux
+The style file: plain.bst
+Database file #1: crypto.bib
+You've used 1 entry,
+            2118 wiz_defined-function locations,
+            522 strings with 4997 characters,
+and the built_in function-call counts, 333 in all, are:
+= -- 25
+> -- 28
+< -- 0
++ -- 11
+- -- 10
+* -- 26
+:= -- 65
+add.period$ -- 2
+call.type$ -- 1
+change.case$ -- 7
+chr.to.int$ -- 0
+cite$ -- 1
+duplicate$ -- 9
+empty$ -- 19
+format.name$ -- 10
+if$ -- 60
+int.to.chr$ -- 0
+int.to.str$ -- 1
+missing$ -- 0
+newline$ -- 7
+num.names$ -- 2
+pop$ -- 11
+preamble$ -- 1
+purify$ -- 7
+quote$ -- 0
+skip$ -- 6
+stack$ -- 0
+substring$ -- 5
+swap$ -- 2
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 4
+warning$ -- 0
+while$ -- 2
+width$ -- 2
+write$ -- 9

@@ -1,0 +1,16 @@
+2005-12-04 16:52:42 debug: debug level for DEBUG is 4
+2005-12-04 16:52:42 debug: debug level for DEFAULT is 4
+2005-12-04 16:52:42 debug: debug level for XPCURSES is 4
+2005-12-04 16:52:42 xpcurses: StartCurses: Starting up Curses.
+2005-12-04 16:52:42 xpcurses: NCurses version 5.0.p19991023
+2005-12-04 16:52:42 xpcurses: MaxCols=80, MaxRows=24, MaxColors=8, TabSize=8
+2005-12-04 16:52:42 xpcurses: Esc Delay=1000, Baudrate=38400, Has Colors=yes
+2005-12-04 16:52:42 xpcurses: MouseMask=0F01F7DF
+2005-12-04 16:52:42 debug: debug level for MAUS2 is 4
+2005-12-04 16:52:42 xpcurses: SysSetScreenSize(Lines=24,Cols=80)
+2005-12-04 16:52:42 debug: debug level for XP2 is 4
+2005-12-04 16:52:42 XP2: Check default system
+2005-12-04 16:52:42 XP2: Default system: INKA, file: INKA
+2005-12-04 16:52:42 debug: debug level for XPNETCALL is 4
+2005-12-04 16:52:42 debug: debug level for INOUT is 4
+2005-12-04 16:56:12 xpcurses: EndXPCurses: Curses is going down.

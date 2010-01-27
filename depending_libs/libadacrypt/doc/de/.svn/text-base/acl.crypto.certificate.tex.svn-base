@@ -1,0 +1,104 @@
+\chapter{Crypto.Certificate}
+\label{sec:CryptoCertificate}
+Mit Hilfe eines asymmetrischen Kryptosystems können Nachrichten in einem Netzwerk digital signiert und verschlüsselt werden. Für jede verschlüsselte Übermittlung benötigt der Sender allerdings den öffentlichen Schlüssel (Public-Key) des Empfängers. Um zu überprüfen, ob es sich tatsächlich um den Schlüssel des Empfängers handelt und nicht um eine Fälschung, benutzt man digitale Zertifikate, welche die Authentizität eines öffentlichen Schlüssels und seinen zulässigen Anwendungs- und Geltungsbereich bestätigen. X.509 ist derzeit der wichtigste Standard für digitale Zertifikate. Die aktuelle Version ist X.509v3.
+
+
+\section{X.509}
+Durch den Einsatz des Crypto.Certificate werden Zertifikate verifiziert und im Falle einer erfolgeichen Prüfung können sie für ihre Zwecke weiter benutzt werden. Andernfalls gilt das Zertifikat als nicht vertrauenswürdig und wird nicht weiter benutzt.\\ Unter solchen umständen sollten in Zukunft die Kinderzertifikate, also die Zertifikate die von einem hierarchisch höheren Signiert wurden, auch nicht mehr vertraut werden.
+
+
+\section{API}
+\begin{tabular}{p{\textwidth}}
+\begin{lstlisting}{}
+procedure Get_Cert(Filename: String);
+\end{lstlisting}\\
+Die Prozedur dient zum einlesen eines Zertifikats. Akzeptiert werden *.txt und *.cer Files. Allerdings können nur die CER-Files auf Echtheit überprüft werden.\\
+Beim Importieren wird die Struktur und die Gültigkeitsdauer des Zertifikats überprüft. Ist das Zertifikat noch aktuell, wird die Signatur mit dem öffentlichen Schlüssel des Austellers entschlüsselt und mit dem Zertifikat-Hash verglichen. Bei einem Wurzelzertifikat befindet sich der Public Key in dem selbigen. So wird die Korrektheit der Werte sichergestellt.\\ \ \\
+\hline
+\end{tabular}
+\begin{tabular}{p{\textwidth}}
+\begin{lstlisting}{}
+procedure CertOut;
+\end{lstlisting}\\
+Die Prozedur \textit{CertOut} gibt das Zertifikat in Textform aus.\\ \ \\
+\hline
+\end{tabular}
+\begin{tabular}{p{\textwidth}}
+\begin{lstlisting}{}
+function AnalyseSigned return Unbounded_String;
+\end{lstlisting}\\
+Die Funktion \textit{AnalyseSigned} entschlüsselt die Signatur des in \textit{Get\_Cert} Importierten Zertifikats und gibt einen Unbounded\_String zurück. Man erhält bei erfolgreicher Dekodierung einen Hash-Wert (die Länge variiert je nach verwendeten Hash-Typ MD5 oder Sha-1). Ansonsten erhält man einen Null\_Unbounded\_String.\\ \ \\
+\end{tabular}
+
+
+\section{Exceptions}
+\begin{tabular}{p{\textwidth}}
+\begin{lstlisting}{}
+Cert_Typ_Error	:	exception;
+\end{lstlisting}\\
+Diese Ausnahme wird geworfen wenn es sich beim Importieren um ein falsches Format handelt.\\ \ \\
+\hline
+\end{tabular}
+
+\begin{tabular}{p{\textwidth}}
+\begin{lstlisting}{}
+Cert_Structure_Error : exception;
+\end{lstlisting}\\
+Diese Ausnahme wird geworfen wenn die Struktur des Zertifikats nicht stimmt.\\ \ \\
+\hline
+\end{tabular}
+
+\begin{tabular}{p{\textwidth}}
+\begin{lstlisting}{}
+ASN1_Structure_Error : exception;
+\end{lstlisting}\\
+Diese Ausnahme wird im Kinderpaket crypto.certificate.asn1 geworfen, wenn die Struktur der Binärdaten nicht nach dem asn1 Standart vorliegen.\\ \ \\
+\hline
+\end{tabular}
+
+\begin{tabular}{p{\textwidth}}
+\begin{lstlisting}{}
+Conversion_Error  : exception;
+\end{lstlisting}\\
+Diese Ausnahme wird im Kinderpaket crypto.certificate.asn1 geworfen, wenn keine Binärdaten vorliegen.\\ \ \\
+\end{tabular}
+
+
+\section{Kinderpaket}
+Das Paket Crypto.Certificate.ASN1 dient lediglich zur Konvertierung eines Zertifikats im Format CER.\\
+Es verfügt über folgende High-Level-API\\
+\begin{tabular}{p{\textwidth}}
+\begin{lstlisting}{}
+procedure ASN1_Out;
+\end{lstlisting}\\
+Mit Hilfe dieser Prozedur wird das Zertifikat in Binär Darstellung ausgegeben. Es muss vorher ein Zertifikat mittels \textit{Get\_Cert(Filename: String)} eingelesen sein.\\ \ \\
+\hline
+\end{tabular}
+\\ \ \\
+Die Low-Level API\\
+\begin{tabular}{p{\textwidth}}
+\begin{lstlisting}{}
+procedure Parse(ASN1Data : Unbounded_String);;
+\end{lstlisting}\\
+Diese Prozedur wird direkt beim Einlesen eines Zertifikats im CER-Format benutzt und dient zum Entschlüsseln der Werte eines nach dem Standard ASN1 (mit Distinct Encoding Rules (DER)) binär codierten Zertifikat.\\ \ \\
+\hline
+\end{tabular}
+
+
+\section{Anwendungsbeispiel}
+\begin{lstlisting}{}
+with Ada.Text_IO; use Ada.Text_IO;
+with Crypto.Certificate; 
+use Crypto.Certificate;
+
+procedure Example_Cert is
+   
+begin
+   --Zertifikat importiern
+   Get_Cert("1.cer");
+
+   --Zertifikat ausgeben
+   CertOut;
+
+end Example_Cert;
+\end{lstlisting}

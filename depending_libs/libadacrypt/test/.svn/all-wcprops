@@ -1,0 +1,545 @@
+K 25
+svn:wc:ra_dav:version-url
+V 40
+/svnroot/libadacrypt-dev/!svn/ver/4/test
+END
+10.cer
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svnroot/libadacrypt-dev/!svn/ver/4/test/10.cer
+END
+test-big_numbers.adb
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svnroot/libadacrypt-dev/!svn/ver/4/test/test-big_numbers.adb
+END
+11.cer
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svnroot/libadacrypt-dev/!svn/ver/4/test/11.cer
+END
+12.cer
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svnroot/libadacrypt-dev/!svn/ver/4/test/12.cer
+END
+13.cer
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svnroot/libadacrypt-dev/!svn/ver/4/test/13.cer
+END
+test-hmac.ads
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svnroot/libadacrypt-dev/!svn/ver/4/test/test-hmac.ads
+END
+14.cer
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svnroot/libadacrypt-dev/!svn/ver/4/test/14.cer
+END
+15.cer
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svnroot/libadacrypt-dev/!svn/ver/4/test/15.cer
+END
+16.cer
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svnroot/libadacrypt-dev/!svn/ver/4/test/16.cer
+END
+17.cer
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svnroot/libadacrypt-dev/!svn/ver/4/test/17.cer
+END
+18.cer
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svnroot/libadacrypt-dev/!svn/ver/4/test/18.cer
+END
+message.txt
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svnroot/libadacrypt-dev/!svn/ver/4/test/message.txt
+END
+19.cer
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svnroot/libadacrypt-dev/!svn/ver/4/test/19.cer
+END
+Makefile
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svnroot/libadacrypt-dev/!svn/ver/4/test/Makefile
+END
+test-ecdsa.adb
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svnroot/libadacrypt-dev/!svn/ver/4/test/test-ecdsa.adb
+END
+test-certificate.adb
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svnroot/libadacrypt-dev/!svn/ver/4/test/test-certificate.adb
+END
+esbox.adb
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svnroot/libadacrypt-dev/!svn/ver/4/test/esbox.adb
+END
+test-big_numbers.ads
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svnroot/libadacrypt-dev/!svn/ver/4/test/test-big_numbers.ads
+END
+vectors.txt
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svnroot/libadacrypt-dev/!svn/ver/4/test/vectors.txt
+END
+1.cer
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svnroot/libadacrypt-dev/!svn/ver/4/test/1.cer
+END
+morver
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svnroot/libadacrypt-dev/!svn/ver/4/test/morver
+END
+2.cer
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svnroot/libadacrypt-dev/!svn/ver/4/test/2.cer
+END
+3.cer
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svnroot/libadacrypt-dev/!svn/ver/4/test/3.cer
+END
+4.cer
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svnroot/libadacrypt-dev/!svn/ver/4/test/4.cer
+END
+e.adb
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svnroot/libadacrypt-dev/!svn/ver/4/test/e.adb
+END
+test-blowfish.adb
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svnroot/libadacrypt-dev/!svn/ver/4/test/test-blowfish.adb
+END
+5.cer
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svnroot/libadacrypt-dev/!svn/ver/4/test/5.cer
+END
+6.cer
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svnroot/libadacrypt-dev/!svn/ver/4/test/6.cer
+END
+7.cer
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svnroot/libadacrypt-dev/!svn/ver/4/test/7.cer
+END
+8.cer
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svnroot/libadacrypt-dev/!svn/ver/4/test/8.cer
+END
+test-twofish.adb
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svnroot/libadacrypt-dev/!svn/ver/4/test/test-twofish.adb
+END
+9.cer
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svnroot/libadacrypt-dev/!svn/ver/4/test/9.cer
+END
+test-ecdsa.ads
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svnroot/libadacrypt-dev/!svn/ver/4/test/test-ecdsa.ads
+END
+hash_message1.txt
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svnroot/libadacrypt-dev/!svn/ver/4/test/hash_message1.txt
+END
+hash_message2.txt
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svnroot/libadacrypt-dev/!svn/ver/4/test/hash_message2.txt
+END
+test-certificate.ads
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svnroot/libadacrypt-dev/!svn/ver/4/test/test-certificate.ads
+END
+hash_message3.txt
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svnroot/libadacrypt-dev/!svn/ver/4/test/hash_message3.txt
+END
+20.cer
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svnroot/libadacrypt-dev/!svn/ver/4/test/20.cer
+END
+hash_message4.txt
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svnroot/libadacrypt-dev/!svn/ver/4/test/hash_message4.txt
+END
+21.cer
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svnroot/libadacrypt-dev/!svn/ver/4/test/21.cer
+END
+hash_message5.txt
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svnroot/libadacrypt-dev/!svn/ver/4/test/hash_message5.txt
+END
+22.cer
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svnroot/libadacrypt-dev/!svn/ver/4/test/22.cer
+END
+hash_message6.txt
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svnroot/libadacrypt-dev/!svn/ver/4/test/hash_message6.txt
+END
+test-sha.adb
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svnroot/libadacrypt-dev/!svn/ver/4/test/test-sha.adb
+END
+23.cer
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svnroot/libadacrypt-dev/!svn/ver/4/test/23.cer
+END
+24.cer
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svnroot/libadacrypt-dev/!svn/ver/4/test/24.cer
+END
+25.cer
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svnroot/libadacrypt-dev/!svn/ver/4/test/25.cer
+END
+26.cer
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svnroot/libadacrypt-dev/!svn/ver/4/test/26.cer
+END
+27.cer
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svnroot/libadacrypt-dev/!svn/ver/4/test/27.cer
+END
+test-blowfish.ads
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svnroot/libadacrypt-dev/!svn/ver/4/test/test-blowfish.ads
+END
+test-dsa.adb
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svnroot/libadacrypt-dev/!svn/ver/4/test/test-dsa.adb
+END
+w.adb
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svnroot/libadacrypt-dev/!svn/ver/4/test/w.adb
+END
+test-rmac.adb
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svnroot/libadacrypt-dev/!svn/ver/4/test/test-rmac.adb
+END
+x.adb
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svnroot/libadacrypt-dev/!svn/ver/4/test/x.adb
+END
+test-ecmqv.adb
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svnroot/libadacrypt-dev/!svn/ver/4/test/test-ecmqv.adb
+END
+test-tdes.adb
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svnroot/libadacrypt-dev/!svn/ver/4/test/test-tdes.adb
+END
+test-twofish.ads
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svnroot/libadacrypt-dev/!svn/ver/4/test/test-twofish.ads
+END
+z.adb
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svnroot/libadacrypt-dev/!svn/ver/4/test/z.adb
+END
+lc.sh
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svnroot/libadacrypt-dev/!svn/ver/4/test/lc.sh
+END
+test-ecdh.adb
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svnroot/libadacrypt-dev/!svn/ver/4/test/test-ecdh.adb
+END
+test-ecies.adb
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svnroot/libadacrypt-dev/!svn/ver/4/test/test-ecies.adb
+END
+test-sha.ads
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svnroot/libadacrypt-dev/!svn/ver/4/test/test-sha.ads
+END
+test-rsa.adb
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svnroot/libadacrypt-dev/!svn/ver/4/test/test-rsa.adb
+END
+test-elliptic_curves.adb
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svnroot/libadacrypt-dev/!svn/ver/4/test/test-elliptic_curves.adb
+END
+test-dsa.ads
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svnroot/libadacrypt-dev/!svn/ver/4/test/test-dsa.ads
+END
+test-rmac.ads
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svnroot/libadacrypt-dev/!svn/ver/4/test/test-rmac.ads
+END
+test-ecmqv.ads
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svnroot/libadacrypt-dev/!svn/ver/4/test/test-ecmqv.ads
+END
+test-tdes.ads
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svnroot/libadacrypt-dev/!svn/ver/4/test/test-tdes.ads
+END
+test-ecdh.ads
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svnroot/libadacrypt-dev/!svn/ver/4/test/test-ecdh.ads
+END
+test-ecies.ads
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svnroot/libadacrypt-dev/!svn/ver/4/test/test-ecies.ads
+END
+test-whirlpool.adb
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svnroot/libadacrypt-dev/!svn/ver/4/test/test-whirlpool.adb
+END
+test-aes.adb
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svnroot/libadacrypt-dev/!svn/ver/4/test/test-aes.adb
+END
+test-oneway_modes.adb
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svnroot/libadacrypt-dev/!svn/ver/4/test/test-oneway_modes.adb
+END
+test-rsa.ads
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svnroot/libadacrypt-dev/!svn/ver/4/test/test-rsa.ads
+END
+morver.c
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svnroot/libadacrypt-dev/!svn/ver/4/test/morver.c
+END
+test-elliptic_curves.ads
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svnroot/libadacrypt-dev/!svn/ver/4/test/test-elliptic_curves.ads
+END
+acltest.adb
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svnroot/libadacrypt-dev/!svn/ver/4/test/acltest.adb
+END
+test-serpent.adb
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svnroot/libadacrypt-dev/!svn/ver/4/test/test-serpent.adb
+END
+test.ads
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svnroot/libadacrypt-dev/!svn/ver/4/test/test.ads
+END
+test-whirlpool.ads
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svnroot/libadacrypt-dev/!svn/ver/4/test/test-whirlpool.ads
+END
+test-aes.ads
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svnroot/libadacrypt-dev/!svn/ver/4/test/test-aes.ads
+END
+test-oneway_modes.ads
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svnroot/libadacrypt-dev/!svn/ver/4/test/test-oneway_modes.ads
+END
+GMGPL
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svnroot/libadacrypt-dev/!svn/ver/4/test/GMGPL
+END
+test-serpent.ads
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svnroot/libadacrypt-dev/!svn/ver/4/test/test-serpent.ads
+END
+test-modes.adb
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svnroot/libadacrypt-dev/!svn/ver/4/test/test-modes.adb
+END
+y.sh
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/svnroot/libadacrypt-dev/!svn/ver/4/test/y.sh
+END
+test-ecnr.adb
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svnroot/libadacrypt-dev/!svn/ver/4/test/test-ecnr.adb
+END
+test-hmac.adb
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svnroot/libadacrypt-dev/!svn/ver/4/test/test-hmac.adb
+END
+test-modes.ads
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svnroot/libadacrypt-dev/!svn/ver/4/test/test-modes.ads
+END
+test-ecnr.ads
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svnroot/libadacrypt-dev/!svn/ver/4/test/test-ecnr.ads
+END

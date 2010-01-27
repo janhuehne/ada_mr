@@ -1,0 +1,50 @@
+-- new topology
+1. crypto
+2.    types  |  symmetric asymmetric |   hashing
+3.  big-numbers | algorithm, mode, blockcipher, streamcipher, cipher,
+    mac/signature , PRF(G), hashfamily  | algorithm | hashfunction
+
+hashfamilies: MMH, NH, ENH for wc-mac and umac. -
+
+reason:  enhance problemes with the current topology.
+
+
+-- optimization
+Big_Number (damn slow!)
+algorithms (slow)
+	
+
+-- MACs
+universal hashfamilies:  NH, MMH, PolyP/Q/R
+MACS                  : HMAC, CBC-MAC, UMAC, WC_MAC usw.
+
+-- modes of operation
+modes for authenticity
+
+-- hashfunctions
+tiger, whirlpool
+
+-- random
+take n-Bits /dev/urandom (seed)
+generate a proovable secure PRNG from a strong universal hashfunction
+because the quality of the  random bits decrease when you take to much random
+bits from /dev/urandom.
+
+-- secure storage pool. !IMPORTANT!
+A secure storage pool overrides every allocated byte and the complete stack.
+
+Now, the ACL don't burn down his heap and stack after usage.
+After execution of an application that uses the ACL you will find (parts of)
+the key in the memory. It's a very good and cheap cryptographic attacks to 
+search key material in the memory after the execution of an application.
+So, without a secure storage pool this lib is only a toy for cryptographes 
+and researchers.
+
+
+
+
+
+
+
+	
+

@@ -1,0 +1,191 @@
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svnroot/libadacrypt-dev/!svn/ver/4/doc/de
+END
+acl.crypto.certificate.tex
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svnroot/libadacrypt-dev/!svn/ver/4/doc/de/acl.crypto.certificate.tex
+END
+acl.crypto.hashfunction.tex
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svnroot/libadacrypt-dev/!svn/ver/4/doc/de/acl.crypto.hashfunction.tex
+END
+acl.crypto.symmetric.mac.tex
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svnroot/libadacrypt-dev/!svn/ver/4/doc/de/acl.crypto.symmetric.mac.tex
+END
+Makefile
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svnroot/libadacrypt-dev/!svn/ver/4/doc/de/Makefile
+END
+acl.crypto.asymmetric.ecnr.tex
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svnroot/libadacrypt-dev/!svn/ver/4/doc/de/acl.crypto.asymmetric.ecnr.tex
+END
+acl.crypto.types.elliptic-curves.tex
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svnroot/libadacrypt-dev/!svn/ver/4/doc/de/acl.crypto.types.elliptic-curves.tex
+END
+crypto.bib
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svnroot/libadacrypt-dev/!svn/ver/4/doc/de/crypto.bib
+END
+acl.crypto.symmetric.blockcipher.tex
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svnroot/libadacrypt-dev/!svn/ver/4/doc/de/acl.crypto.symmetric.blockcipher.tex
+END
+acl.crypto.asymmetric.tex
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svnroot/libadacrypt-dev/!svn/ver/4/doc/de/acl.crypto.asymmetric.tex
+END
+acl.crypto.symmetric.oneway_blockcipher.tex
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svnroot/libadacrypt-dev/!svn/ver/4/doc/de/acl.crypto.symmetric.oneway_blockcipher.tex
+END
+acl.crypto.types.big-numbers.binfield.tex
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/libadacrypt-dev/!svn/ver/4/doc/de/acl.crypto.types.big-numbers.binfield.tex
+END
+acl.crypto.asymmetric.dsa.tex
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svnroot/libadacrypt-dev/!svn/ver/4/doc/de/acl.crypto.asymmetric.dsa.tex
+END
+acl.crypto.symmetric.mode.tex
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svnroot/libadacrypt-dev/!svn/ver/4/doc/de/acl.crypto.symmetric.mode.tex
+END
+acl.crypto.tex
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svnroot/libadacrypt-dev/!svn/ver/4/doc/de/acl.crypto.tex
+END
+acl.crypto.symmetric.algorithm.oneway.tex
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/libadacrypt-dev/!svn/ver/4/doc/de/acl.crypto.symmetric.algorithm.oneway.tex
+END
+acldoku-symmetric.tex
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svnroot/libadacrypt-dev/!svn/ver/4/doc/de/acldoku-symmetric.tex
+END
+acldoku-types.tex
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svnroot/libadacrypt-dev/!svn/ver/4/doc/de/acldoku-types.tex
+END
+acl.crypto.random.tex
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svnroot/libadacrypt-dev/!svn/ver/4/doc/de/acl.crypto.random.tex
+END
+acl.crypto.symmetric.tex
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svnroot/libadacrypt-dev/!svn/ver/4/doc/de/acl.crypto.symmetric.tex
+END
+acl.crypto.types.elliptic-curves.databasezp.tex
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svnroot/libadacrypt-dev/!svn/ver/4/doc/de/acl.crypto.types.elliptic-curves.databasezp.tex
+END
+acleinfuehrung.tex
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svnroot/libadacrypt-dev/!svn/ver/4/doc/de/acleinfuehrung.tex
+END
+acl.crypto.symmetric.algorithm.tex
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svnroot/libadacrypt-dev/!svn/ver/4/doc/de/acl.crypto.symmetric.algorithm.tex
+END
+acl.crypto.types.tex
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svnroot/libadacrypt-dev/!svn/ver/4/doc/de/acl.crypto.types.tex
+END
+acl.crypto.asymmetric.rsa.tex
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svnroot/libadacrypt-dev/!svn/ver/4/doc/de/acl.crypto.asymmetric.rsa.tex
+END
+acl.crypto.symmetric.mode.oneway.tex
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svnroot/libadacrypt-dev/!svn/ver/4/doc/de/acl.crypto.symmetric.mode.oneway.tex
+END
+acl.crypto.symmetric.algorithm.ecmqv.tex
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svnroot/libadacrypt-dev/!svn/ver/4/doc/de/acl.crypto.symmetric.algorithm.ecmqv.tex
+END
+acl.crypto.symmetric.algorithm.ecies.tex
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svnroot/libadacrypt-dev/!svn/ver/4/doc/de/acl.crypto.symmetric.algorithm.ecies.tex
+END
+acl.crypto.types.big-numbers.tex
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svnroot/libadacrypt-dev/!svn/ver/4/doc/de/acl.crypto.types.big-numbers.tex
+END
+acldoku.tex
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svnroot/libadacrypt-dev/!svn/ver/4/doc/de/acldoku.tex
+END
+acl.crypto.symmetric.algorithm.ecdh.tex
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svnroot/libadacrypt-dev/!svn/ver/4/doc/de/acl.crypto.symmetric.algorithm.ecdh.tex
+END
+acl.crypto.asymmetric.ecdsa.tex
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svnroot/libadacrypt-dev/!svn/ver/4/doc/de/acl.crypto.asymmetric.ecdsa.tex
+END

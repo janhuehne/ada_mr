@@ -1,0 +1,917 @@
+K 25
+svn:wc:ra_dav:version-url
+V 39
+/svnroot/libadacrypt-dev/!svn/ver/6/src
+END
+crypto-symmetric-oneway_blockcipher_twofish192.ads
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-oneway_blockcipher_twofish192.ads
+END
+crypto-types-elliptic_curves-nss_bf.ads
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-types-elliptic_curves-nss_bf.ads
+END
+crypto.ads
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto.ads
+END
+crypto-symmetric-algorithm-tripledes-oneway.ads
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-tripledes-oneway.ads
+END
+crypto-symmetric-algorithm-sha384.ads
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-sha384.ads
+END
+crypto-symmetric-oneway_blockcipher.ads
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-oneway_blockcipher.ads
+END
+crypto-symmetric-algorithm-mmh.ads
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-mmh.ads
+END
+crypto-symmetric-oneway_blockcipher_whirlpool.ads
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-oneway_blockcipher_whirlpool.ads
+END
+crypto-asymmetric-dsa.adb
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svnroot/libadacrypt-dev/!svn/ver/5/src/crypto-asymmetric-dsa.adb
+END
+crypto-symmetric-algorithm-sha512.adb
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-sha512.adb
+END
+crypto-symmetric-algorithm-blowfish-oneway.adb
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-blowfish-oneway.adb
+END
+crypto-hashfunction.adb
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-hashfunction.adb
+END
+crypto-symmetric-algorithm-ecmqv.adb
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-ecmqv.adb
+END
+crypto-symmetric-algorithm-tripledes.adb
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-tripledes.adb
+END
+crypto-symmetric-blockcipher_blowfish128.ads
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-blockcipher_blowfish128.ads
+END
+crypto-asymmetric-dsa.ads
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svnroot/libadacrypt-dev/!svn/ver/5/src/crypto-asymmetric-dsa.ads
+END
+crypto-symmetric-algorithm-ecies.adb
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-ecies.adb
+END
+crypto-symmetric-algorithm-sha512.ads
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-sha512.ads
+END
+crypto-symmetric-algorithm-blowfish-oneway.ads
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-blowfish-oneway.ads
+END
+crypto-hashfunction.ads
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-hashfunction.ads
+END
+crypto-symmetric-oneway_blockcipher_blowfish128.ads
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-oneway_blockcipher_blowfish128.ads
+END
+crypto-symmetric-algorithm-ecmqv.ads
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-ecmqv.ads
+END
+crypto-symmetric-algorithm-tripledes.ads
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-tripledes.ads
+END
+crypto-symmetric-algorithm-aes-oneway.adb
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-aes-oneway.adb
+END
+crypto-symmetric-mac-hmac.adb
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-mac-hmac.adb
+END
+crypto-symmetric-algorithm-blowfish.adb
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-blowfish.adb
+END
+crypto-symmetric-algorithm-ecies.ads
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-ecies.ads
+END
+crypto-symmetric-algorithm-sha512-oneway.adb
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-sha512-oneway.adb
+END
+crypto-symmetric-algorithm-whirlpool.adb
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-whirlpool.adb
+END
+crypto-types-big_numbers-utils.adb
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-types-big_numbers-utils.adb
+END
+crypto-symmetric-algorithm-sha1-oneway.adb
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-sha1-oneway.adb
+END
+crypto-symmetric-algorithm-twofish-oneway.adb
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-twofish-oneway.adb
+END
+crypto-types-big_numbers-mod_utils.adb
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-types-big_numbers-mod_utils.adb
+END
+crypto-asymmetric.ads
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-asymmetric.ads
+END
+crypto-symmetric-algorithm-sha384-oneway.adb
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-sha384-oneway.adb
+END
+crypto-symmetric-oneway_blockcipher_sha256.ads
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-oneway_blockcipher_sha256.ads
+END
+crypto-symmetric-algorithm-whirlpool-tables.ads
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-whirlpool-tables.ads
+END
+crypto-symmetric-mode.ads
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-mode.ads
+END
+crypto-types-elliptic_curves-ss_bf.adb
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-types-elliptic_curves-ss_bf.adb
+END
+crypto-symmetric-algorithm-aes-oneway.ads
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-aes-oneway.ads
+END
+crypto-symmetric-mac-hmac.ads
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-mac-hmac.ads
+END
+crypto-symmetric-algorithm-blowfish.ads
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-blowfish.ads
+END
+crypto-symmetric-algorithm-sha512-oneway.ads
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-sha512-oneway.ads
+END
+crypto-symmetric-algorithm-whirlpool.ads
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-whirlpool.ads
+END
+crypto-asymmetric-prime_tables.ads
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-asymmetric-prime_tables.ads
+END
+crypto-symmetric-algorithm-sha1-oneway.ads
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-sha1-oneway.ads
+END
+crypto-symmetric-algorithm-twofish-oneway.ads
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-twofish-oneway.ads
+END
+crypto-symmetric-algorithm-sha384-oneway.ads
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-sha384-oneway.ads
+END
+crypto-hashfunction_sha256.ads
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-hashfunction_sha256.ads
+END
+crypto-types-big_numbers-binfield_utils.adb
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-types-big_numbers-binfield_utils.adb
+END
+crypto-types-elliptic_curves-ss_bf.ads
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-types-elliptic_curves-ss_bf.ads
+END
+crypto-symmetric-oneway_blockcipher_sha384.ads
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-oneway_blockcipher_sha384.ads
+END
+crypto-certificate-asn1.adb
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-certificate-asn1.adb
+END
+crypto-symmetric-blockcipher_tripledes.ads
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-blockcipher_tripledes.ads
+END
+crypto-symmetric.ads
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric.ads
+END
+crypto-symmetric-blockcipher_aes128.ads
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-blockcipher_aes128.ads
+END
+crypto-hashfunction_sha1.ads
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-hashfunction_sha1.ads
+END
+crypto-types-elliptic_curves-zp-database.adb
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-types-elliptic_curves-zp-database.adb
+END
+crypto-asymmetric-ecdsa.adb
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-asymmetric-ecdsa.adb
+END
+crypto-asymmetric-ecnr.adb
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-asymmetric-ecnr.adb
+END
+crypto-symmetric-blockcipher_twofish128.ads
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-blockcipher_twofish128.ads
+END
+crypto-symmetric-mac-hmac_sha1.ads
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-mac-hmac_sha1.ads
+END
+crypto-random.adb
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-random.adb
+END
+crypto-symmetric-algorithm-aes.adb
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-aes.adb
+END
+crypto-symmetric-blockcipher_serpent256.ads
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-blockcipher_serpent256.ads
+END
+crypto-symmetric-oneway_blockcipher_sha512.ads
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-oneway_blockcipher_sha512.ads
+END
+crypto-types-elliptic_curves-zp-database.ads
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-types-elliptic_curves-zp-database.ads
+END
+Makefile
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svnroot/libadacrypt-dev/!svn/ver/4/src/Makefile
+END
+crypto-symmetric-mode-ctr.adb
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-mode-ctr.adb
+END
+crypto-asymmetric-ecdsa.ads
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-asymmetric-ecdsa.ads
+END
+crypto-symmetric-algorithm-serpent.adb
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-serpent.adb
+END
+crypto-asymmetric-ecnr.ads
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-asymmetric-ecnr.ads
+END
+crypto-symmetric-algorithm-sha_utils.adb
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-sha_utils.adb
+END
+crypto-symmetric-algorithm.ads
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm.ads
+END
+crypto-symmetric-blockcipher_aes256.ads
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-blockcipher_aes256.ads
+END
+crypto-random.ads
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-random.ads
+END
+crypto-symmetric-algorithm-aes.ads
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-aes.ads
+END
+crypto-types-elliptic_curves.adb
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-types-elliptic_curves.adb
+END
+crypto-symmetric-mac-hmac_whirlpool.ads
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-mac-hmac_whirlpool.ads
+END
+crypto-hashfunction_sha512.ads
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-hashfunction_sha512.ads
+END
+crypto-symmetric-algorithm-whirlpool-oneway.adb
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-whirlpool-oneway.adb
+END
+crypto-symmetric-blockcipher_twofish256.ads
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-blockcipher_twofish256.ads
+END
+crypto-symmetric-mode-ctr.ads
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-mode-ctr.ads
+END
+crypto-symmetric-algorithm-serpent.ads
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-serpent.ads
+END
+crypto-types.adb
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svnroot/libadacrypt-dev/!svn/ver/5/src/crypto-types.adb
+END
+crypto-symmetric-algorithm-sha_utils.ads
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-sha_utils.ads
+END
+crypto-symmetric-algorithm-tripledes-tables.ads
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-tripledes-tables.ads
+END
+crypto-symmetric-mac-hmac_sha256.ads
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-mac-hmac_sha256.ads
+END
+crypto-types-elliptic_curves.ads
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-types-elliptic_curves.ads
+END
+crypto-symmetric-mode-oneway_ctr.adb
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-mode-oneway_ctr.adb
+END
+crypto-symmetric-oneway_blockcipher_aes128.ads
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-oneway_blockcipher_aes128.ads
+END
+crypto-asymmetric-rsa.adb
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-asymmetric-rsa.adb
+END
+crypto-symmetric-algorithm-whirlpool-oneway.ads
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-whirlpool-oneway.ads
+END
+crypto-symmetric-algorithm-serpent-oneway.adb
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-serpent-oneway.adb
+END
+crypto-types.ads
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-types.ads
+END
+crypto-symmetric-oneway_blockcipher_twofish128.ads
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-oneway_blockcipher_twofish128.ads
+END
+make.ads
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svnroot/libadacrypt-dev/!svn/ver/4/src/make.ads
+END
+crypto-symmetric-mode-oneway_ctr.ads
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-mode-oneway_ctr.ads
+END
+crypto-symmetric-oneway_blockcipher_serpent256.ads
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-oneway_blockcipher_serpent256.ads
+END
+crypto-symmetric-algorithm-sha1.adb
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-sha1.adb
+END
+crypto-asymmetric-rsa.ads
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-asymmetric-rsa.ads
+END
+crypto-symmetric-blockcipher_obsolete_tripledes.ads
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-blockcipher_obsolete_tripledes.ads
+END
+crypto-certificate.adb
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-certificate.adb
+END
+crypto-symmetric-algorithm-serpent-oneway.ads
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-serpent-oneway.ads
+END
+crypto-symmetric-oneway_blockcipher_aes256.ads
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-oneway_blockcipher_aes256.ads
+END
+crypto-hashfunction_whirlpool.ads
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-hashfunction_whirlpool.ads
+END
+crypto-symmetric-blockcipher_aes192.ads
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-blockcipher_aes192.ads
+END
+crypto-symmetric-algorithm-sha1.ads
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-sha1.ads
+END
+crypto-symmetric-mode-cfb.adb
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-mode-cfb.adb
+END
+crypto-symmetric-algorithm-blowfish-tables.ads
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-blowfish-tables.ads
+END
+crypto-symmetric-oneway_blockcipher_twofish256.ads
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-oneway_blockcipher_twofish256.ads
+END
+crypto-certificate.ads
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-certificate.ads
+END
+crypto-symmetric-mode-cbc.adb
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-mode-cbc.adb
+END
+crypto-symmetric-blockcipher_twofish192.ads
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-blockcipher_twofish192.ads
+END
+crypto-symmetric-algorithm-ecdh.adb
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-ecdh.adb
+END
+crypto-types-elliptic_curves-zp.adb
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-types-elliptic_curves-zp.adb
+END
+crypto-symmetric-mode-ofb.adb
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-mode-ofb.adb
+END
+crypto-symmetric-algorithm-twofish.adb
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-twofish.adb
+END
+crypto-symmetric-algorithm-sha256.adb
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-sha256.adb
+END
+crypto-symmetric-mode-cfb.ads
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-mode-cfb.ads
+END
+crypto-types-big_numbers.adb
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-types-big_numbers.adb
+END
+crypto-symmetric-mac.adb
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-mac.adb
+END
+crypto-symmetric-mode-cbc.ads
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-mode-cbc.ads
+END
+crypto-symmetric-algorithm-sha256-oneway.adb
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-sha256-oneway.adb
+END
+crypto-symmetric-mode-oneway_cfb.adb
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-mode-oneway_cfb.adb
+END
+crypto-symmetric-oneway_blockcipher_sha1.ads
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-oneway_blockcipher_sha1.ads
+END
+crypto-symmetric-algorithm-ecdh.ads
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-ecdh.ads
+END
+crypto-symmetric-mac-hmac_sha512.ads
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-mac-hmac_sha512.ads
+END
+crypto-types-elliptic_curves-zp.ads
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-types-elliptic_curves-zp.ads
+END
+crypto-symmetric-algorithm-aes-tables.ads
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-aes-tables.ads
+END
+crypto-symmetric-mode-ofb.ads
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-mode-ofb.ads
+END
+crypto-symmetric-algorithm-twofish.ads
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-twofish.ads
+END
+crypto-symmetric-blockcipher.adb
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-blockcipher.adb
+END
+crypto-symmetric-algorithm-sha256.ads
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-sha256.ads
+END
+crypto-symmetric-oneway_blockcipher_obsolete_tripledes.ads
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-oneway_blockcipher_obsolete_tripledes.ads
+END
+crypto-types-big_numbers.ads
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svnroot/libadacrypt-dev/!svn/ver/6/src/crypto-types-big_numbers.ads
+END
+crypto-symmetric-mac-rmac.adb
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-mac-rmac.adb
+END
+crypto-symmetric-mode-oneway_ofb.adb
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-mode-oneway_ofb.adb
+END
+crypto-symmetric-mac.ads
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-mac.ads
+END
+crypto-symmetric-algorithm-twofish-tables.ads
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-twofish-tables.ads
+END
+crypto-symmetric-algorithm-sha256-oneway.ads
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-sha256-oneway.ads
+END
+crypto-types-elliptic_curves-nss_bf.adb
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-types-elliptic_curves-nss_bf.adb
+END
+crypto-symmetric-algorithm-tripledes-oneway.adb
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-tripledes-oneway.adb
+END
+crypto-symmetric-mode-oneway_cfb.ads
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-mode-oneway_cfb.ads
+END
+crypto-symmetric-algorithm-sha384.adb
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-sha384.adb
+END
+crypto-symmetric-oneway_blockcipher.adb
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-oneway_blockcipher.adb
+END
+crypto-symmetric-blockcipher.ads
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-blockcipher.ads
+END
+crypto-symmetric-oneway_blockcipher_aes192.ads
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-oneway_blockcipher_aes192.ads
+END
+crypto-symmetric-algorithm-mmh.adb
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-algorithm-mmh.adb
+END
+crypto-symmetric-oneway_blockcipher_tripledes.ads
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-oneway_blockcipher_tripledes.ads
+END
+crypto-symmetric-mac-rmac.ads
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-mac-rmac.ads
+END
+crypto-symmetric-mode-oneway_ofb.ads
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/libadacrypt-dev/!svn/ver/4/src/crypto-symmetric-mode-oneway_ofb.ads
+END

@@ -1,0 +1,52 @@
+VER=0.1.0
+LIBDIR=/usr/local/lib
+INSTDIR=/usr/local/lib/libadacrypt-dev-$(VER)
+
+DEL=rm -f
+DELDIR= rm -rf
+
+CC=gnatmake
+CFLAGS=-c  -shared -gnato -s -O3 -gnatn 
+
+all : make.o
+
+
+make.o :
+	$(CC) $(CFLAGS) make.ads
+
+.PHONY : clean
+.SILENT : clean
+
+install:
+	mkdir -p $(INSTDIR)
+	mkdir -p $(LIBDIR)
+	cp *.ads *.adb *.o $(INSTDIR)/
+
+uninstall:
+	$(DELDIR) $(INSTDIR)
+
+clean:
+	$(DEL) *.o *.ali 
+
+#SHARED LIB
+
+shared :
+	gcc -shared -O3 -Wl,-soname,libadacrypt.so.1 -o libadacrypt.so.$(VER) \
+	     crypto*.o
+
+clean-shared:
+	$(DEL) libadacrypt.so.$(VER)
+
+install-shared : 
+	mkdir -p $(INSTDIR)
+	mkdir -p $(LIBDIR)
+	cp crypto*.ads crypto*.ali $(INSTDIR)/
+	cp libadacrypt.so $(LIBDIR)/
+	$(DEL) $(LIBDIR)/libadacrypt.so
+	ln -s  $(LIBDIR)/libadacrypt.so.$(VER) $(LIBDIR)/libadacrypt.so
+	ldconfig
+
+uninstall-shared: 
+	$(DEL) $(LIBDIR)/libadacrypt.so
+	$(DEL) $(LIBDIR)/libadacrypt.so.$(VER)
+	$(DEL) $(INSTDIR)/crypto*.ali
