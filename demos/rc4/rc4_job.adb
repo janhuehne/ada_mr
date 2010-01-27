@@ -1,6 +1,8 @@
 with Ada.Text_IO;
 with Ada_Mr.Xml.Helper;
 with Ada_Mr.Logger;
+with Ada.Calendar;
+with GNAT.Calendar.Time_IO;
 package body Rc4_Job is
   
   overriding function To_Xml(The_Job : Rc4_Job) return String is
@@ -28,8 +30,6 @@ package body Rc4_Job is
     J.Most_Sig_Byte_Range := Natural'Value(Ada_Mr.Xml.Get_Value(Xml_Node, "most_sig_byte_range"));
     
     return J;
-  exception
-    when Error : others => Ada_Mr.Helper.Print_Exception(Error);
   end From_Xml;
   
   
@@ -46,12 +46,7 @@ package body Rc4_Job is
     Most_Sig_Byte_Range : Natural := Natural'Value(Ada_Mr.Helper.Read_Configuration("user", "most_sig_byte_range"));
   begin
     Random_Key := Rc_4.Random_Key(In_Key);
-    
     Rc_4.Print_Key(Random_Key);
---    Random_Key(0) := 0;
---    Random_Key(1) := 0;
---    Random_Key(2) := 200;
---    Random_Key(3) := 0;
     
     Rc_4.Init_RC4(Random_Key, S_Box);
     
@@ -73,7 +68,7 @@ package body Rc4_Job is
         Job.Job_Id              := Ada_Mr.Job.Get_Next_Job_Id;
         Job.Plain_Text          := Plain_Text;
         Job.Cipher_Text         := Cipher_Text;
-        Job.Start_Most_Sig_Byte := Rc_4.Unsigned_Byte((I * Most_Sig_Byte_Range) mod 255);
+        Job.Start_Most_Sig_Byte := Rc_4.Unsigned_Byte(I * Most_Sig_Byte_Range);
         
         if Integer(Job.Start_Most_Sig_Byte) + Most_Sig_Byte_Range - 1 > 255 then
           Job.Most_Sig_Byte_Range := 255 - Integer(Job.Start_Most_Sig_Byte);
@@ -113,16 +108,15 @@ package body Rc4_Job is
   
   
   overriding procedure Compute_Job(The_Job : Rc4_Job) is
-    Test_Key    : Rc_4.Key_Type;
+    Test_Key    : Rc_4.Key_Type := (others => 0);
     S_Box       : Rc_4.S_Box;
     X, Y        : Natural;
     Cipher_Text : Rc_4.Unsigned_Byte_Array(1 .. 10);
-    Key_Found   : Boolean := false;
   begin
-    Ada_Mr.Logger.Put_Line("Starting compute job", Ada_Mr.Logger.Info);
-    
+    Key_Found := False;
     for I in Natural(The_Job.Start_Most_Sig_Byte) .. (Natural(The_Job.Start_Most_Sig_Byte) + The_Job.Most_Sig_Byte_Range) loop
       Test_Key(0) := Rc_4.Unsigned_Byte(I);
+      
       for J in Rc_4.Unsigned_Byte'Range loop
         Test_Key(1) := J;
         for K in Rc_4.Unsigned_Byte'Range loop
@@ -136,9 +130,7 @@ package body Rc4_Job is
             Rc_4.Init_RC4(Test_Key, S_Box);
             Cipher_Text := The_Job.Plain_Text;
             
-            for I in Cipher_Text'First .. Cipher_Text'Last loop
-              Rc_4.Encrypt(S_Box, Cipher_Text(I), X, Y);
-            end loop;
+            Rc_4.Encrypt(S_Box, Cipher_Text);
             
             if Rc_4."="(Cipher_Text, The_Job.Cipher_Text) then
               Found_Key := Test_Key;
@@ -153,19 +145,22 @@ package body Rc4_Job is
         
         exit when Key_Found = true;
       end loop;
-        
+      
       exit when Key_Found = true;
     end loop;
   end Compute_Job;
   
   
   function Split_Result_For_Different_Reducer return Ada_Mr.Helper.String_String_Maps.Map is
-    Mapping : Ada_Mr.Helper.String_String_Maps.Map;
+    Mapping  : Ada_Mr.Helper.String_String_Maps.Map;
   begin
-    Mapping.Insert(
-      "Reducer_1", 
-      "<key>" & Byte_Array_To_Xml(Found_Key) & "</key>"
-    );
+    
+    if Key_Found = True then
+      Mapping.Insert(
+        "Reducer_1", 
+        "<key>" & Byte_Array_To_Xml(Found_Key) & "</key>"
+      );
+    end if;
     
     return Mapping;
   end Split_Result_For_Different_Reducer;
