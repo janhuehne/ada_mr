@@ -40,7 +40,7 @@ package Pi_Job is
   
   
   -- merge job results
-  procedure Merge_Job_Results(Xml_Node : Ada_Mr.Xml.Node_Access);
+  procedure Merge_Job_Results(Xml_Node : Ada_Mr.Xml.Node_Access; Stop_System : out Boolean);
   
   
   procedure Finalize;

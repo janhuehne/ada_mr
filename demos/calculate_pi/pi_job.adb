@@ -121,7 +121,7 @@ package body Pi_Job is
   end Split_Result_For_Different_Reducer;
   
   
-  procedure Merge_Job_Results(Xml_Node : Ada_Mr.Xml.Node_Access) is
+  procedure Merge_Job_Results(Xml_Node : Ada_Mr.Xml.Node_Access; Stop_System : out Boolean) is
   begin
     In_Circle_Count := In_Circle_Count + Natural'Value(Ada_Mr.Xml.Get_Value(Xml_Node, "in_circle_count"));
     Not_In_Circle_Count := Not_In_Circle_Count + Natural'Value(Ada_Mr.Xml.Get_Value(Xml_Node, "not_in_circle_count"));
