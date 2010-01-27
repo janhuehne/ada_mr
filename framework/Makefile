@@ -6,8 +6,8 @@ DEL=rm -f
 DELDIR= rm -rf
 
 CC=gnatmake
-CFLAGS=-c  -shared -gnato -s -O3 -gnatn
-LIBS=-Ilib -Imaster -Imapper -Ireducer -Ilibadacrypt
+CFLAGS=-c -O3
+LIBS=-I/usr/local/lib/libadacrypt -ladacrypt
 
 all : make.o
 
@@ -20,8 +20,20 @@ make.o :
 clean:
 	$(DEL) *.o *.ali
 
-install-shared-os-x :
+shared:
+	ar rc libadamr.a.$(VER) ada_mr*.o simple_xml*.o
+
+install-shared:
+	$(DELDIR) $(LIBDIR)/libadamr*
 	mkdir -p $(INSTDIR)
 	mkdir -p $(LIBDIR)
-	cp *.o *.ali $(INSTDIR)
-	cp *.ads $(INSTDIR)
+	cp *.ads *.adb *.ali $(INSTDIR)
+	chmod 444 $(INSTDIR)/*
+	ln -s $(INSTDIR) $(LIBDIR)/libadamr
+	cp libadamr.a.$(VER) $(LIBDIR)/
+	ln -s $(LIBDIR)/libadamr.a.$(VER) $(LIBDIR)/libadamr.a
+	ldconfig
+
+uninstall-shared:
+	$(DELDIR) $(LIBDIR)/libadamr*
+	ldconfig
