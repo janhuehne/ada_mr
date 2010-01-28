@@ -27,11 +27,11 @@ package body _Job is
   procedure Split_Raw_Data is
   begin
     declare
-      Job : Job;
+      The_Job : Job;
     begin
-      Job.Job_Id := Ada_Mr.Job.Get_Next_Job_Id;
+      The_Job.Job_Id := Ada_Mr.Job.Get_Next_Job_Id;
       
-      Calculated_Jobs.Append(Job);
+      Calculated_Jobs.Append(The_Job);
     end;
   end Split_Raw_Data;
   

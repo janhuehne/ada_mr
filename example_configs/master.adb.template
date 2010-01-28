@@ -5,7 +5,7 @@ procedure Master is
   package Job renames _Job;
   
   package Master_MR is new Ada_Mr.Master.Main(
-    Job.Char_Job,
+    Job.Job,
     Job.From_Xml,
     Job.To_Xml,
     Job.Get_Job_Id,
