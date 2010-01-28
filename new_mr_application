@@ -28,10 +28,6 @@ while [ "$job_record" = "" ]
 
 
 
-echo $workspace_path
-echo $project_name
-echo $job_record
-
 # create job directors
 project_path=$workspace_path"/"$project_name
 mkdir -p $project_path
