@@ -7,7 +7,7 @@ procedure Reducer_Count_Char is
   
   package Reducer_MR is new Ada_Mr.Reducer.Main(
     Job.Merge_Job_Results, 
-    Char_Job.Finalize
+    Job.Finalize
   );
   
 begin
