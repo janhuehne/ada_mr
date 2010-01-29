@@ -93,5 +93,6 @@ package Md5_Job is
   Last_Distinguished_Points : D_P_Array(Equals'Range);
   Step_Counter : Nat_Array(Equals'Range);
   Current_Distinguished_Point : GNAT.MD5.Message_Digest;
+  Result_To_Send : Natural;
   
 end Md5_Job;

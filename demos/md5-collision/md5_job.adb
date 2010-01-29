@@ -87,6 +87,7 @@ package body Md5_Job is
         Step_Counter(I) := Step_Counter(I) + 1;
         
         if Hash((32 - Equals(I)'Length + 1) .. 32) = Equals(I) then
+          Result_To_Send := I;
           Current_Distinguished_Point  := Hash;
           
           Ada.Text_IO.Put_Line("Last distinguished point:    " & Last_Distinguished_Points(I));
@@ -94,15 +95,7 @@ package body Md5_Job is
           Ada.Text_IO.Put_Line("Steps between:               " & Step_Counter(I)'Img);
           
           -- --> Send result to reducers
-          declare
-            Reducer_Result_Map : Ada_Mr.Helper.String_String_Maps.Map;
-          begin 
-            Reducer_Result_Map := Split_Result_For_Different_Reducer;
-            Reducer_Result_Map.Iterate(Ada_Mr.Mapper.Helper.Send_Result_To_Reducer'Access);
-          end;
-          
-          
-          
+          Ada_Mr.Mapper.Helper.Send_Result(Split_Result_For_Different_Reducer);
           
           Last_Distinguished_Points(I) := Current_Distinguished_Point;
           Step_Counter(I) := 0;
@@ -126,6 +119,10 @@ package body Md5_Job is
     --    "Reducer_1", 
     --    ""
     --  );
+    Mapping.Insert(
+      "Reducer_1",
+      "<ldp>" & Last_Distinguished_Points(Result_To_Send) & "</ldp><cdp>" & Current_Distinguished_Point & "</cdp><steps>" & Ada_Mr.Helper.Trim(Step_Counter(Result_To_Send)'Img) & "</steps>"
+    );
     
     return Mapping;
   end Split_Result_For_Different_Reducer;
