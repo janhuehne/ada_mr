@@ -114,15 +114,18 @@ package body Md5_Job is
   function Split_Result_For_Different_Reducer return Ada_Mr.Helper.String_String_Maps.Map is
     Mapping  : Ada_Mr.Helper.String_String_Maps.Map;
   begin
-    -- Example:
-    --  Mapping.Insert(
-    --    "Reducer_1", 
-    --    ""
-    --  );
-    Mapping.Insert(
-      "Reducer_1",
-      "<ldp>" & Last_Distinguished_Points(Result_To_Send) & "</ldp><cdp>" & Current_Distinguished_Point & "</cdp><steps>" & Ada_Mr.Helper.Trim(Step_Counter(Result_To_Send)'Img) & "</steps>"
-    );
+    if Result_To_Send <= 5 then
+      Mapping.Insert(
+        "Reducer_1",
+        "<ldp>" & Last_Distinguished_Points(Result_To_Send) & "</ldp><cdp>" & Current_Distinguished_Point & "</cdp><steps>" & Ada_Mr.Helper.Trim(Step_Counter(Result_To_Send)'Img) & "</steps>"
+      );
+    else
+      Mapping.Insert(
+        "Reducer_2",
+        "<ldp>" & Last_Distinguished_Points(Result_To_Send) & "</ldp><cdp>" & Current_Distinguished_Point & "</cdp><steps>" & Ada_Mr.Helper.Trim(Step_Counter(Result_To_Send)'Img) & "</steps>"
+      );
+      
+    end if;
     
     return Mapping;
   end Split_Result_For_Different_Reducer;
