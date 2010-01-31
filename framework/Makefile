@@ -10,6 +10,7 @@ CFLAGS=-c -O3
 LIBS=-I/usr/local/lib/libadacrypt -ladacrypt
 
 all : make.o
+share-and-install : clean make.o shared install-shared
 
 make.o :
 	$(CC) $(LIBS) $(CFLAGS) make.ads
