@@ -96,28 +96,16 @@ package body Ada_Mr.Xml.Helper is
     return Xml_Command(G_T, "initialization", Details);
   end Create_Initialization;
   
+  
   function Create_Job_Request return String is
   begin
     return Xml_Command(Mapper, "job_request");
   end Create_Job_Request;
   
+  
   function Create_System_Control(G_T : Group_Tag; Message : String) return String is
-    Xml_String : Ada.Strings.Unbounded.Unbounded_String;
   begin
-    Ada.Strings.Unbounded.Append(Xml_String, "<?xml version=""1.0"" ?>");
-    Ada.Strings.Unbounded.Append(Xml_String, "<adamr-");
-    Ada.Strings.Unbounded.Append(Xml_String, To_String(G_T));
-    Ada.Strings.Unbounded.Append(Xml_String, ">");
-    
-    Ada.Strings.Unbounded.Append(Xml_String, "<sysctrl><message>");
-    Ada.Strings.Unbounded.Append(Xml_String, Message);
-    Ada.Strings.Unbounded.Append(Xml_String, "</sysctrl></message>");
-    
-    Ada.Strings.Unbounded.Append(Xml_String, "</adamr-");
-    Ada.Strings.Unbounded.Append(Xml_String, To_String(G_T));
-    Ada.Strings.Unbounded.Append(Xml_String, ">");
-    
-    return Ada.Strings.Unbounded.To_String(Xml_String);
+    return Xml_Command(G_T, "sysctrl", "", "<message>" & Message & "</message>");
   end Create_System_Control;
   
   function Hash_To_Xml_String(Details : Ada_Mr.Helper.String_String_Maps.Map) return String is
@@ -138,6 +126,7 @@ package body Ada_Mr.Xml.Helper is
     return ASU.To_String(Detail_String);
   end Hash_To_Xml_String;
   
+  
   function Request_From(Node : Ada_Mr.Xml.Node_Access) return Ada_Mr.Helper.Worker_Type is
     Node_Tag : String := Ada_Mr.Xml.Get_Tag(Node);
   begin
@@ -151,23 +140,6 @@ package body Ada_Mr.Xml.Helper is
     
     return Ada_Mr.Helper.Invalid;
   end;
-  
---  function Is_Master_Request(Node : Ada_Mr.Xml.Node_Access) return Boolean is
---  begin
---    return Ada_Mr.Helper.Is_Equal(Ada_Mr.Xml.Get_Tag(Node), "adamr-master");
---  end Is_Master_Request;
---  
---  
---  function Is_Mapper_Request(Node : Ada_Mr.Xml.Node_Access) return Boolean is
---  begin
---    return Ada_Mr.Helper.Is_Equal(Ada_Mr.Xml.Get_Tag(Node), "adamr-mapper");
---  end Is_Mapper_Request;
---  
---  
---  function Is_Reducer_Request(Node : Ada_Mr.Xml.Node_Access) return Boolean is
---  begin
---    return Ada_Mr.Helper.Is_Equal(Ada_Mr.Xml.Get_Tag(Node), "adamr-reducer");
---  end Is_Reducer_Request;
   
   
   function Is_Command(Node : Ada_Mr.Xml.Node_Access; Command : String) return Boolean is
