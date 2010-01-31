@@ -37,7 +37,7 @@ package Md5_Job is
   
   -- Job record definition
   type Job is new Ada_Mr.Job.Object with record
-    Start_Point    : String(1..32);
+    Start_Point      : String(1..32);
   end record;
   
   
@@ -71,28 +71,57 @@ package Md5_Job is
   procedure Finalize;
   
   
-  
-  
   -- package instance
   -- Vector to store all computed jobs
   package Job_Vector is new Ada.Containers.Vectors(
     Element_Type => Job, 
     Index_Type => Positive
   );
-  
-  
+    
   -- Precalculated jobs
   Calculated_Jobs : Job_Vector.Vector;
   
   
-  type D_P_Array is array(Natural range <>) of GNAT.MD5.Message_Digest;
-  type Nat_Array is array(Natural range <>) of Natural;
-  type Eq_Array  is array(Natural range <>) of String(1..6);
   
-  Equals : Eq_Array(1 ..10) := ("000000", "111111", "222222", "333333", "444444", "555555", "666666", "777777", "888888", "999999");
-  Last_Distinguished_Points : D_P_Array(Equals'Range);
-  Step_Counter : Nat_Array(Equals'Range);
-  Current_Distinguished_Point : GNAT.MD5.Message_Digest;
+  -- Datastructure and content for the distinguished point pattern
+  Dp_Pattern_Length : Natural := 6;
+  
+  type Dp_Pattern_Array  is array(Natural range <>) of String(1 .. Dp_Pattern_Length);
+  Dp_Pattern : Dp_Pattern_Array := ("000000", "111111", "222222", "333333", "444444", "555555", "666666", "777777", "888888", "999999");
+  
+  
+  
+  Collision_Length : Natural := 13;
+  
+  
+  
+  -- Datastructe for the distinguished point set
+  type Distinguished_Point_Set is record
+    Last     : GNAT.MD5.Message_Digest;
+    Current  : GNAT.MD5.Message_Digest;
+    Distance : Natural;
+  end record;
+  
+  function Distinguished_Point_Set_To_Xml(Set : Distinguished_Point_Set) return String;
+  function Distinguished_Point_Set_From_Xml(Xml_Node : Ada_Mr.Xml.Node_Access) return Distinguished_Point_Set;
+  procedure Print(Set : Distinguished_Point_Set);
+  
+  function Calculate_Collision(In_Dp_1 : Distinguished_Point_Set; In_Dp_2 : Distinguished_Point_Set) return Boolean;
+  
+  -- Mapper Stuff
+  type Distinguished_Point_Set_Array is array(Natural range <>) of Distinguished_Point_Set;
+  Distinguished_Point : Distinguished_Point_Set_Array(Dp_Pattern'Range);
   Result_To_Send : Natural;
   
+  
+  -- Reducer Stuff
+  package D_P_Vector is new Ada.Containers.Vectors(
+    Element_Type => Distinguished_Point_Set, 
+    Index_Type => Positive
+  );
+  
+  Distinguished_Points : D_P_Vector.Vector;
+  
+  
+  Null_String : String := "00000000000000000000000000000000";
 end Md5_Job;
