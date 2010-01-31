@@ -77,9 +77,9 @@ package body Ada_Mr.Generics.Echo is
           if Input_Status = Completed then
             declare
               Request     : String := String'Input(S);
-              Xml_Root    : Ada_Mr.Xml.Node_Access := Ada_Mr.Xml.Parser.Parse(Content => Request);
+              Xml_Root    : Ada_Mr.Xml.Node_Access;
             begin
-              
+              Xml_Root := Ada_Mr.Xml.Parser.Parse(Content => Request);
               Process_Request(S, Ada_Mr.Xml.Helper.Request_From(Xml_Root), Ada_Mr.Xml.Helper.Get_Verified_Content(Xml_Root));
             exception
               when Error : others =>

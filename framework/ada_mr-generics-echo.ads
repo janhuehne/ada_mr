@@ -11,7 +11,7 @@ package Ada_Mr.Generics.Echo is
   
   package ASU renames Ada.Strings.Unbounded;
   
-  Max_Tasks : CONSTANT Positive := 5; --Positive'Value(Ada_Mr.Helper.Read_Configuration("SETTINGS", "MAX_CONNECTION_TASKS"));
+  Max_Tasks : CONSTANT Positive := 20; --Positive'Value(Ada_Mr.Helper.Read_Configuration("SETTINGS", "MAX_CONNECTION_TASKS"));
   type Index is mod Max_Tasks;
   
   type Echo; 
