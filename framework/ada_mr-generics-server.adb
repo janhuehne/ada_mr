@@ -43,7 +43,7 @@ package body Ada_Mr.Generics.Server is
         
         Bind_Socket(Server, Addr);
         
-        Listen_Socket(Server, 4);
+        Listen_Socket(Server, 30);
         
         --  set up selector 
         Create_Selector(Accept_Selector);
