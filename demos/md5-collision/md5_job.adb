@@ -132,10 +132,7 @@ procedure Merge_Job_Results(Xml_Node : Ada_Mr.Xml.Node_Access; Stop_System : out
 begin
   Current_Dp_Set := Distinguished_Point_Set_From_Xml(Xml_Node);
   
-  Ada.Text_IO.Put_Line("Calling Merge Job Result");
-  
   loop
-    Ada.Text_IO.Put_Line("Looping");
     exit when D_P_Vector."="(Distinguished_Points_Cursor, D_P_Vector.No_Element);
       
     if D_P_Vector.Element(Distinguished_Points_Cursor).Current((32-Collision_Length+1) .. 32) = Current_Dp_Set.Current((32-Collision_Length+1) .. 32) then
@@ -148,8 +145,6 @@ begin
     
     D_P_Vector.Next(Distinguished_Points_Cursor);
   end loop;
-  
-  Ada.Text_IO.Put_Line("End loop");
   
   if D_P_Vector."="(Distinguished_Points_Cursor, D_P_Vector.No_Element) then
     Distinguished_Points.Append(Current_Dp_Set);
