@@ -149,6 +149,8 @@ begin
     D_P_Vector.Next(Distinguished_Points_Cursor);
   end loop;
   
+  Ada.Text_IO.Put_Line("End loop");
+  
   if D_P_Vector."="(Distinguished_Points_Cursor, D_P_Vector.No_Element) then
     Distinguished_Points.Append(Current_Dp_Set);
   end if;
