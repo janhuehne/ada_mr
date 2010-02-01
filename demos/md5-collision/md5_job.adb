@@ -135,6 +135,7 @@ begin
   Ada.Text_IO.Put_Line("Calling Merge Job Result");
   
   loop
+    Ada.Text_IO.Put_Line("Looping");
     exit when D_P_Vector."="(Distinguished_Points_Cursor, D_P_Vector.No_Element);
       
     if D_P_Vector.Element(Distinguished_Points_Cursor).Current((32-Collision_Length+1) .. 32) = Current_Dp_Set.Current((32-Collision_Length+1) .. 32) then
