@@ -132,6 +132,8 @@ procedure Merge_Job_Results(Xml_Node : Ada_Mr.Xml.Node_Access; Stop_System : out
 begin
   Current_Dp_Set := Distinguished_Point_Set_From_Xml(Xml_Node);
   
+  Ada.Text_IO.Put_Line("Calling Merge Job Result");
+  
   loop
     exit when D_P_Vector."="(Distinguished_Points_Cursor, D_P_Vector.No_Element);
       
@@ -195,9 +197,6 @@ end Finalize;
     Dp_1 : Distinguished_Point_Set;
     Dp_2 : Distinguished_Point_Set;
   begin
-    Print(Dp_1);
-    Print(Dp_2);
-    
     if In_Dp_1.Distance > In_Dp_2.Distance then
       Dp_1 := In_Dp_1;
       DP_2 := In_Dp_2;
