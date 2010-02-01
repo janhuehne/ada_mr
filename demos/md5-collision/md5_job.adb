@@ -158,6 +158,8 @@ begin
   if Stop = True then
     Stop_System := True;
   end if;
+exception
+  when Error : others => Ada_Mr.Helper.Print_Exception(Error);
 end Merge_Job_Results;
   
   
