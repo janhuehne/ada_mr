@@ -37,7 +37,7 @@ package Md5_Job is
   
   -- Job record definition
   type Job is new Ada_Mr.Job.Object with record
-    Start_Point      : String(1..32);
+    Start_Point : GNAT.MD5.Message_Digest;
   end record;
   
   
@@ -91,7 +91,7 @@ package Md5_Job is
   
   
   
-  Collision_Length : Natural := 13;
+  Collision_Length : Natural := 14;
   
   
   
