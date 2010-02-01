@@ -76,6 +76,10 @@ overriding procedure Compute_Job(The_Job : Job) is
 begin
   Hash := The_Job.Start_Point;
   
+  for I in Distinguished_Point'Range loop
+    Distinguished_Point(I).Last := Hash;
+  end loop;
+  
   loop
     Tmp  := Hash;
     Tmp(1 .. (32-Collision_Length)) := Null_String(1 .. (32-Collision_Length));
