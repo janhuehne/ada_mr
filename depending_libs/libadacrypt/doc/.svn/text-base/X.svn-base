@@ -1,3 +1,0 @@
- gnatmake -c  -A.  foo
- gnatbind  -aO. -I- -x  foo.ali
-gnatlink -I. -dy -s  -a0. foo.ali -ladacrypt
