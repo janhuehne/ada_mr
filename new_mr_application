@@ -1,6 +1,6 @@
 #!/bin/bash
 #default_workspace_path="~/adamr"
-default_workspace_path="./demos"
+default_workspace_path="./evaluation"
 project_name=""
 job_record=""
 # read workspace from command line
