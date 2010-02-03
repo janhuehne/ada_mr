@@ -166,7 +166,7 @@ package body Ada_Mr.Xml.Helper is
     
     
     if Ada_Mr.Crypt.Helper.Compute_HMAC(Ada_Mr.Xml.Node_Content_To_String(Xml_Content), Ada_Mr.Helper.Read_Configuration("CRYPTO", "HMAC")) /= Ada_Mr.Xml.Get_Value(Xml_Root, "hmac") then
-      raise Ada_Mr.Crypt.Helper.Wrong_HMAC;
+      Ada.Exceptions.Raise_Exception(Ada_Mr.Crypt.Helper.Wrong_HMAC'Identity, "Content: " & Ada_Mr.Xml.Node_Content_To_String(Xml_Content));
     end if;
       
     Ada_Mr.Logger.Put_Line("HMAC verified", Ada_Mr.Logger.Info);
