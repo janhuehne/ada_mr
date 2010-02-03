@@ -47,9 +47,7 @@ package body Ada_Mr.Master.Server is
           Worker_Entry.Port        := Port_Type'Value(Ada_Mr.Xml.Get_Value(Details, "port"));
           
           if GNAT.Sockets."="(Worker_Entry.Ip, GNAT.Sockets.Any_Inet_Addr) then
-            Ada_Mr.Logger.Put_Line(GNAT.Sockets.Image(GNAT.Sockets.Get_Address(S).Addr), Ada_Mr.Logger.Err);
-          else
-            Ada_Mr.Logger.Put_Line(GNAT.Sockets.Image(Worker_Entry.Ip), Ada_Mr.Logger.Err);
+            Worker_Entry.Ip := GNAT.Sockets.Get_Address(S).Addr;
           end if;
           
           Add_Worker(Worker_Entry);
