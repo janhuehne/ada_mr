@@ -52,7 +52,7 @@ package Md5_Job is
   
   
   -- print job on stdio (optional)
-  overriding procedure Print_Job(The_Job : Job; State : String);
+  overriding procedure Print_Job(The_Job : Job; State : String; Message : String);
   
   
   -- compute job (map function)

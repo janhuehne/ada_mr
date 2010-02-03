@@ -15,11 +15,12 @@ package body Ada_Mr.Job is
     return Return_Value;
   end Get_Next_Job_Id;
   
-  procedure Print_Job(The_Job : Object; State : String) is
+  procedure Print_Job(The_Job : Object; State : String; Message : String) is
   begin
     Ada_Mr.Helper.Put(The_Job.Job_Id'Img, 10, 1);
     Ada_Mr.Helper.Put("Please override ""Print_Job"" for more details", 50, 1);
     Ada_Mr.Helper.Put(State, 20);
+    Ada_Mr.Helper.Put(Message, 20);
     Ada.Text_IO.New_Line;
   end;
   

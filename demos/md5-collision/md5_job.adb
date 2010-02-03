@@ -61,7 +61,7 @@ package body Md5_Job is
   end Get_Next_Raw_Job;
   
   
-  overriding procedure Print_Job(The_Job : Job; State : String) is
+  overriding procedure Print_Job(The_Job : Job; State : String; Message : String) is
   begin
     Ada_Mr.Helper.Put(The_Job.Job_Id'Img, 10, 1);
     Ada_Mr.Helper.Put(The_Job.Start_Point, 50, 1);
@@ -128,7 +128,7 @@ end Split_Result_For_Different_Reducer;
 procedure Merge_Job_Results(Xml_Node : Ada_Mr.Xml.Node_Access; Stop_System : out Boolean) is
   Current_Dp_Set : Distinguished_Point_Set;
   Distinguished_Points_Cursor : D_P_Vector.Cursor := Distinguished_Points.First;
-  Stop : Boolean := False;
+  --Stop : Boolean := False;
 begin
   Current_Dp_Set := Distinguished_Point_Set_From_Xml(Xml_Node);
   
@@ -138,7 +138,8 @@ begin
     if D_P_Vector.Element(Distinguished_Points_Cursor).Current((32-Collision_Length+1) .. 32) = Current_Dp_Set.Current((32-Collision_Length+1) .. 32) then
       Ada.Text_IO.Put_Line("Collision candidate found!");
       if Calculate_Collision(D_P_Vector.Element(Distinguished_Points_Cursor), Current_Dp_Set) = True then
-        Stop := True;
+        --Stop := True;
+        Stop_System := True;
         exit;
       end if;
     end if;
@@ -150,9 +151,9 @@ begin
     Distinguished_Points.Append(Current_Dp_Set);
   end if;
   
-  if Stop = True then
-    Stop_System := True;
-  end if;
+--  if Stop = True then
+--    Stop_System := True;
+--  end if;
 exception
   when Error : others => Ada_Mr.Helper.Print_Exception(Error);
 end Merge_Job_Results;

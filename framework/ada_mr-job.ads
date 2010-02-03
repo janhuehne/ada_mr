@@ -24,7 +24,7 @@ package Ada_Mr.Job is
   function Get_Next_Raw_Job return Object is abstract;
   
   -- Called by the generic system to print job in stio
-  procedure Print_Job(The_Job : Object; State : String);
+  procedure Print_Job(The_Job : Object; State : String; Message : String);
   
   -- Called by the generic mapper to compute a job
   procedure Compute_Job(The_Job : Object) is abstract;

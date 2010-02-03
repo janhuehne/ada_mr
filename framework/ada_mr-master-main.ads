@@ -14,7 +14,7 @@ generic
   with function From_Xml(Xml_Node : Ada_Mr.Xml.Node_Access) return My_Job;
   with function To_Xml(Job : in My_Job) return String;
   with function Get_Job_Id(Job : in My_Job) return Natural;
-  with procedure Print_Job(Job : in My_Job; State : String);
+  with procedure Print_Job(Job : in My_Job; State : String; Message : String);
   with procedure Split_Raw_Data;
   with function Get_Next_Raw_Job return My_Job;
   

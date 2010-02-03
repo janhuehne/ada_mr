@@ -295,7 +295,7 @@ package body Ada_Mr.Master.Main is
       procedure Print(Cursor : Job_Entry_Record_Vectors.Cursor) is
         Element : Job_Entry_Record_Access := Job_Entry_Record_Vectors.Element(Cursor);
       begin
-        Print_Job(Element.Job, Ada_Mr.Master.Helper.To_String(Element.State));
+        Print_Job(Element.Job, Ada_Mr.Master.Helper.To_String(Element.State), ASU.To_String(Element.Message));
       end Print;
       
     begin
