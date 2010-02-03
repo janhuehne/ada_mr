@@ -8,6 +8,8 @@ package body _Job is
   overriding function To_Xml(The_Job : Job) return String is
     Details : Ada_Mr.Helper.String_String_Maps.Map;
   begin
+    Details.Insert("job_id", Ada_Mr.Helper.Trim(The_Job.Job_Id'Img));
+    
     -- Example:
     -- Details.Insert("key, "value");
     
@@ -47,7 +49,10 @@ package body _Job is
   
 --  overriding procedure Print_Job(The_Job : Job; State : String) is
 --  begin
---    null;
+--    Ada_Mr.Helper.Put(The_Job.Job_Id'Img, 10, 1);
+--    Ada_Mr.Helper.Put("Please override ""Print_Job"" for more details", 50, 1);
+--    Ada_Mr.Helper.Put(State, 20);
+--    Ada.Text_IO.New_Line;
 --  end Print_Job;
   
   
@@ -66,6 +71,7 @@ package body _Job is
     --    ""
     --  );
     
+    -- !! Dont't forget to reset the mapper result after submitting it !!
     return Mapping;
   end Split_Result_For_Different_Reducer;
   
@@ -73,6 +79,9 @@ package body _Job is
   procedure Merge_Job_Results(Xml_Node : Ada_Mr.Xml.Node_Access; Stop_System : out Boolean) is
   begin
     null;
+    
+    -- Never stop the system at this point
+    Stop_System := false;
   end Merge_Job_Results;
   
   

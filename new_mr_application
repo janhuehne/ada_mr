@@ -23,7 +23,7 @@ while [ "$project_name" = "" ]
 # read job_record name
 while [ "$job_record" = "" ] 
   do
-    read -p "Job-record name (e.g. demo): " job_record
+    read -p "Job-record name (e.g. demo -> Demo_Job): " job_record
   done
 
 
