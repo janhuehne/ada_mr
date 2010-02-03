@@ -34,9 +34,6 @@ package body Ada_Mr.Master.Server is
       
       if Ada_Mr.Xml.Helper.Is_Command(Xml_Root, "initialization") then
         
-        Ada_Mr.Logger.Put_Line(GNAT.Sockets.Image(GNAT.Sockets.Get_Address(S).Addr), Ada_Mr.Logger.Err);
-        
-        
         declare
           Details : Ada_Mr.Xml.Node_Access := Ada_Mr.Xml.Find_Child_With_Tag(Xml_Root, "details");
           Worker_Entry : Ada_Mr.Master.Helper.Worker_Record_Access := new Ada_Mr.Master.Helper.Worker_Record;
