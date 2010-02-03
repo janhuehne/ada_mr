@@ -72,14 +72,12 @@ package body Ada_Mr.Generics.Server is
             --  Hence the Accept_Socket call should not block. 
             Accept_Socket(Server, New_Sock, Peer_Addr);
             
-            Ada_Mr.Logger.Put_Line(GNAT.Sockets.Image(Get_Peer_Name(New_Sock).Addr), Ada_Mr.Logger.Err);
-            
             if Echo.Buffer.Num_Waiting = 0 and Total_Tasks < Echo.Max_Tasks then
               -- start new task
               Slave := new Echo.Echo;
               Total_Tasks := Total_Tasks + 1;
               Logger.Put_Line("New echo task started", Logger.Info);
-
+              
               -- call entry Start to activate task
               Slave.Start(New_Sock, Slave);
             else
@@ -90,7 +88,7 @@ package body Ada_Mr.Generics.Server is
               Slave.ReStart(New_Sock);
               Logger.Put_Line("Idle echo task reactivated", Logger.Info);
             end if;
-
+            
             --Process_Incomming_Connection(New_Sock);
           end if;
         end loop;
