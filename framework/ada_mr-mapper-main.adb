@@ -59,8 +59,8 @@ package body Ada_Mr.Mapper.Main is
         
         -- start local server to accept incomming connections
         Server_Task.Start(
-          GNAT.Sockets.Inet_Addr(Ada_Mr.Helper.Read_Configuration("LOCAL_SERVER-BIND_IP")),
-          GNAT.Sockets.Port_Type'Value(Ada_Mr.Helper.Read_Configuration("LOCAL_SERVER-BIND_PORT"))
+          GNAT.Sockets.Inet_Addr(Ada_Mr.Helper.Read_Configuration("LOCAL_SERVER", "IP")),
+          GNAT.Sockets.Port_Type'Value(Ada_Mr.Helper.Read_Configuration("LOCAL_SERVER", "PORT"))
         );
         
         

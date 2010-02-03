@@ -60,8 +60,8 @@ package body Ada_Mr.Reducer.Main is
         
         -- start local server to accept incomming connections
         Server_Task.Start(
-          GNAT.Sockets.Inet_Addr(Ada_Mr.Helper.Read_Configuration("LOCAL_SERVER-BIND_IP")),
-          GNAT.Sockets.Port_Type'Value(Ada_Mr.Helper.Read_Configuration("LOCAL_SERVER-BIND_PORT"))
+          GNAT.Sockets.Inet_Addr(Ada_Mr.Helper.Read_Configuration("LOCAL_SERVER", "IP")),
+          GNAT.Sockets.Port_Type'Value(Ada_Mr.Helper.Read_Configuration("LOCAL_SERVER", "PORT"))
         );
         
         -- runner task to send request
@@ -129,8 +129,8 @@ package body Ada_Mr.Reducer.Main is
       
       declare
         Response : String := Ada_Mr.Helper.Send(
-          GNAT.Sockets.Inet_Addr(Ada_Mr.Helper.Read_Configuration("MASTER-IP")),
-          GNAT.Sockets.Port_Type'Value(Ada_Mr.Helper.Read_Configuration("MASTER-PORT")),
+          GNAT.Sockets.Inet_Addr(Ada_Mr.Helper.Read_Configuration("MASTER", "IP")),
+          GNAT.Sockets.Port_Type'Value(Ada_Mr.Helper.Read_Configuration("MASTER", "PORT")),
           Ada_Mr.Xml.Helper.Xml_Command(
             G_T          => Ada_Mr.Xml.Helper.Reducer,
             Command      => "stop_map_reduce_system",

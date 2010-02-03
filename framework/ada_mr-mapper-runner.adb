@@ -15,6 +15,9 @@ with Ada_Mr.Mapper.Helper;
 with Ada_Mr.Logger;
 with Ada_Mr.Helper;
 
+with Ada.Calendar;
+with GNAT.Calendar.Time_IO;
+
 package body Ada_Mr.Mapper.Runner is 
   
   procedure Run is
@@ -33,8 +36,8 @@ package body Ada_Mr.Mapper.Runner is
           Ada_Mr.Xml.Helper.Create_Initialization(
             Ada_Mr.Xml.Helper.Mapper, 
             Ada_Mr.Helper.Read_Configuration_Or_Null("IDENTIFIER"), 
-            GNAT.Sockets.Inet_Addr(Ada_Mr.Helper.Read_Configuration("LOCAL_SERVER", "BIND_IP")),
-            GNAT.Sockets.Port_Type'Value(Ada_Mr.Helper.Read_Configuration("LOCAL_SERVER", "BIND_PORT"))
+            GNAT.Sockets.Inet_Addr(Ada_Mr.Helper.Read_Configuration("LOCAL_SERVER", "IP")),
+            GNAT.Sockets.Port_Type'Value(Ada_Mr.Helper.Read_Configuration("LOCAL_SERVER", "PORT"))
           ),
           Natural'Value(Ada_Mr.Helper.Read_Configuration("SETTINGS", "MAX_CONNECTION_TRIES")),
           Natural'Value(Ada_Mr.Helper.Read_Configuration("SETTINGS", "TIMEOUT_CONNECTION_TRIES"))
@@ -89,10 +92,13 @@ package body Ada_Mr.Mapper.Runner is
             Natural'Value(Ada_Mr.Helper.Read_Configuration("SETTINGS", "TIMEOUT_CONNECTION_TRIES"))
           );
           
-          Xml_Tree : Ada_Mr.Xml.Node_Access := Ada_Mr.Xml.Helper.Get_Verified_Content(Ada_Mr.Xml.Parser.Parse(Content => Response));
+          Xml_Tree : Ada_Mr.Xml.Node_Access;
           
           Details_For_Master_Notification : Ada_Mr.Helper.String_String_Maps.Map;
+          
+          Job_Start, Job_End : Ada.Calendar.Time;
         begin
+          Xml_Tree := Ada_Mr.Xml.Helper.Get_Verified_Content(Ada_Mr.Xml.Parser.Parse(Content => Response));
           
           if Ada_Mr.Xml.Helper.Is_Command(Xml_Tree, "new_job") then
             
@@ -103,44 +109,54 @@ package body Ada_Mr.Mapper.Runner is
             begin
               Job := From_Xml(Ada_Mr.Xml.Find_Child_With_Tag(Xml_Tree, "details"));
               
+              Details_For_Master_Notification.Insert("job_id", Ada_Mr.Helper.Trim(Get_Job_Id(Job)'Img));
+              
               Ada_Mr.Logger.Put_Line("Computing job", Ada_Mr.Logger.Info);
+              
+              Job_Start := Ada.Calendar.Clock;
               Compute_Job(Job);
+              Job_End := Ada.Calendar.Clock;
+              
               Ada_Mr.Logger.Put_Line("Job computed", Ada_Mr.Logger.Info);
               
-              -- --> Send result to reducers
+              -- Send result to reducers
               Ada_Mr.Mapper.Helper.Send_Result(Split_Result_For_Different_Reducer);
-              -- <-- Send result to reducer
               
-              -- send new job status to master
-              Details_For_Master_Notification.Insert("job_id", Ada_Mr.Helper.Trim(Get_Job_Id(Job)'Img));
+              -- Set job state
               Details_For_Master_Notification.Insert("job_state", "done");
-              
+              Details_For_Master_Notification.Insert("message", "Execution time in seconds: " & Ada.Calendar."-"(Job_End, Job_Start)'Img);
+            exception
+              when Error : others =>
+                Details_For_Master_Notification.Insert("job_state", "failed");
+                Details_For_Master_Notification.Insert("message", "Exception: " & Ada.Exceptions.Exception_Message(Error));
+                Ada_Mr.Helper.Print_Exception(Error);
+            end;
+            
+            
+            -- Send new job_state to master
+            declare
+            begin
               declare
+                Response : String := Ada_Mr.Helper.Send(
+                  Master_Ip,
+                  Master_Port,
+                  Ada_Mr.Xml.Helper.Xml_Command(
+                    G_T     => Ada_Mr.Xml.Helper.Mapper,
+                    Command => "change_job_state",
+                    Access_Token => Ada_Mr.Helper.Read_Configuration("ACCESS_TOKEN"),
+                    Details => Details_For_Master_Notification
+                  ),
+                  Natural'Value(Ada_Mr.Helper.Read_Configuration("SETTINGS", "MAX_CONNECTION_TRIES")),
+                  Natural'Value(Ada_Mr.Helper.Read_Configuration("SETTINGS", "TIMEOUT_CONNECTION_TRIES"))
+                );
               begin
-                declare
-                  Response : String := Ada_Mr.Helper.Send(
-                    Master_Ip,
-                    Master_Port,
-                    Ada_Mr.Xml.Helper.Xml_Command(
-                      G_T     => Ada_Mr.Xml.Helper.Mapper,
-                      Command => "change_job_state",
-                      Access_Token => Ada_Mr.Helper.Read_Configuration("ACCESS_TOKEN"),
-                      Details => Details_For_Master_Notification
-                    ),
-                    Natural'Value(Ada_Mr.Helper.Read_Configuration("SETTINGS", "MAX_CONNECTION_TRIES")),
-                    Natural'Value(Ada_Mr.Helper.Read_Configuration("SETTINGS", "TIMEOUT_CONNECTION_TRIES"))
-                  );
-                begin
-                  null;
-                end;
-              exception
-                when Error : others =>
-                  Ada_Mr.Logger.Put_Line("Master unreachable! Job failed!", Ada_Mr.Logger.Err);
+                null;
               end;
             exception
               when Error : others =>
-                Ada_Mr.Helper.Print_Exception(Error);
+                Ada_Mr.Logger.Put_Line("Master unreachable! Job failed!", Ada_Mr.Logger.Err);
             end;
+            
             
           elsif Ada_Mr.Xml.Helper.Is_Command(Xml_Tree, "sleep") then
             

@@ -33,8 +33,8 @@ package body Ada_Mr.Reducer.Runner is
           Ada_Mr.Xml.Helper.Create_Initialization(
             Ada_Mr.Xml.Helper.Reducer, 
             Ada_Mr.Helper.Read_Configuration_Or_Null("IDENTIFIER"), 
-            GNAT.Sockets.Inet_Addr(Ada_Mr.Helper.Read_Configuration("LOCAL_SERVER", "BIND_IP")),
-            GNAT.Sockets.Port_Type'Value(Ada_Mr.Helper.Read_Configuration("LOCAL_SERVER", "BIND_PORT"))
+            GNAT.Sockets.Inet_Addr(Ada_Mr.Helper.Read_Configuration("LOCAL_SERVER", "IP")),
+            GNAT.Sockets.Port_Type'Value(Ada_Mr.Helper.Read_Configuration("LOCAL_SERVER", "PORT"))
           ),
           Natural'Value(Ada_Mr.Helper.Read_Configuration("SETTINGS", "MAX_CONNECTION_TRIES")),
           Natural'Value(Ada_Mr.Helper.Read_Configuration("SETTINGS", "TIMEOUT_CONNECTION_TRIES"))

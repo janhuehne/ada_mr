@@ -352,13 +352,13 @@ package body Ada_Mr.Helper is
       Local_Server_Details := Ada_Mr.Xml.Find_Child_With_Tag(Config_Xml, "local_server");
       
       begin
-        Add_Configuration("local_server", "bind_ip", Ada_Mr.Xml.Get_Value(Local_Server_Details, "bind_ip"));
+        Add_Configuration("local_server", "ip", Ada_Mr.Xml.Get_Value(Local_Server_Details, "ip"));
       exception
         when others => Ada_Mr.Logger.Put_Line("No local server ip found. Using defaults.", Ada_Mr.Logger.Warn);
       end;
       
       begin
-        Add_Configuration("local_server", "bind_port", Ada_Mr.Xml.Get_Value(Local_Server_Details, "bind_port"));
+        Add_Configuration("local_server", "port", Ada_Mr.Xml.Get_Value(Local_Server_Details, "port"));
       exception
         when others => Ada_Mr.Logger.Put_Line("No local server port found. Using defaults.", Ada_Mr.Logger.Warn);
       end;
@@ -502,16 +502,16 @@ package body Ada_Mr.Helper is
   begin
     
     -- default local server
-    Add_Configuration("local_server", "bind_ip", "0.0.0.0");
+    Add_Configuration("local_server", "ip", "0.0.0.0");
     
     if W_Type = Master then
-      Add_Configuration("local_server", "bind_port", "7000");
+      Add_Configuration("local_server", "port", "7000");
       
     elsif W_Type = Mapper then
-      Add_Configuration("local_server", "bind_port", "8000");
+      Add_Configuration("local_server", "port", "8000");
     
     elsif W_Type = Reducer then
-      Add_Configuration("local_server", "bind_port", "9000");
+      Add_Configuration("local_server", "port", "9000");
     end if;
     
     

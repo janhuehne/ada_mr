@@ -2,8 +2,8 @@
 <adamr-master-config>
   
   <local_server>
-    <bind_ip></bind_ip>
-    <bind_port></bind_port>
+    <ip></ip>
+    <port></port>
   </local_server>
   
   

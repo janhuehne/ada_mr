@@ -32,6 +32,7 @@ package body Ada_Mr.Master.Helper is
       when Pending => return "Pending";
       when In_Progress => return "In progress";
       when Done => return "Done";
+      when Failed  => return "Failed";
     end case;
   end To_String;
   
@@ -43,6 +44,8 @@ package body Ada_Mr.Master.Helper is
       return In_Progress;
     elsif Ada_Mr.Helper.Is_Equal(Arg, "Done", true) then
       return Done;
+    elsif Ada_Mr.Helper.Is_Equal(Arg, "Failed", true) then
+      return Failed;
     else
       raise Unknown_Job_State;
     end if;

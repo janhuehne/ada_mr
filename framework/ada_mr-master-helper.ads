@@ -21,7 +21,8 @@ package Ada_Mr.Master.Helper is
   type Job_State is (
     Pending,
     In_Progress,
-    Done
+    Done,
+    Failed
   );
   
   function To_String(Arg : Job_State) return String;
