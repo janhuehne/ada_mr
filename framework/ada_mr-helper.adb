@@ -300,8 +300,7 @@ package body Ada_Mr.Helper is
       Ada_Mr.Logger.Put_Line("Parsing configuration file", Ada_Mr.Logger.Info);
       Config_Xml := Ada_Mr.Xml.Parser.Parse(File_Name => Config_File);
     else
-      Ada_Mr.Logger.Put_Line("No configuration file found.", Ada_Mr.Logger.Warn);
-      raise Configuration_File_Error;
+      raise Configuration_File_Not_Found;
     end if;
     
     
@@ -431,8 +430,10 @@ package body Ada_Mr.Helper is
     
     Ada_Mr.Logger.Put_Line("Configuration file successfully parsed", Ada_Mr.Logger.Info);
   exception
+    when Configuration_File_Not_Found => 
+      Ada_Mr.Logger.Put_Line("Configuration file: """ & Config_File & """ not found!", Ada_Mr.Logger.Warn);
+    
     when Error : others => 
---      Ada_Mr.Helper.Print_Exception(Error);
       Ada.Exceptions.Raise_Exception(Configuration_File_Error'Identity, "There is a problem with the configuration file.");
   end;
   
@@ -500,19 +501,26 @@ package body Ada_Mr.Helper is
   
   procedure Set_Default_Configuration(W_Type : Worker_Type) is
   begin
+    -- default config file
+    case W_Type is
+      when Master  => Add_Configuration("config_file", "master_config.xml");
+      when Mapper  => Add_Configuration("config_file", "mapper_config.xml");
+      when Reducer => Add_Configuration("config_file", "reducer_config.xml");
+      when others  => null;
+    end case;
     
-    -- default local server
+    
+    -- default local server ip
     Add_Configuration("local_server", "ip", "0.0.0.0");
     
-    if W_Type = Master then
-      Add_Configuration("local_server", "port", "7000");
-      
-    elsif W_Type = Mapper then
-      Add_Configuration("local_server", "port", "8000");
     
-    elsif W_Type = Reducer then
-      Add_Configuration("local_server", "port", "9000");
-    end if;
+    -- default local server port
+    case W_Type is
+      when Master  => Add_Configuration("local_server", "port", "7000");
+      when Mapper  => Add_Configuration("local_server", "port", "8000");
+      when Reducer => Add_Configuration("local_server", "port", "9000");
+      when others  => null;
+    end case;
     
     
     -- default master
@@ -562,57 +570,81 @@ package body Ada_Mr.Helper is
   
   
   procedure Parse_Command_Line_Arguments(W_Type : Worker_Type) is
-  begin
-    if Ada.Command_Line.Argument_Count > 0 then
-      for I in 1..Ada.Command_Line.Argument_Count loop
-        declare 
-          Argument : String := Ada.Command_Line.Argument(I);
-        begin
-          if Starts_With(Argument, "--", true) then
-            
-            declare
-              Input : String := Argument(3 .. Argument'Last);
-            begin
-              -- available for all worker types
-              begin
-                if Starts_With(Argument, "config_file=", true) then
-                  Parse_Configuration(Ada_Mr.Helper.Sub_Str(Argument, 13, Argument'Last), W_Type);
-                else
-                  Parse_Configuration(To_Lower(To_String(W_Type)) & "_config.xml", W_Type);
-                end if;
-              exception
-                when Error : others => null;
-              end;
-              
-              declare
-                Dividor : Natural := Ada.Strings.Fixed.Index(Argument, "=");
-                Key     : String  := Input(Input'First .. Dividor-1);
-                Value   : String  := Input(Dividor+1 .. Input'Last);
-              begin
-                if Starts_With(Key, "identifier", true) then
-                  if W_Type = Mapper or W_Type = Reducer then
-                    Add_Configuration(Key, Value);
-                  end if;
-                else
-                  Add_Configuration(Key, Value);
-                end if;
-              end;
-            end;
-          end if;
-        end;
-      end loop;
-    else
-      begin
-        Parse_Configuration(To_Lower(To_String(W_Type)) & "_config.xml", W_Type);
-      exception
-        when Error : others => Ada_Mr.Helper.Print_Exception(Error);
-      end;
-      Logger.Put_Line("No command line arguments found.", Logger.Warn);
-    end if;
     
-    -- readout config to set some package variables
-    -- logger
-    declare
+    function Map_Command_Line_Argument_To_Config_Argument(Command_Line_Argument : String) return String is
+    begin
+      if Ada_Mr.Helper.Is_Equal(Command_Line_Argument, "i") then
+        return "identifier";
+      elsif Ada_Mr.Helper.Is_Equal(Command_Line_Argument, "ls-ip") then
+        return "local_server-ip";
+      elsif Ada_Mr.Helper.Is_Equal(Command_Line_Argument, "ls-port") then
+        return "local_server-port";
+      elsif Ada_Mr.Helper.Is_Equal(Command_Line_Argument, "m-ip") then
+        return "master-ip";
+      elsif Ada_Mr.Helper.Is_Equal(Command_Line_Argument, "m-port") then
+        return "master-port";
+      elsif Ada_Mr.Helper.Is_Equal(Command_Line_Argument, "hmac") then
+        return "crypto-hmac";
+      elsif Ada_Mr.Helper.Is_Equal(Command_Line_Argument, "mct") then
+        return "settings-mac_connection_tries";
+      elsif Ada_Mr.Helper.Is_Equal(Command_Line_Argument, "tct") then
+        return "settings-timeout_connection_tries";
+      elsif Ada_Mr.Helper.Is_Equal(Command_Line_Argument, "ll") then
+        return "settings-log_level";
+      else
+        return Command_Line_Argument;
+      end if;
+    end Map_Command_Line_Argument_To_Config_Argument;
+    
+  begin
+    -- Set default configuration
+    Set_Default_Configuration(W_Type);
+    
+    
+    -- check for configfile argument
+    for I in 1..Ada.Command_Line.Argument_Count loop
+      if Starts_With(Ada.Command_Line.Argument(I), "-config_file=", true) then
+         Add_Configuration("config_file", Ada.Command_Line.Argument(I)(14 .. Ada.Command_Line.Argument(I)'Last));
+      end if;
+    end loop;
+    
+    
+    -- parse config file
+    begin
+      Parse_Configuration(Read_Configuration("config_file"), W_Type);
+    exception
+      when Error : others => Ada_Mr.Helper.Print_Exception(Error);
+    end;
+    
+    
+    -- store command line argument
+    for I in 1..Ada.Command_Line.Argument_Count loop
+      declare 
+        Argument : String := Ada.Command_Line.Argument(I);
+      begin
+        if Starts_With(Argument, "-", true) then
+          
+          declare
+            Input : String := Argument(2 .. Argument'Last);
+
+            Dividor : Natural := Ada.Strings.Fixed.Index(Argument, "=");
+            Key     : String  := Input(Input'First .. Dividor-1);
+            Value   : String  := Input(Dividor+1 .. Input'Last);
+          begin
+            if Starts_With(Key, "identifier", true) then
+              if W_Type = Mapper or W_Type = Reducer then
+                Add_Configuration(Map_Command_Line_Argument_To_Config_Argument(Key), Value);
+              end if;
+            else
+              Add_Configuration(Map_Command_Line_Argument_To_Config_Argument(Key), Value);
+            end if;
+          end;
+        end if;
+      end;
+    end loop;
+    
+    
+    -- read log level
     begin
       Logger.Set_Output_Level(
         Read_Configuration("settings", "log_level")
@@ -620,7 +652,6 @@ package body Ada_Mr.Helper is
     exception
       when others => null;
     end;
-    
   end Parse_Command_Line_Arguments;
   
   

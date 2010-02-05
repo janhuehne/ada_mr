@@ -112,6 +112,7 @@ package Ada_Mr.Helper is
   Unknown_Command : Exception;
   Initialisation_Failed : Exception;
   Configuration_File_Error : Exception;
+  Configuration_File_Not_Found : Exception;
   Unknow_Worker_Type : Exception;
   Configuration_Param_Not_Found : Exception;
 
