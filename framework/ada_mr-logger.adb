@@ -63,13 +63,15 @@ package body Ada_Mr.Logger is
       when Info =>
         return true;
       when Warn =>
-        if Level = Warn OR Level = Err then
+        if Level = Warn OR Level = Err OR Level = User OR Level = System then
           return true;
         end if;
       when Err =>
-        if Level = Err then
+        if Level = Err OR Level = User OR Level = System then
           return true;
         end if;
+      when others =>
+        return false;
     end case;
     
     return false;
@@ -81,6 +83,8 @@ package body Ada_Mr.Logger is
       when Info => return "INFO";
       when Warn => return "WARN";
       when Err => return "ERROR";
+      when User => return "USER";
+      when System => return "SYSTEM";
     end case;
   end Image;
   
@@ -93,6 +97,10 @@ package body Ada_Mr.Logger is
       return Warn;
     elsif Ada_Mr.Helper.Is_Equal("err", Level, true) or Ada_Mr.Helper.Is_Equal("error", Level, true) then
       return Err;
+    elsif Ada_Mr.Helper.Is_Equal("user", Level, true) then
+      return User;
+    elsif Ada_Mr.Helper.Is_Equal("system", Level, true) then
+      return System;
     else
       return Err;
     end if;

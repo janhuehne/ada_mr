@@ -1,6 +1,6 @@
 package Ada_Mr.Logger is
   
-  type Log_Level is (Info, Warn, Err);
+  type Log_Level is (Info, Warn, Err, User, System);
   
   procedure Set_Output_Level(Level : Log_Level);
   procedure Set_Output_Level(Level : String);
