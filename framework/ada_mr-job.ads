@@ -5,7 +5,7 @@ package Ada_Mr.Job is
   
   -- record
   type Object is abstract tagged record
-    Job_Id : Natural;
+    Job_Id : Natural := 0;
   end record;
   
   -- Serializes a job into the xml format
@@ -40,6 +40,8 @@ package Ada_Mr.Job is
   
   
   function Get_Next_Job_Id return Natural;
+  
+  procedure Set_Job_Id(The_Job : in out Object);
 
 private
   
