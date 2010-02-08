@@ -83,19 +83,16 @@ package Md5_Job is
   
   
   
-  -- Datastructure and content for the distinguished point pattern
-  Dp_Pattern_Length : Natural := 6;
   
-  type Dp_Pattern_Array  is array(Natural range <>) of String(1 .. Dp_Pattern_Length);
-  Dp_Pattern : Dp_Pattern_Array := ("000000", "111111", "222222", "333333", "444444", "555555", "666666", "777777", "888888", "999999");
+  -- Readout configuration
+  Distinguished_Point_Pattern : String := "000000"; --Ada_Mr.Helper.Read_Configuration("user", "dpp");
   
   
-  
+  -- Set the collision length
   Collision_Length : Natural := 14;
   
   
-  
-  -- Datastructe for the distinguished point set
+  -- Datastructure and methods: distinguished point set
   type Distinguished_Point_Set is record
     Last     : GNAT.MD5.Message_Digest;
     Current  : GNAT.MD5.Message_Digest;
@@ -106,15 +103,16 @@ package Md5_Job is
   function Distinguished_Point_Set_From_Xml(Xml_Node : Ada_Mr.Xml.Node_Access) return Distinguished_Point_Set;
   procedure Print(Set : Distinguished_Point_Set);
   
+  
+  -- Calculate a collision
   function Calculate_Collision(In_Dp_1 : Distinguished_Point_Set; In_Dp_2 : Distinguished_Point_Set) return Boolean;
   
-  -- Mapper Stuff
-  type Distinguished_Point_Set_Array is array(Natural range <>) of Distinguished_Point_Set;
-  Distinguished_Point : Distinguished_Point_Set_Array(Dp_Pattern'Range);
-  Result_To_Send : Natural;
+  
+  -- Mapper result variable
+  Distinguished_Point : Distinguished_Point_Set;
   
   
-  -- Reducer Stuff
+  -- Reducer result vector
   package D_P_Vector is new Ada.Containers.Vectors(
     Element_Type => Distinguished_Point_Set, 
     Index_Type => Positive

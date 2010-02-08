@@ -3,6 +3,7 @@ with Ada_Mr.Logger;
 with Ada_Mr.Xml.Helper;
 with Ada.Numerics.Discrete_Random;
 with Ada_Mr.Mapper.Helper;
+with GNAT.Sockets;
 
 package body Md5_Job is
   
@@ -38,7 +39,6 @@ package body Md5_Job is
       declare
         The_Job : Job;
       begin
-        The_Job.Job_Id := Ada_Mr.Job.Get_Next_Job_Id;
         
         for I in The_Job.Start_Point'Range loop
           The_Job.Start_Point(I) := Character'Val(Rand.Random(Gen));
@@ -70,99 +70,90 @@ package body Md5_Job is
   end Print_Job;
   
   
-overriding procedure Compute_Job(The_Job : Job) is
-  Hash  : GNAT.MD5.Message_Digest;
-  Tmp   : GNAT.MD5.Message_Digest;
-begin
-  Hash := The_Job.Start_Point;
-  
-  for I in Distinguished_Point'Range loop
-    Distinguished_Point(I).Last := Hash;
-  end loop;
-  
-  loop
-    Tmp  := Hash;
-    Tmp(1 .. (32-Collision_Length)) := Null_String(1 .. (32-Collision_Length));
-    Hash := GNAT.MD5.Digest(Tmp);
+  overriding procedure Compute_Job(The_Job : Job) is
+    Hash  : GNAT.MD5.Message_Digest;
+    Tmp   : GNAT.MD5.Message_Digest;
+  begin
+    Distinguished_Point.Last := The_Job.Start_Point;
     
-    for I in Dp_Pattern'Range loop
+    Hash := The_Job.Start_Point;
+    
+    -- search for a distinguished point
+    loop
+      Tmp  := Hash;
+      Tmp(1 .. (32-Collision_Length)) := Null_String(1 .. (32-Collision_Length));
+      Hash := GNAT.MD5.Digest(Tmp);
       
-      Distinguished_Point(I).Distance := Distinguished_Point(I).Distance + 1;
+      Distinguished_Point.Distance := Distinguished_Point.Distance + 1;
       
-      if Hash((32 - Dp_Pattern_Length + 1) .. 32) = Dp_Pattern(I) then
-        Result_To_Send := I;
-        
-        Distinguished_Point(I).Current := Hash;
-        
-        -- --> Send result to reducers
+      if Hash((32 - Distinguished_Point_Pattern'Length + 1) .. 32) = Distinguished_Point_Pattern then
+        Ada_Mr.Logger.Put_Line("Distinguished point found: " & Hash, Ada_Mr.Logger.User);
+        Distinguished_Point.Current := Hash;
         Ada_Mr.Mapper.Helper.Send_Result(Split_Result_For_Different_Reducer);
-        
-        Distinguished_Point(I).Last     := Distinguished_Point(I).Current;
-        Distinguished_Point(I).Distance := 0;
       end if;
-      
     end loop;
-  end loop;
-end Compute_Job;
-  
-  
-function Split_Result_For_Different_Reducer return Ada_Mr.Helper.String_String_Maps.Map is
-  Mapping  : Ada_Mr.Helper.String_String_Maps.Map;
-begin
-  if Result_To_Send <= 5 then
-    Mapping.Insert(
-      "Reducer_1",
-      Distinguished_Point_Set_To_Xml(Distinguished_Point(Result_To_Send))
-    );
-  else
-    Mapping.Insert(
-      "Reducer_2",
-      Distinguished_Point_Set_To_Xml(Distinguished_Point(Result_To_Send))
-    );
-  end if;
-  
-  return Mapping;
-end Split_Result_For_Different_Reducer;
-  
-  
-procedure Merge_Job_Results(Xml_Node : Ada_Mr.Xml.Node_Access; Stop_System : out Boolean) is
-  Current_Dp_Set : Distinguished_Point_Set;
-  Distinguished_Points_Cursor : D_P_Vector.Cursor := Distinguished_Points.First;
-  --Stop : Boolean := False;
-begin
-  Current_Dp_Set := Distinguished_Point_Set_From_Xml(Xml_Node);
-  
-  loop
-    exit when D_P_Vector."="(Distinguished_Points_Cursor, D_P_Vector.No_Element);
-      
-    if D_P_Vector.Element(Distinguished_Points_Cursor).Current((32-Collision_Length+1) .. 32) = Current_Dp_Set.Current((32-Collision_Length+1) .. 32) then
-      Ada.Text_IO.Put_Line("Collision candidate found!");
-      if Calculate_Collision(D_P_Vector.Element(Distinguished_Points_Cursor), Current_Dp_Set) = True then
-        --Stop := True;
-        Stop_System := True;
-        exit;
-      end if;
-    end if;
     
-    D_P_Vector.Next(Distinguished_Points_Cursor);
-  end loop;
-  
-  if D_P_Vector."="(Distinguished_Points_Cursor, D_P_Vector.No_Element) then
-    Distinguished_Points.Append(Current_Dp_Set);
-  end if;
-  
---  if Stop = True then
---    Stop_System := True;
---  end if;
-exception
-  when Error : others => Ada_Mr.Helper.Print_Exception(Error);
-end Merge_Job_Results;
+  end Compute_Job;
   
   
-procedure Finalize is
-begin
-  Ada.Text_IO.Put_Line("Some reducer found a collision. Shuting down!");
-end Finalize;
+  function Split_Result_For_Different_Reducer return Ada_Mr.Helper.String_String_Maps.Map is
+    Mapping  : Ada_Mr.Helper.String_String_Maps.Map;
+  begin
+    
+--    if Distinguished_Point.Current(32 - Distinguished_Point_Pattern'Length) = '0' then
+      Mapping.Insert(
+        "Reducer_1",
+        Distinguished_Point_Set_To_Xml(Distinguished_Point)
+      );
+--    else
+--      Mapping.Insert(
+--        "Reducer_2",
+--        Distinguished_Point_Set_To_Xml(Distinguished_Point)
+--      );
+--    end if;
+    
+    return Mapping;
+  end Split_Result_For_Different_Reducer;
+  
+  
+  procedure Merge_Job_Results(Xml_Node : Ada_Mr.Xml.Node_Access; Stop_System : out Boolean) is
+    Current_Dp_Set : Distinguished_Point_Set;
+    Distinguished_Points_Cursor : D_P_Vector.Cursor := Distinguished_Points.First;
+  begin
+    -- Dont't exit per default
+    Stop_System := False;
+    
+    Current_Dp_Set := Distinguished_Point_Set_From_Xml(Xml_Node);
+    
+    loop
+      exit when D_P_Vector."="(Distinguished_Points_Cursor, D_P_Vector.No_Element);
+      
+      if D_P_Vector.Element(Distinguished_Points_Cursor).Current((32-Collision_Length+1) .. 32) = Current_Dp_Set.Current((32-Collision_Length+1) .. 32) then
+        Ada.Text_IO.Put_Line("Collision candidate found!");
+        if Calculate_Collision(D_P_Vector.Element(Distinguished_Points_Cursor), Current_Dp_Set) = True then
+          --Stop := True;
+          Stop_System := True;
+          exit;
+        end if;
+      end if;
+      
+      D_P_Vector.Next(Distinguished_Points_Cursor);
+    end loop;
+    
+    if D_P_Vector."="(Distinguished_Points_Cursor, D_P_Vector.No_Element) then
+      Distinguished_Points.Append(Current_Dp_Set);
+      Ada_Mr.Logger.Put_Line("DP vector size: " & D_P_Vector.Length(Distinguished_Points)'Img, Ada_Mr.Logger.User);
+    end if;
+  
+  exception
+    when Error : others => Ada_Mr.Helper.Print_Exception(Error);
+  end Merge_Job_Results;
+  
+  
+  procedure Finalize is
+  begin
+    Ada.Text_IO.Put_Line("Some reducer found a collision. Shuting down!");
+  end Finalize;
   
   
   function Distinguished_Point_Set_To_Xml(Set : Distinguished_Point_Set) return String is

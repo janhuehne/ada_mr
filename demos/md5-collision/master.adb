@@ -8,6 +8,7 @@ procedure Master is
     Job.Job,
     Job.From_Xml,
     Job.To_Xml,
+    Job.Set_Job_Id,
     Job.Get_Job_Id,
     Job.Print_Job,
     Job.Split_Raw_Data,
