@@ -120,7 +120,19 @@ package body Ada_Mr.Master.Server is
                 
                 String'Output(S, Ada_Mr.Xml.Helper.Create_System_Control(Ada_Mr.Xml.Helper.Master, "okay"));
               end;
+            
+            
+            -- *******************************************************
+            -- Create a new job at runtime
+            elsif Ada_Mr.Xml.Helper.Is_Command(Xml_Root, "new_job") then
+            
+              Add_Job(
+                From_Xml(Ada_Mr.Xml.Find_Child_With_Tag(Xml_Root, "details"))
+              );
               
+              String'Output(S, Ada_Mr.Xml.Helper.Create_System_Control(Ada_Mr.Xml.Helper.Master, "okay"));
+            
+            
             -- *******************************************************
             -- Store not delivered map result (e.g. a reducer is not reachable)
             elsif Ada_Mr.Xml.Helper.Is_Command(Xml_Root, "not_delivered_map_result") then
