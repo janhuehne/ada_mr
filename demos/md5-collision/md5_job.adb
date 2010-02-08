@@ -89,6 +89,8 @@ package body Md5_Job is
       if Hash((32 - Distinguished_Point_Pattern'Length + 1) .. 32) = Distinguished_Point_Pattern then
         Ada_Mr.Logger.Put_Line("Distinguished point found: " & Hash, Ada_Mr.Logger.User);
         Distinguished_Point.Current := Hash;
+        
+        -- Submit result to the reducer
         Ada_Mr.Mapper.Helper.Send_Result(Split_Result_For_Different_Reducer);
       end if;
     end loop;
@@ -97,20 +99,25 @@ package body Md5_Job is
   
   
   function Split_Result_For_Different_Reducer return Ada_Mr.Helper.String_String_Maps.Map is
-    Mapping  : Ada_Mr.Helper.String_String_Maps.Map;
+    Mapping : Ada_Mr.Helper.String_String_Maps.Map;
   begin
     
---    if Distinguished_Point.Current(32 - Distinguished_Point_Pattern'Length) = '0' then
+    if Distinguished_Point.Current(32 - Distinguished_Point_Pattern'Length) = 'a' OR
+       Distinguished_Point.Current(32 - Distinguished_Point_Pattern'Length) = 'b' OR
+       Distinguished_Point.Current(32 - Distinguished_Point_Pattern'Length) = 'c' OR
+       Distinguished_Point.Current(32 - Distinguished_Point_Pattern'Length) = 'd' OR
+       Distinguished_Point.Current(32 - Distinguished_Point_Pattern'Length) = 'e' OR
+       Distinguished_Point.Current(32 - Distinguished_Point_Pattern'Length) = 'f' then
       Mapping.Insert(
         "Reducer_1",
         Distinguished_Point_Set_To_Xml(Distinguished_Point)
       );
---    else
---      Mapping.Insert(
---        "Reducer_2",
---        Distinguished_Point_Set_To_Xml(Distinguished_Point)
---      );
---    end if;
+    else
+      Mapping.Insert(
+        "Reducer_2",
+        Distinguished_Point_Set_To_Xml(Distinguished_Point)
+      );
+    end if;
     
     return Mapping;
   end Split_Result_For_Different_Reducer;
