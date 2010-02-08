@@ -13,6 +13,7 @@ generic
   type My_Job is private;
   with function From_Xml(Xml_Node : Ada_Mr.Xml.Node_Access) return My_Job;
   with function To_Xml(Job : in My_Job) return String;
+  with procedure Set_Job_Id(The_Job : in out My_Job);
   with function Get_Job_Id(Job : in My_Job) return Natural;
   with procedure Print_Job(Job : in My_Job; State : String; Message : String);
   with procedure Split_Raw_Data;
@@ -130,9 +131,11 @@ package Ada_Mr.Master.Main is
   package Server is new Ada_Mr.Master.Server(
     My_Job,
     Job_Entry_Record_Access,
+    From_Xml,
     Worker.Add,
     Worker.Find_By_Identifier,
     Worker.Find_By_Access_Token_And_Type,
+    Jobs.Add,
     Jobs.Get_By_Id,
     Jobs.Get_Next_Pending,
     Change_Job_State,

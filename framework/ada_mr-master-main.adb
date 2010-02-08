@@ -216,7 +216,9 @@ package body Ada_Mr.Master.Main is
     begin
       Job_Entry.Job := Job;
       Job_Entry.State := Ada_Mr.Master.Helper.Pending;
-        
+      
+      Set_Job_Id(Job_Entry.Job);
+      
       Jobs.Append(Job_Entry);
       Ada_Mr.Logger.Put_Line("--> Job successfully imported.", Ada_Mr.Logger.Info);
     end Add;

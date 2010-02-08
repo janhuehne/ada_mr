@@ -14,9 +14,11 @@ with Ada_Mr.Helper;
 generic
   type My_Job is private;
   type Job_Entry_Record_Access is private;
+  with function From_Xml(Xml_Node : Ada_Mr.Xml.Node_Access) return My_Job;
   with procedure Add_Worker(New_Worker : in out Ada_Mr.Master.Helper.Worker_Record_Access);
   with function Find_Worker_By_Identifier(Identifier : String) return Ada_Mr.Master.Helper.Worker_Record_Access;
   with function Find_Worker_By_Access_Token_And_Type(Access_Token : String; W_Type : Ada_Mr.Helper.Worker_Type) return Ada_Mr.Master.Helper.Worker_Record_Access;
+  with procedure Add_Job(Job : My_Job);
   with function Get_Job_By_Id(Id : Natural) return Job_Entry_Record_Access;
   with function Get_Next_Pending_Job return Job_Entry_Record_Access;
   with procedure Change_Job_State(Job_Entry : in out Job_Entry_Record_Access; State : Ada_Mr.Master.Helper.Job_State; Message : String := "");
