@@ -111,6 +111,8 @@ package body Ada_Mr.Generics.Echo is
         terminate;
       end select;
     end loop;
+    
+    Close_Selector(Input_Selector);
   end Echo;
   
 end Ada_Mr.Generics.Echo;
