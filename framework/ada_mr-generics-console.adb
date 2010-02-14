@@ -14,7 +14,7 @@ package body Ada_Mr.Generics.Console is
       To_Controll         := M_Arg;
     end Start;
     
-    Ada_Mr.Logger.Put_Line("Welcome to " & Banner & " console!", Ada_Mr.Logger.Info);
+    Ada_Mr.Logger.Put_Line("Welcome to " & Banner & " console!", Ada_Mr.Logger.System);
     
     loop
       Ada.Text_IO.Get_Line(In_String, In_Last);

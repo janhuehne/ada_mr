@@ -52,14 +52,13 @@ package body Ada_Mr.Master.Main is
         -- print configuration
         Ada_Mr.Helper.Print_Configuration;
         
-        Ada_Mr.Logger.Put_Line("Splitting raw data", Ada_Mr.Logger.Info);
+        Ada_Mr.Logger.Put_Line("Splitting raw data", Ada_Mr.Logger.System);
         Split_Raw_Data;
-        Ada_Mr.Logger.Put_Line("Splitting raw data done", Ada_Mr.Logger.Info);
+        Ada_Mr.Logger.Put_Line("Splitting raw data done", Ada_Mr.Logger.System);
         
-        Ada_Mr.Logger.Put_Line("Importing jobs", Ada_Mr.Logger.Info);
+        Ada_Mr.Logger.Put_Line("Importing jobs", Ada_Mr.Logger.System);
         
         loop
-          declare
           begin
             Jobs.Add(Get_Next_Raw_Job);
           exception
@@ -67,7 +66,7 @@ package body Ada_Mr.Master.Main is
           end;
         end loop;
         
-        Ada_Mr.Logger.Put_Line(Jobs.Count'Img & " jobs imported", Ada_Mr.Logger.Info);
+        Ada_Mr.Logger.Put_Line(Jobs.Count'Img & " jobs imported", Ada_Mr.Logger.System);
         
         Console_Task.Start(
           Main_Task
@@ -82,7 +81,7 @@ package body Ada_Mr.Master.Main is
         Observer_Task.Start;
       or
         accept Stop;
-        Ada_Mr.Logger.Put_Line(" -> Please wait, while closing the client connections.", Ada_Mr.Logger.Info);
+        Ada_Mr.Logger.Put_Line(" -> Please wait, while closing the client connections.", Ada_Mr.Logger.System);
         
         -- sending exit command to all worker
         declare
@@ -169,7 +168,6 @@ package body Ada_Mr.Master.Main is
       
         Ada_Mr.Logger.Put_Line("All jobs done", Ada_Mr.Logger.Info);
         
-        -- TODO: send this to all connected reducers!
         declare
           Reducer_Vector : Ada_Mr.Master.Helper.Worker_Entry_Vectors.Vector := Worker.Find_All_By_Type(Ada_Mr.Helper.Reducer);
           

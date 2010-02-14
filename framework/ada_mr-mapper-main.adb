@@ -67,7 +67,7 @@ package body Ada_Mr.Mapper.Main is
         Ping_Task.Start;
       or
         accept Stop;
-        Ada_Mr.Logger.Put_Line("Depending tasks will be terminted", Ada_Mr.Logger.Info);
+        Ada_Mr.Logger.Put_Line("Depending tasks will be terminted", Ada_Mr.Logger.System);
         Ada_Mr.Mapper.Helper.Aborted.Stop;
         Runner_Task.Stop;
         Server_Task.Stop;
@@ -75,7 +75,7 @@ package body Ada_Mr.Mapper.Main is
         exit;
       or 
         accept Abort_It;
-        Ada_Mr.Logger.Put_Line("Depending tasks will be aborted", Ada_Mr.Logger.Info);
+        Ada_Mr.Logger.Put_Line("Depending tasks will be aborted", Ada_Mr.Logger.System);
         Ada_Mr.Mapper.Helper.Aborted.Stop;
         abort Runner_Task;
         Server_Task.Stop;
@@ -126,8 +126,6 @@ package body Ada_Mr.Mapper.Main is
             Access_Token => Ada_Mr.Helper.Read_Configuration("ACCESS_TOKEN")
           )
         );
-        
-        --Xml_Tree : Ada_Mr.Xml.Node_Access := Ada_Mr.Xml.Helper.Get_Verified_Content(Ada_Mr.Xml.Parser.Parse(Content => Response));
       begin
         null;
       end;

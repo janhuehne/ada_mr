@@ -33,7 +33,7 @@ package body Ada_Mr.Generics.Server is
           Addr.Port := Port;
         end Start;
         
-        Ada_Mr.Logger.Put_Line("Server task started", Ada_Mr.Logger.Info);
+        Ada_Mr.Logger.Put_Line("Server task started", Ada_Mr.Logger.System);
         
         Initialize;
         Create_Socket(Server);
@@ -55,7 +55,7 @@ package body Ada_Mr.Generics.Server is
         Empty(Accept_Set);
         Empty(WSet);
         
-        Ada_Mr.Logger.Put_Line("Ready to accept connections on " & Image(Addr.Addr) & " with port " & Addr.Port'Img & ".", Ada_Mr.Logger.Info);
+        Ada_Mr.Logger.Put_Line("Ready to accept connections on " & Image(Addr.Addr) & " with port " & Addr.Port'Img & ".", Ada_Mr.Logger.System);
         
         loop
           exit when Exit_Server;

@@ -67,7 +67,7 @@ package body Ada_Mr.Reducer.Main is
         Result_Merge_Task.Start;
       or
         accept Stop;
-        Ada_Mr.Logger.Put_Line("Stopping all reducer tasks", Ada_Mr.Logger.Info);
+        Ada_Mr.Logger.Put_Line("Stopping all reducer tasks", Ada_Mr.Logger.System);
         Ada_Mr.Reducer.Helper.Aborted.Stop;
         Server_Task.Stop;
         Runner_Task.Stop;
@@ -121,7 +121,7 @@ package body Ada_Mr.Reducer.Main is
     
     
     if Stop_Map_Reduce_System = True then
-      Ada_Mr.Logger.Put_Line("Stop the complete map reduce system", Ada_Mr.Logger.Info);
+      Ada_Mr.Logger.Put_Line("Stopping the complete map reduce system", Ada_Mr.Logger.System);
       
       declare
         Response : String := Ada_Mr.Helper.Send(
