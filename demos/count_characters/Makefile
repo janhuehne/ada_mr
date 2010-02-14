@@ -10,12 +10,15 @@ LIBS=-I/usr/local/lib/libadamr -I/usr/local/lib/libadacrypt
 all: clean pure_master pure_mapper pure_reducer clean_compilation_files
 
 pure_master:
+	$(DEL) master
 	$(CC) $(LIBS) master.adb $(CFLAGS)
 
 pure_mapper:
+	$(DEL) mapper
 	$(CC) $(LIBS) mapper.adb $(CFLAGS)
 
 pure_reducer:
+	$(DEL) reducer
 	$(CC) $(LIBS) reducer.adb $(CFLAGS)
 
 clean_compilation_files:

@@ -1,8 +1,8 @@
-with char_Job;
+with Count_Job;
 with Ada_Mr.Mapper.Main;
 
 procedure Mapper is
-  package Job renames char_Job;
+  package Job renames Count_Job;
     
   package Mapper_MR is new Ada_Mr.Mapper.Main(
     Job.Job,

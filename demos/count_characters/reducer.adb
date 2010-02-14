@@ -1,8 +1,8 @@
-with char_Job;
+with Count_Job;
 with Ada_Mr.Reducer.Main;
 
 procedure Reducer is
-  package Job renames char_Job;
+  package Job renames Count_Job;
   
   package Reducer_MR is new Ada_Mr.Reducer.Main(
     Job.Merge_Job_Results, 
