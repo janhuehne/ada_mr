@@ -3,7 +3,7 @@ import os
 
 # readin workspace
 default_workspace = '~/ada_mr'
-user_workspace = raw_input('Workspace path (~/ not supported) [' + default_workspace + ']: ')
+user_workspace = raw_input('Workspace path [' + default_workspace + ']: ')
 
 if user_workspace == "":
   user_workspace = default_workspace
@@ -16,8 +16,8 @@ while(project_path == ""):
 
 
 #readin package name
-default_package_name = "job"
-user_package_name = raw_input('Package name [' + default_package_name + ']: ')
+default_package_name = "Demo_Job"
+user_package_name = raw_input('Package name (only "Job" is not allowed) [' + default_package_name + ']: ')
 
 if user_package_name == "":
   user_package_name = default_package_name
@@ -61,7 +61,6 @@ with Ada.Containers.Vectors;
 with Ada.Strings.Unbounded;
 with Ada_Mr.Helper;
 with Ada_Mr.Xml;
-
 with Ada_Mr.Job;
 
 package #job_package# is
@@ -168,8 +167,6 @@ package body #job_package# is
     declare
       The_Job : Job;
     begin
-      The_Job.Job_Id := Ada_Mr.Job.Get_Next_Job_Id;
-      
       Calculated_Jobs.Append(The_Job);
     end;
   end Split_Raw_Data;
@@ -256,12 +253,15 @@ LIBS=-I/usr/local/lib/libadamr -I/usr/local/lib/libadacrypt
 all: clean pure_master pure_mapper pure_reducer clean_compilation_files
 
 pure_master:
+	$(DEL) master
 	$(CC) $(LIBS) master.adb $(CFLAGS)
 
 pure_mapper:
+	$(DEL) mapper
 	$(CC) $(LIBS) mapper.adb $(CFLAGS)
 
 pure_reducer:
+	$(DEL) reducer
 	$(CC) $(LIBS) reducer.adb $(CFLAGS)
 
 clean_compilation_files:
