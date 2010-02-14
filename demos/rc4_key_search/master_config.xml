@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<adamr-master-config>
+  
+  <user>
+    <key>123456</key>
+    <most_sig_byte_range>20</most_sig_byte_range>
+  </user>
+  
+</adamr-master-config>
