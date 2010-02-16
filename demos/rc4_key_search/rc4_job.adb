@@ -100,7 +100,8 @@ package body Rc4_Job is
     Ada_Mr.Helper.Put(From'Img, 20, 1);
     Ada_Mr.Helper.Put(" -", 3, 1);
     Ada_Mr.Helper.Put(To'Img, 5, 1);
-    Ada_Mr.Helper.Put(State, 20);
+    Ada_Mr.Helper.Put(State, 20, 1);
+    Ada_Mr.Helper.Put("          " & Message);
     Ada.Text_IO.New_Line;
   end Print_Job;
   

@@ -82,7 +82,8 @@ package body Pi_Job is
     Ada_Mr.Helper.Put(The_Job.Job_Id'Img, 10, 1);
     Ada_Mr.Helper.Put(The_Job.Random_Inital_Value'Img, 30, 1);
     Ada_Mr.Helper.Put(The_Job.Pairs_Per_Map_Process'Img, 30, 1);
-    Ada_Mr.Helper.Put(State, 20);
+    Ada_Mr.Helper.Put(State, 20, 1);
+    Ada_Mr.Helper.Put("          " & Message);
     Ada.Text_IO.New_Line;
   end Print_Job;
   

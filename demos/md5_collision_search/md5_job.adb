@@ -65,7 +65,8 @@ package body Md5_Job is
   begin
     Ada_Mr.Helper.Put(The_Job.Job_Id'Img, 10, 1);
     Ada_Mr.Helper.Put(The_Job.Start_Point, 50, 1);
-    Ada_Mr.Helper.Put(State, 20);
+    Ada_Mr.Helper.Put(State, 20, 1);
+    Ada_Mr.Helper.Put("          " & Message);
     Ada.Text_IO.New_Line;
   end Print_Job;
   

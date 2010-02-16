@@ -67,8 +67,8 @@ package body Count_Job is
   begin
     Ada_Mr.Helper.Put(The_Job.Job_Id'Img, 10, 1);
     Ada_Mr.Helper.Put(ASU.To_String(The_Job.Computable_String), 30, 1);
-    Ada_Mr.Helper.Put(State, 20);
-    Ada_Mr.Helper.Put(Message, 20);
+    Ada_Mr.Helper.Put(State, 20, 1);
+    Ada_Mr.Helper.Put("          " & Message);
     Ada.Text_IO.New_Line;
   end Print_Job;
   
