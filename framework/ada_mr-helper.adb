@@ -74,7 +74,7 @@ package body Ada_Mr.Helper is
   
   procedure Put(Str : String; Field_Length : Natural := 0; Space_Pos : Natural := 1) is
     
-    Field : Positive := Field_Length;
+    Field : Natural := Field_Length;
     
     procedure Print_Spaces is
       Space_Counter : Natural := 0;

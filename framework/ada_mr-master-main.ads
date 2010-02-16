@@ -71,7 +71,7 @@ package Ada_Mr.Master.Main is
   type Job_Entry_Record is record
     Job     : My_Job;
     State   : Ada_Mr.Master.Helper.Job_State := Ada_Mr.Master.Helper.Pending;
-    Message : ASU.Unbounded_String;
+    Message : ASU.Unbounded_String := ASU.To_Unbounded_String("");
   end record;
   
   type Job_Entry_Record_Access is access Job_Entry_Record;
