@@ -111,6 +111,7 @@ package Ada_Mr.Master.Main is
 ----------------------------------------------------
   protected Worker is
     procedure Add(New_Worker : in out Ada_Mr.Master.Helper.Worker_Record_Access);
+    procedure Stop_All;
     function Exists_Identifier(Identifier : String) return Boolean;
     function Find_By_Identifier(Identifier : String) return Ada_Mr.Master.Helper.Worker_Record_Access;
     function Find_By_Access_Token_And_Type(Access_Token : String; W_Type : Ada_Mr.Helper.Worker_Type) return Ada_Mr.Master.Helper.Worker_Record_Access;

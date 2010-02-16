@@ -84,41 +84,7 @@ package body Ada_Mr.Master.Main is
         Ada_Mr.Logger.Put_Line(" -> Please wait, while closing the client connections.", Ada_Mr.Logger.System);
         
         -- sending exit command to all worker
-        declare
-          
-          procedure Send_Exit_Command(C : Ada_Mr.Master.Helper.Worker_Entry_Vectors.Cursor) is
-            Worker_Access : Ada_Mr.Master.Helper.Worker_Record_Access;
-          begin
-            Worker_Access :=  Ada_Mr.Master.Helper.Worker_Entry_Vectors.Element(C);
-            
-            declare
-              Xml_Command : String := Ada_Mr.Xml.Helper.Xml_Command(
-                G_T           => Ada_Mr.Xml.Helper.Master,
-                Command       => "exit",
-                Access_Token  => Worker_Access.Access_Token,
-                Details       => "<abort>" & Ada_Mr.Master.Helper.Stop_Map_Reduce_System'Img & "</abort>"
-              );
-              
-              Response : String := Ada_Mr.Helper.Send(
-                Worker_Access.Ip,
-                Worker_Access.Port,
-                Xml_Command
-              );
-            begin
-              Logger.Put_Line(Response, Logger.Info);
-            end;
-          exception
-            when others =>
-              Logger.Put_Line("Worker """ & ASU.To_String(Worker_Access.Identifier) & """ could not shut down.", Logger.Err);
-          end;
-          
-          Worker_Vector : Ada_Mr.Master.Helper.Worker_Entry_Vectors.Vector;
-        begin
-          Worker_Vector.Append(Worker.Find_All_By_Type(Ada_Mr.Helper.Mapper));
-          Worker_Vector.Append(Worker.Find_All_By_Type(Ada_Mr.Helper.Reducer));
-          
-          Worker_Vector.Iterate(Send_Exit_Command'Access);
-        end;
+
         
         
         Ada_Mr.Master.Helper.Aborted.Set_Exit;
@@ -157,7 +123,6 @@ package body Ada_Mr.Master.Main is
   end Exit_Observer;
   
   
-  --function Observe(To_Controll : Master_Task_Access) return Boolean is
   procedure Observe is
     use GNAT.Sockets;
   begin
@@ -194,7 +159,8 @@ package body Ada_Mr.Master.Main is
       end if;
     end loop;
     
-    Main_Task.Stop;
+    Worker.Stop_All;
+  --  Main_Task.Stop;
   --  return false;
   end Observe;
 
@@ -391,6 +357,42 @@ package body Ada_Mr.Master.Main is
       Worker.Append(New_Worker);
     end Add;
     
+    
+    procedure Stop_All is
+      Worker_Access : Ada_Mr.Master.Helper.Worker_Record_Access;
+    begin
+      
+      loop
+        exit when Worker.Is_Empty;
+        Worker_Access := Worker.First_Element;
+        
+        begin
+          declare
+            Xml_Command : String := Ada_Mr.Xml.Helper.Xml_Command(
+              G_T           => Ada_Mr.Xml.Helper.Master,
+              Command       => "exit",
+              Access_Token  => Worker_Access.Access_Token,
+              Details       => "<abort>" & Ada_Mr.Master.Helper.Stop_Map_Reduce_System'Img & "</abort>"
+            );
+            
+            Response : String := Ada_Mr.Helper.Send(
+              Worker_Access.Ip,
+              Worker_Access.Port,
+              Xml_Command
+            );
+          begin
+            Logger.Put_Line(Response, Logger.Info);
+          end;
+        exception
+          when others =>
+            Logger.Put_Line("Worker """ & ASU.To_String(Worker_Access.Identifier) & """ could not shut down.", Logger.Err);
+        end;
+        
+        Worker.Delete_First;
+      end loop;
+    end Stop_All;
+    
+    
     function Find_By_Identifier(Identifier : String) return Ada_Mr.Master.Helper.Worker_Record_Access is
       Cursor : Ada_Mr.Master.Helper.Worker_Entry_Vectors.Cursor := Worker.First;
     begin
@@ -407,7 +409,6 @@ package body Ada_Mr.Master.Main is
         end;
         
         Ada_Mr.Master.Helper.Worker_Entry_Vectors.Next(Cursor);
-        
       end loop;
       
       Ada.Exceptions.Raise_Exception(Ada_Mr.Master.Helper.No_Worker_Found'Identity, "No worker found");
@@ -517,7 +518,7 @@ package body Ada_Mr.Master.Main is
       Ada.Text_IO.Put_Line("  Commands:");
       Ada.Text_IO.Put_Line("    worker       Prints all connected worker");
       Ada.Text_IO.Put_Line("    config       Prints configuration");
-      Ada.Text_IO.Put_Line("    quit         Exit Ada MR Master and stop all mapper and reducer");
+      Ada.Text_IO.Put_Line("    quit         Exit Ada MR Master and stop all connected mapper and reducer");
       Ada.Text_IO.Put_Line("    jobs         Number of unprocessed jobs");
       Ada.Text_IO.Put_Line("    help         Displays this message");
       Ada.Text_IO.New_Line;
@@ -528,6 +529,8 @@ package body Ada_Mr.Master.Main is
       Ada_Mr.Helper.Print_Configuration;
     
     elsif Ada_Mr.Helper.Is_Equal(User_Input, "quit", true) OR Is_Equal(User_Input, "exit", true) then
+      Worker.Stop_All;
+      
       To_Controll.Stop;
     
     elsif (Is_Equal(User_Input, "worker", true)) then
