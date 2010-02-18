@@ -99,24 +99,12 @@ package body Ada_Mr.Reducer.Main is
       exit when Stop_Map_Reduce_System = True;
       exit when Ada_Mr.Reducer.Helper.Aborted.Check = true;
       
-      declare
-        Cursor : Ada_Mr.Reducer.Helper.Xml_Node_Access_Vectors.Cursor := Ada_Mr.Reducer.Helper.Finished_Jobs_Queue.First;
-      begin
-        loop
-          exit when Stop_Map_Reduce_System = True;
-          exit when Ada_Mr.Reducer.Helper.Xml_Node_Access_Vectors."="(Cursor, Ada_Mr.Reducer.Helper.Xml_Node_Access_Vectors.No_Element);
-          
-          declare
-          begin
-            Merge_Jobs(Ada_Mr.Reducer.Helper.Xml_Node_Access_Vectors.Element(Cursor), Stop_Map_Reduce_System);
-            Ada_Mr.Reducer.Helper.Finished_Jobs_Queue.Delete(Cursor);
-          exception
-            when Error : others => Ada_Mr.Helper.Print_Exception(Error);
-          end;
-          
-          Ada_Mr.Reducer.Helper.Xml_Node_Access_Vectors.Next(Cursor);
-        end loop;
-      end;
+      if not Ada_Mr.Reducer.Helper.Mapper_Results.Is_Empty then
+        Merge_Jobs(
+          Ada_Mr.Reducer.Helper.Mapper_Results.Get_Next,
+          Stop_Map_Reduce_System
+        );
+      end if;
     end loop;
     
     

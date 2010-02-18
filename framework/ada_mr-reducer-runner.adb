@@ -64,7 +64,12 @@ package body Ada_Mr.Reducer.Runner is
         Ada.Exceptions.Raise_Exception(Ada_Mr.Helper.Initialisation_Failed'Identity, "Ada MR Master is not reachable");
       when Error : others =>
         Ada_Mr.Helper.Print_Exception(Error);
+        raise;
     end;
+    
+    -- Ask master for not delivered mapper results
+    Ada_Mr.Reducer.Helper.Import_Not_Delivered_Mapper_Results_From_Master;
+    
     
   exception
     when Error : others =>

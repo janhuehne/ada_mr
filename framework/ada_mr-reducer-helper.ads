@@ -1,5 +1,4 @@
-with Ada.Containers.Vectors;
-with Ada_Mr.Xml;
+  with Ada_Mr.Xml;
 with GNAT.Sockets;
 with Ada.Strings.Unbounded;
 
@@ -14,12 +13,21 @@ package Ada_Mr.Reducer.Helper is
     Abort_It  : Boolean := false;
   end Aborted;
   
-  package Xml_Node_Access_Vectors is new Ada.Containers.Vectors(
-    Element_Type => Ada_Mr.Xml.Node_Access, 
-    Index_Type => Positive,
-    "=" => Ada_Mr.Xml."="
-  );
+  procedure Import_Not_Delivered_Mapper_Results_From_Master;
   
-  Finished_Jobs_Queue : Xml_Node_Access_Vectors.Vector;
+  
+  protected Mapper_Results is
+    procedure Add(Node : Ada_Mr.Xml.Node_Access);
+    procedure Add(Node_Vector : Ada_Mr.Xml.Node_Access_Vector.Vector);
+    function Is_Empty return Boolean;
+    function Get_Next return Ada_Mr.Xml.Node_Access;
+--  private
+--    Mapper_Results_Vector : Ada_Mr.Xml.Node_Access_Vector.Vector;
+  end Mapper_Results;
+  
+  Mapper_Results_Vector : Ada_Mr.Xml.Node_Access_Vector.Vector;
+  
+--  Index : Positive := 1;
+  
   
 end Ada_Mr.Reducer.Helper;

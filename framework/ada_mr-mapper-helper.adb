@@ -82,9 +82,7 @@ package body Ada_Mr.Mapper.Helper is
         when Error : others =>
           Ada_Mr.Helper.Print_Exception(Error);
           Ada_Mr.Logger.Put_Line("Reducer not found or not reachable! Sending job result to the master!", Ada_Mr.Logger.Err);
---          Details_For_Master_Notification.Insert("message", Reducer_Identifier & "not reachable");
-          
-          declare
+            
           begin
             declare
               Response : String := Ada_Mr.Helper.Send(
@@ -94,7 +92,7 @@ package body Ada_Mr.Mapper.Helper is
                   G_T     => Ada_Mr.Xml.Helper.Mapper,
                   Command => "not_delivered_map_result",
                   Access_Token => Ada_Mr.Helper.Read_Configuration("ACCESS_TOKEN"),
-                  Details => "<result>" & Result & "</result>"
+                  Details => "<reducer>" & Reducer_Identifier & "</reducer><result>" & Result & "</result>"
                 ),
                 Natural'Value(Ada_Mr.Helper.Read_Configuration("SETTINGS", "MAX_CONNECTION_TRIES")),
                 Natural'Value(Ada_Mr.Helper.Read_Configuration("SETTINGS", "TIMEOUT_CONNECTION_TRIES"))

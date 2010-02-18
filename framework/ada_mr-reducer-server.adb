@@ -25,7 +25,11 @@ package body Ada_Mr.Reducer.Server is
       
       if Ada_Mr.Xml.Helper.Is_Command(Xml_Root, "job_result") then
       
-        Ada_Mr.Reducer.Helper.Finished_Jobs_Queue.Append(Ada_Mr.Xml.Find_Child_With_Tag(Xml_Root, "details"));
+        Ada_Mr.Reducer.Helper.Mapper_Results.Add(
+          Ada_Mr.Xml.Find_Child_With_Tag(Xml_Root, "details")
+        );
+        
+--        Ada_Mr.Reducer.Helper.Finished_Jobs_Queue.Append();
         
         String'Output(
           S, 
@@ -36,6 +40,12 @@ package body Ada_Mr.Reducer.Server is
     elsif From = Master then
       
       if Ada_Mr.Xml.Helper.Is_Command(Xml_Root, "finalize") then
+        Ada_Mr.Reducer.Helper.Import_Not_Delivered_Mapper_Results_From_Master;
+        
+        loop
+          exit when Ada_Mr.Reducer.Helper.Mapper_Results.Is_Empty = True;
+        end loop;
+        
         Finalize_Jobs;
         
         String'Output(

@@ -129,7 +129,9 @@ package body Ada_Mr.Master.Main is
     loop
       exit when Exit_Observer;
       
-      if Jobs.Count_By_State(Ada_Mr.Master.Helper.Done) = Jobs.Count or Ada_Mr.Master.Helper.Stop_Map_Reduce_System = True then
+      if Jobs.Count_By_State(Ada_Mr.Master.Helper.Done) = Jobs.Count 
+          or Ada_Mr.Master.Helper.Stop_Map_Reduce_System = True then
+--          or Ada_Mr.Master.Helper.Not_Delivered_Map_Results.All_Done = True then
       
         Ada_Mr.Logger.Put_Line("All jobs done", Ada_Mr.Logger.Info);
         
@@ -530,7 +532,6 @@ package body Ada_Mr.Master.Main is
     
     elsif Ada_Mr.Helper.Is_Equal(User_Input, "quit", true) OR Is_Equal(User_Input, "exit", true) then
       Worker.Stop_All;
-      
       To_Controll.Stop;
     
     elsif (Is_Equal(User_Input, "worker", true)) then

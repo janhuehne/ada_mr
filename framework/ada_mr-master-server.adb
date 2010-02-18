@@ -138,19 +138,23 @@ package body Ada_Mr.Master.Server is
             elsif Ada_Mr.Xml.Helper.Is_Command(Xml_Root, "not_delivered_map_result") then
               
               declare
-                Not_Delivered_Map_Result : Ada_Mr.Master.Helper.Not_Delivered_Map_Result_Access := new Ada_Mr.Master.Helper.Not_Delivered_Map_Result;
+                Details : Ada_Mr.Xml.Node_Access;
               begin
-                Not_Delivered_Map_Result.Reducer := Worker;
-                Not_Delivered_Map_Result.Result  := ASU.To_Unbounded_String("aa");
+                Details := Ada_Mr.Xml.Find_Child_With_Tag(Xml_Root, "details");
                 
-                Ada_Mr.Master.Helper.Undelivered_Job_Results.Append(Not_Delivered_Map_Result);
+                Ada_Mr.Master.Helper.Not_Delivered_Map_Results.Add(
+                  Ada_Mr.Xml.Get_Value(Details, "reducer"),
+                  Ada_Mr.Xml.Node_Content_To_String(Ada_Mr.Xml.Find_Child_With_Tag(Details, "result"))
+                );
+                
                 Ada_Mr.Logger.Put_Line(ASU.To_String(Worker.Identifier) & ": A job result could not delivered to a reducer.", Ada_Mr.Logger.Warn);
               end;
               
               String'Output(S, Ada_Mr.Xml.Helper.Create_System_Control(Ada_Mr.Xml.Helper.Master, "okay"));
-            
-              -- *******************************************************
-              -- Return the reducer details like ip and port
+              
+              
+            -- *******************************************************
+            -- Return the reducer details like ip and port
             elsif Ada_Mr.Xml.Helper.Is_Command(Xml_Root, "reducer_details") then
               
               declare
@@ -180,8 +184,31 @@ package body Ada_Mr.Master.Server is
             if Ada_Mr.Xml.Helper.Is_Command(Xml_Root, "stop_map_reduce_system") then
               Ada_Mr.Master.Helper.Stop_Map_Reduce_System := True;
               String'Output(S, Ada_Mr.Xml.Helper.Create_System_Control(Ada_Mr.Xml.Helper.Master, "okay"));
+            
+            elsif Ada_Mr.Xml.Helper.Is_Command(Xml_Root, "get_pending_map_results") then
+              
+              declare
+                Pending_Results : ASU.Unbounded_String;
+                
+                procedure Create_Resuts_As_Xml(C : Ada_Mr.Master.Helper.Not_Delivered_Map_Result_Vectors.Cursor) is
+                begin
+                  ASU.Append(Pending_Results, "<map_rs>");
+                  ASU.Append(Pending_Results, ASU.To_String(Ada_Mr.Master.Helper.Not_Delivered_Map_Result_Vectors.Element(C).Result));
+                  ASU.Append(Pending_Results, "</map_rs>");
+                end Create_Resuts_As_Xml;
+              begin
+                Ada_Mr.Master.Helper.Not_Delivered_Map_Results.Get_All_Pending_By_Identifier(ASU.To_String(Worker.Identifier)).Iterate(Create_Resuts_As_Xml'Access);
+                
+                String'Output(
+                  S, 
+                  Ada_Mr.Xml.Helper.Xml_Command(
+                    G_T     => Ada_Mr.Xml.Helper.Master, 
+                    Command => "pending_results", 
+                    Details => ASU.To_String(Pending_Results)
+                  )
+                );
+              end;
             end if;
-          
           end if;
           -- End Handle Mapper requests -->
           

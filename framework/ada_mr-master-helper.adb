@@ -1,5 +1,5 @@
 with Ada_Mr.Helper;
-
+with Ada_Mr.Logger;
 package body Ada_Mr.Master.Helper is
 
   protected body Aborted is
@@ -26,6 +26,63 @@ package body Ada_Mr.Master.Helper is
     
   end Aborted;
   
+  
+  protected body Not_Delivered_Map_Results is
+  
+    procedure Add(Reducer : String; Result : String) is
+      Tmp : Not_Delivered_Map_Result_Access;
+    begin
+      Tmp := new Not_Delivered_Map_Result;
+      Tmp.Reducer := ASU.To_Unbounded_String(Reducer);
+      Tmp.Result  := ASU.To_Unbounded_String(Result);
+      
+      Vector.Append(Tmp);
+    end Add;
+    
+    
+    function Get_All_Pending_By_Identifier(Identifier : String) return Not_Delivered_Map_Result_Vectors.Vector is
+      Tmp     : Not_Delivered_Map_Result_Vectors.Vector;
+      C       : Not_Delivered_Map_Result_Vectors.Cursor;
+      Element : Not_Delivered_Map_Result_Access;
+    begin
+      C := Vector.First;
+      
+      loop
+        exit when Not_Delivered_Map_Result_Vectors."="(Not_Delivered_Map_Result_Vectors.No_Element, C);
+        
+        Element := Not_Delivered_Map_Result_Vectors.Element(C);
+        
+        if ASU.To_String(Element.Reducer) = Identifier and Element.Pending = True then
+          Tmp.Append(Element);
+          Element.Pending := False;
+        end if;
+        
+        Not_Delivered_Map_Result_Vectors.Next(C);
+      end loop;
+      
+      return Tmp;
+    end Get_All_Pending_By_Identifier;
+    
+    
+    function All_Done return Boolean is
+      C : Not_Delivered_Map_Result_Vectors.Cursor;
+    begin
+      loop
+        exit when Not_Delivered_Map_Result_Vectors."="(Not_Delivered_Map_Result_Vectors.No_Element, C);
+        
+        if Not_Delivered_Map_Result_Vectors.Element(C).Pending = True then
+          return False;
+        end if;
+        
+        Not_Delivered_Map_Result_Vectors.Next(C);
+      end loop;
+      
+      return True;
+    end All_Done;
+      
+  end Not_Delivered_Map_Results;
+  
+  
   function To_String(Arg : Job_State) return String is
   begin
     case Arg is
@@ -35,6 +92,7 @@ package body Ada_Mr.Master.Helper is
       when Failed  => return "Failed";
     end case;
   end To_String;
+  
   
   function From_String(Arg : String) return Job_State is
   begin
