@@ -43,6 +43,42 @@ package body Ada_Mr.Logger is
   end Put_Line;
   
   
+  procedure Info(Item : String; Prefix : String := "") is
+  begin
+    Put_Line(Item, Info, Prefix);
+  end Info;
+  
+  
+  procedure Warn(Item : String; Prefix : String := "") is
+  begin
+    Put_Line(Item, Warn, Prefix);
+  end Warn;
+  
+  
+  procedure Error(Item : String; Prefix : String := "") is
+  begin
+    Put_Line(Item, Err, Prefix);
+  end Error;
+  
+  
+  procedure User(Item : String; Prefix : String := "") is
+  begin
+    Put_Line(Item, User, Prefix);
+  end User;
+  
+  
+  procedure System(Item : String; Prefix : String := "") is
+  begin
+    Put_Line(Item, System, Prefix);
+  end System;
+  
+  
+  procedure Debug(Item : String; Prefix : String := "") is
+  begin
+    Put_Line(Item, Debug, Prefix);
+  end Debug;
+  
+  
   procedure New_Line(Level : Log_Level) is
   begin
     if Has_Correct_Level(Level) then
@@ -60,8 +96,12 @@ package body Ada_Mr.Logger is
   function Has_Correct_Level(Level : Log_Level) return Boolean is
   begin
     case Output_Level is
-      when Info =>
+      when Debug => 
         return true;
+      when Info =>
+        if Level = Info OR Level = Warn OR Level = Err OR Level = User OR Level = System then
+          return true;
+        end if;
       when Warn =>
         if Level = Warn OR Level = Err OR Level = User OR Level = System then
           return true;
@@ -85,6 +125,7 @@ package body Ada_Mr.Logger is
       when Err => return "ERROR";
       when User => return "USER";
       when System => return "SYSTEM";
+      when Debug => return "DEBUG";
     end case;
   end Image;
   
@@ -101,6 +142,8 @@ package body Ada_Mr.Logger is
       return User;
     elsif Ada_Mr.Helper.Is_Equal("system", Level, true) then
       return System;
+    elsif Ada_Mr.Helper.Is_Equal("debug", Level, true) then
+      return Debug;
     else
       return Err;
     end if;
