@@ -197,7 +197,7 @@ package body Ada_Mr.Master.Server is
                   ASU.Append(Pending_Results, "</map_rs>");
                 end Create_Resuts_As_Xml;
               begin
-                Ada_Mr.Master.Helper.Not_Delivered_Map_Results.Get_All_Pending_By_Identifier(ASU.To_String(Worker.Identifier)).Iterate(Create_Resuts_As_Xml'Access);
+                Ada_Mr.Master.Helper.Not_Delivered_Map_Results.Get_All_By_Identifier(ASU.To_String(Worker.Identifier)).Iterate(Create_Resuts_As_Xml'Access);
                 
                 String'Output(
                   S, 

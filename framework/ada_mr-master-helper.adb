@@ -36,49 +36,41 @@ package body Ada_Mr.Master.Helper is
       Tmp.Reducer := ASU.To_Unbounded_String(Reducer);
       Tmp.Result  := ASU.To_Unbounded_String(Result);
       
-      Vector.Append(Tmp);
+      Not_Delivered_Map_Results_Vector.Append(Tmp);
     end Add;
     
     
-    function Get_All_Pending_By_Identifier(Identifier : String) return Not_Delivered_Map_Result_Vectors.Vector is
+    function Get_All_By_Identifier(Identifier : String) return Not_Delivered_Map_Result_Vectors.Vector is
       Tmp     : Not_Delivered_Map_Result_Vectors.Vector;
       C       : Not_Delivered_Map_Result_Vectors.Cursor;
       Element : Not_Delivered_Map_Result_Access;
     begin
-      C := Vector.First;
+      C := Not_Delivered_Map_Results_Vector.First;
       
       loop
         exit when Not_Delivered_Map_Result_Vectors."="(Not_Delivered_Map_Result_Vectors.No_Element, C);
         
         Element := Not_Delivered_Map_Result_Vectors.Element(C);
         
-        if ASU.To_String(Element.Reducer) = Identifier and Element.Pending = True then
+        if ASU.To_String(Element.Reducer) = Identifier then
           Tmp.Append(Element);
-          Element.Pending := False;
+          Not_Delivered_Map_Result_Vectors.Delete(
+            Not_Delivered_Map_Results_Vector,
+            Not_Delivered_Map_Result_Vectors.To_Index(C)
+          );
         end if;
         
         Not_Delivered_Map_Result_Vectors.Next(C);
       end loop;
       
       return Tmp;
-    end Get_All_Pending_By_Identifier;
+    end Get_All_By_Identifier;
     
     
-    function All_Done return Boolean is
-      C : Not_Delivered_Map_Result_Vectors.Cursor;
+    function Is_Empty return Boolean is
     begin
-      loop
-        exit when Not_Delivered_Map_Result_Vectors."="(Not_Delivered_Map_Result_Vectors.No_Element, C);
-        
-        if Not_Delivered_Map_Result_Vectors.Element(C).Pending = True then
-          return False;
-        end if;
-        
-        Not_Delivered_Map_Result_Vectors.Next(C);
-      end loop;
-      
-      return True;
-    end All_Done;
+      return Not_Delivered_Map_Results_Vector.Is_Empty;
+    end Is_Empty;
       
   end Not_Delivered_Map_Results;
   

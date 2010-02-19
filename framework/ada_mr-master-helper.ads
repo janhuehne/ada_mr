@@ -57,7 +57,6 @@ package Ada_Mr.Master.Helper is
   type Not_Delivered_Map_Result is record
     Reducer   : ASU.Unbounded_String;
     Result    : ASU.Unbounded_String;
-    Pending   : Boolean := True;
   end record;
   
   type Not_Delivered_Map_Result_Access is access Not_Delivered_Map_Result;
@@ -69,11 +68,11 @@ package Ada_Mr.Master.Helper is
   
   protected Not_Delivered_Map_Results is
     procedure Add(Reducer : String; Result : String);
-    function Get_All_Pending_By_Identifier(Identifier : String) return Not_Delivered_Map_Result_Vectors.Vector;
-    function All_Done return Boolean;
-  private
-    Vector : Not_Delivered_Map_Result_Vectors.Vector;
+    function Get_All_By_Identifier(Identifier : String) return Not_Delivered_Map_Result_Vectors.Vector;
+    function Is_Empty return Boolean;
   end;
+  
+  Not_Delivered_Map_Results_Vector : Not_Delivered_Map_Result_Vectors.Vector;
   
   
   

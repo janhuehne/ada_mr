@@ -29,8 +29,6 @@ package body Ada_Mr.Reducer.Server is
           Ada_Mr.Xml.Find_Child_With_Tag(Xml_Root, "details")
         );
         
---        Ada_Mr.Reducer.Helper.Finished_Jobs_Queue.Append();
-        
         String'Output(
           S, 
           Ada_Mr.Xml.Helper.Create_System_Control(Ada_Mr.Xml.Helper.Reducer, "okay")
