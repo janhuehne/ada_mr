@@ -43,7 +43,6 @@ with Ada.Strings.Unbounded;
 with Ada_Mr.Xml;
 with GNAT.Sockets;
 with Ada_Mr.Helper;
-
 with Ada.Calendar;
 
 package Ada_Mr.Master.Helper is
