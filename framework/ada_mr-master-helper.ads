@@ -1,5 +1,5 @@
 -------------------------------------------------------------------------------
--- <STRONG>Copyright &copy; 2009, 2010 by Jan-Hendrik Hühne.</STRONG>
+-- <STRONG>Copyright &copy; 2009, 2010 by Jan-Hendrik H&uumlhne.</STRONG>
 -- <BLOCKQUOTE>
 --   This program is free software; you can redistribute it and/or
 --   modify it under the terms of the GNU General Public License as
@@ -58,7 +58,6 @@ package Ada_Mr.Master.Helper is
     Done,
     Failed
   );
-  -- Definition for different job states
   
   function To_String(Arg : Job_State) return String;
   -- Returns a job state as a string
@@ -77,16 +76,13 @@ package Ada_Mr.Master.Helper is
     Access_Token : String(1..32);
     Updated_At   : Ada.Calendar.Time;
   end record;
-  -- Record that stores a worker with the metadata
   
   type Worker_Record_Access is access Worker_Record;
-  -- Access type for a Worker_Record
   
   package Worker_Entry_Vectors is new Ada.Containers.Vectors(
     Element_Type => Worker_Record_Access,
     Index_Type => Positive
   );
-  -- Vector that stores the connected worker
   
   
   
@@ -95,16 +91,13 @@ package Ada_Mr.Master.Helper is
     Reducer   : ASU.Unbounded_String;
     Result    : ASU.Unbounded_String;
   end record;
-  -- Record that stores not delivered mapper results
   
   type Not_Delivered_Map_Result_Access is access Not_Delivered_Map_Result;
-  -- Access type for a Not_Delivered_Map_Result
   
   package Not_Delivered_Map_Result_Vectors is new Ada.Containers.Vectors(
     Element_Type => Not_Delivered_Map_Result_Access,
     Index_Type => Positive
   );
-  -- Vector that stores the not delivered mapper results
   
   protected Not_Delivered_Map_Results is
     procedure Add(Reducer : String; Result : String);
