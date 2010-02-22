@@ -1,5 +1,5 @@
 -------------------------------------------------------------------------------
--- <STRONG>Copyright &copy; 2009, 2010 by Jan-Hendrik H&uumlhne.</STRONG>
+-- <STRONG>Copyright &copy; 2009, 2010 by Jan-Hendrik H&uuml;hne.</STRONG>
 -- <BLOCKQUOTE>
 --   This program is free software; you can redistribute it and/or
 --   modify it under the terms of the GNU General Public License as
@@ -28,7 +28,8 @@
 -- </BLOCKQUOTE>
 --
 --  <AUTHOR>
---    Jan-Hendrik Hühne <E_MAIL>
+--    Bauhaus-University Weimar
+--    Jan-Hendrik H&uuml;hne <jan.huehne@uni-weimar.de>
 --  </AUTHOR>
 --
 --  <PURPOSE>
