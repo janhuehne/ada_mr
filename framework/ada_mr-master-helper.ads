@@ -60,10 +60,10 @@ package Ada_Mr.Master.Helper is
   );
   
   function To_String(Arg : Job_State) return String;
-  -- Returns a job state as a string
+  -- Returns a job state as a string.
   
   function From_String(Arg : String) return Job_State;
-  -- Returns a job state from a string
+  -- Returns a job state from a string.
   
   
   
@@ -101,13 +101,13 @@ package Ada_Mr.Master.Helper is
   
   protected Not_Delivered_Map_Results is
     procedure Add(Reducer : String; Result : String);
-    -- Procedure to add a new not delivered mapper result
+    -- Procedure to add a new not delivered mapper result.
       
     function Get_All_By_Identifier(Identifier : String) return Not_Delivered_Map_Result_Vectors.Vector;
-    -- Returns a vector with all not delivered mapper results for a given worker
+    -- Returns a vector with all not delivered mapper results for a given worker.
       
     function Is_Empty return Boolean;
-    -- Returns true if no not delivered mapper results available
+    -- Returns true if no not delivered mapper results available.
   end;
   
   Not_Delivered_Map_Results_Vector : Not_Delivered_Map_Result_Vectors.Vector;
@@ -117,16 +117,16 @@ package Ada_Mr.Master.Helper is
   
   protected Aborted is
     procedure Set_Abort;
-    -- Procedure to abort the complete system
+    -- Procedure to abort the complete system.
     
     procedure Set_Exit;
-    -- Procedure to exit the complete system
+    -- Procedure to exit the complete system.
       
     function Get_Abort return Boolean;
-    -- Returns the abort status
+    -- Returns the abort status.
     
     function Get_Exit return Boolean;
-    -- Returns the exit status
+    -- Returns the exit status.
   private
     Abort_Master  : Boolean := false;
     Exit_Master   : Boolean := false;
