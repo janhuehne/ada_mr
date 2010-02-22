@@ -28,7 +28,7 @@
 -- </BLOCKQUOTE>
 --
 --  <AUTHOR>
---    Bauhaus-University Weimar
+--    Bauhaus-University Weimar<br />
 --    Jan-Hendrik H&uuml;hne <jan.huehne@uni-weimar.de>
 --  </AUTHOR>
 --
