@@ -33,8 +33,9 @@
 --  </AUTHOR>
 --
 --  <PURPOSE>
---    Root package for the mapper component.
+--    Root package for the Ada_Mr.Mapper component.
 --  </PURPOSE>
 -------------------------------------------------------------------------------
+
 package Ada_Mr.Mapper is
 end Ada_Mr.Mapper;
