@@ -4,21 +4,30 @@ with Ada_Mr.Xml.Helper;
 with Ada_Mr.Xml.Parser;
 package body Ada_Mr.Reducer.Helper is
   
-  protected body Aborted is
-  
-    procedure Stop is
+  -------------
+  -- Aborted --
+  -------------
+  protected body Aborted
+  is
+    procedure Stop 
+    is
     begin
       Abort_It := true;
     end Stop;
     
-    function Check return Boolean is
+    function Check
+      return Boolean
+    is
     begin
       return Abort_It;
     end Check;
-    
   end Aborted;
   
   
+  
+  -----------------------------------------------------
+  -- Import_Not_Delivered_Mapper_Results_From_Master --
+  -----------------------------------------------------
   procedure Import_Not_Delivered_Mapper_Results_From_Master is
     Response : String := Ada_Mr.Helper.Send(
       GNAT.Sockets.Inet_Addr(Ada_Mr.Helper.Read_Configuration("MASTER-IP")),
@@ -35,7 +44,9 @@ package body Ada_Mr.Reducer.Helper is
     Xml_Tree         : Ada_Mr.Xml.Node_Access;
     Xml_Details_Tree : Ada_Mr.Xml.Node_Access;
     
-    procedure Import_Mapper_Results(C : Ada_Mr.Xml.Node_Access_Vector.Cursor) is
+    procedure Import_Mapper_Results(
+      C : Ada_Mr.Xml.Node_Access_Vector.Cursor)
+    is
     begin
       Ada_Mr.Logger.Info("Importing mapper result from the master.");
       
@@ -56,24 +67,35 @@ package body Ada_Mr.Reducer.Helper is
   
   
   
+  --------------------
+  -- Mapper_Results --
+  --------------------
   protected body Mapper_Results is
   
-    procedure Add(Node : Ada_Mr.Xml.Node_Access) is
+    procedure Add
+      (Node : Ada_Mr.Xml.Node_Access) 
+    is
     begin
       Mapper_Results_Vector.Append(Node);
     end Add;
     
-    procedure Add(Node_Vector : Ada_Mr.Xml.Node_Access_Vector.Vector) is
+    procedure Add
+      (Node_Vector : Ada_Mr.Xml.Node_Access_Vector.Vector)
+    is
     begin
       Mapper_Results_Vector.Append(Node_Vector);
     end Add;
     
-    function Is_Empty return Boolean is
+    function Is_Empty
+      return Boolean 
+    is
     begin
       return Mapper_Results_Vector.Is_Empty;
     end Is_Empty;
     
-    function Get_Next return Ada_Mr.Xml.Node_Access is
+    function Get_Next
+      return Ada_Mr.Xml.Node_Access
+    is
       Tmp : Ada_Mr.Xml.Node_Access;
     begin
       Tmp := Mapper_Results_Vector.First_Element;

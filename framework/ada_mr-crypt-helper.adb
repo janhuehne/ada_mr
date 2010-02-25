@@ -3,13 +3,22 @@ with Ada.Numerics.Discrete_Random;
 with GNAT.MD5;
 
 package body Ada_Mr.Crypt.Helper is
-  
-  function Compute_HMAC(Message : String; Key : String) return String is
+  ------------------
+  -- Compute_HMAC --
+  ------------------
+  function Compute_HMAC 
+    (Message : String; 
+     Key     : String) 
+    return String
+  is
     use Crypto.Types;
     use Crypto.Symmetric.Mac.Hmac_SHA256;
     
     
-    function To_W_Block512(Message : Bytes) return W_Block512 is
+    function To_W_Block512
+      (Message : Bytes) 
+      return W_Block512 
+    is
       Block : W_Block512 := (others => 0);
       
       Message_In_Words : Words := To_Words(Message);
@@ -30,9 +39,6 @@ package body Ada_Mr.Crypt.Helper is
     Tag               : W_Block256;
     Return_String     : ASU.Unbounded_String;
   begin
---    Ada_Mr.Logger.Put_Line("Key:   " & Key, Ada_Mr.Logger.Info, "Crypto");
---    Ada_Mr.Logger.Put_Line("Input: " & Message, Ada_Mr.Logger.Info, "Crypto");
-    
     Init(Key_Block);
     
     if Message'Length = Full_Blocks * Block_Length then
@@ -65,20 +71,15 @@ package body Ada_Mr.Crypt.Helper is
   end Compute_HMAC;
   
   
-  function Encrypt(Message : String; Key : String) return String is
-  begin
-    return Message;
-  end Encrypt;
   
-  
-  function Decrypt(Message : String; Key : String) return String is
-  begin
-    return Message;
-  end Decrypt;
-  
-  
-  
-  function Create_Access_Token(Identifier : String; Worker_Type : String) return String is
+  -------------------------
+  -- Create_Access_Token --
+  -------------------------
+  function Create_Access_Token
+    (Identifier  : String; 
+     Worker_Type : String) 
+    return String
+  is
     subtype Rand_Range is Integer range 1..999999;
     package Rand is new Ada.Numerics.Discrete_Random(Rand_Range);
     Gen : Rand.Generator;
@@ -89,5 +90,35 @@ package body Ada_Mr.Crypt.Helper is
       Identifier & "-" & Worker_Type & "-" & Rand.Random(Gen)'Img
     );
   end Create_Access_Token;
+  
+  
+  
+  -------------
+  -- Encrypt --
+  -------------
+  function Encrypt
+    (Message : String; 
+     Key     : String) 
+    return String
+  is
+  begin
+    return Message;
+  end Encrypt;
+  
+  
+  
+  -------------
+  -- Decrypt --
+  -------------
+  function Decrypt
+    (Message : String; 
+     Key :     String) 
+    return String
+  is
+  begin
+    return Message;
+  end Decrypt;
+  
+  
   
 end Ada_Mr.Crypt.Helper;

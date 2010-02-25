@@ -14,9 +14,9 @@ with Ada.Command_Line;
 
 package body Ada_Mr.Mapper.Main is
   
-----------------------------------------------------
--- MAPPER TASK                                    --
-----------------------------------------------------
+  -----------------
+  -- Mapper_Task --
+  -----------------
   task body Mapper_Task is
     Runner_Task   : Runner.Runner.Runner_Task;
     Server_Task   : Server.Server.Server_Task;
@@ -40,7 +40,9 @@ package body Ada_Mr.Mapper.Main is
     
     loop
       select
-        accept Start(Self : Mapper_Task_Access) do
+        accept Start
+          (Self : Mapper_Task_Access)
+        do
           Main_Task := Self;
         end Start;
         
@@ -92,19 +94,34 @@ package body Ada_Mr.Mapper.Main is
   end Mapper_Task;
   
   
-  procedure Stop_Mapper_Task is
+  
+  ----------------------
+  -- Stop_Mapper_Task --
+  ----------------------
+  procedure Stop_Mapper_Task 
+  is
   begin
     Main_Task.Stop;
   end Stop_Mapper_Task;
   
   
-  procedure Abort_Mapper_Task is
+  
+  -----------------------
+  -- Abort_Mapper_Task --
+  -----------------------
+  procedure Abort_Mapper_Task
+  is
   begin
     Main_Task.Abort_It;
   end Abort_Mapper_Task;
   
   
-  procedure Ping_Master is
+  
+  -----------------
+  -- Ping_Master --
+  -----------------
+  procedure Ping_Master
+  is
     Master_Ip   : GNAT.Sockets.Inet_Addr_Type;
     Master_Port : GNAT.Sockets.Port_Type;
   begin
@@ -134,10 +151,13 @@ package body Ada_Mr.Mapper.Main is
   end Ping_Master;
   
   
-----------------------------------------------------
--- GENERIC CONSOLE METHODS                        --
-----------------------------------------------------
-  function Banner return String is
+  
+  ------------
+  -- Banner --
+  ------------
+  function Banner
+    return String 
+  is
   begin
     return "ADA MR Mapper";
   end Banner;

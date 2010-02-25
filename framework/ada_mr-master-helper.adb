@@ -2,34 +2,49 @@ with Ada_Mr.Helper;
 with Ada_Mr.Logger;
 package body Ada_Mr.Master.Helper is
 
-  protected body Aborted is
-    
-    procedure Set_Abort is
+  -------------
+  -- Aborted --
+  -------------
+  protected body Aborted
+  is
+    procedure Set_Abort
+    is
     begin
       Abort_Master := true;
     end Set_Abort;
     
-    procedure Set_Exit is
+    procedure Set_Exit
+    is
     begin
       Exit_Master := true;
     end Set_Exit;
     
-    function Get_Abort return Boolean is
+    function Get_Abort
+      return Boolean 
+    is
     begin
       return Abort_Master;
     end Get_Abort;
     
-    function Get_Exit return Boolean is
+    function Get_Exit
+      return Boolean 
+    is
     begin
       return Exit_Master;
     end Get_Exit;
-    
   end Aborted;
   
   
-  protected body Not_Delivered_Map_Results is
   
-    procedure Add(Reducer : String; Result : String) is
+  -------------------------------
+  -- Not_Delivered_Map_Results --
+  -------------------------------
+  protected body Not_Delivered_Map_Results 
+  is
+    procedure Add
+      (Reducer : String; 
+      Result   : String) 
+    is
       Tmp : Not_Delivered_Map_Result_Access;
     begin
       Tmp := new Not_Delivered_Map_Result;
@@ -40,7 +55,10 @@ package body Ada_Mr.Master.Helper is
     end Add;
     
     
-    function Get_All_By_Identifier(Identifier : String) return Not_Delivered_Map_Result_Vectors.Vector is
+    function Get_All_By_Identifier
+      (Identifier : String)
+      return Not_Delivered_Map_Result_Vectors.Vector 
+    is
       Tmp     : Not_Delivered_Map_Result_Vectors.Vector;
       C       : Not_Delivered_Map_Result_Vectors.Cursor;
       Element : Not_Delivered_Map_Result_Access;
@@ -67,7 +85,9 @@ package body Ada_Mr.Master.Helper is
     end Get_All_By_Identifier;
     
     
-    function Is_Empty return Boolean is
+    function Is_Empty
+      return Boolean 
+    is
     begin
       return Not_Delivered_Map_Results_Vector.Is_Empty;
     end Is_Empty;
@@ -75,7 +95,14 @@ package body Ada_Mr.Master.Helper is
   end Not_Delivered_Map_Results;
   
   
-  function To_String(Arg : Job_State) return String is
+  
+  ---------------
+  -- To_String --
+  ---------------
+  function To_String
+    (Arg : Job_State)
+    return String 
+  is
   begin
     case Arg is
       when Pending => return "Pending";
@@ -86,7 +113,14 @@ package body Ada_Mr.Master.Helper is
   end To_String;
   
   
-  function From_String(Arg : String) return Job_State is
+  
+  -----------------
+  -- From_String --
+  -----------------
+  function From_String
+    (Arg : String)
+    return Job_State 
+  is
   begin
     if Ada_Mr.Helper.Is_Equal(Arg, "Pending", true) then
       return Pending;

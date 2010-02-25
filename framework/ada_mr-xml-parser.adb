@@ -6,11 +6,23 @@ with Ada_Mr.Helper;
 
 package body Ada_Mr.Xml.Parser is
   
-  function Parse(File_Name : in String := ""; Content : in String := "") return Ada_Mr.Xml.Node_Access is
+  -----------
+  -- Parse --
+  -----------
+  function Parse
+    (File_Name : in String := ""; 
+     Content   : in String := "") 
+    return Ada_Mr.Xml.Node_Access 
+  is
     Root_Node : Ada_Mr.Xml.Node_Access;
     Last_Depth : Integer := 0;
     
-    procedure Open_Node(Tag : in String; Attributes : in Simple_Xml.Xml_Io.Xml_Attributes; Value : in String; Depth : in Integer) is
+    procedure Open_Node
+      (Tag        : in String; 
+       Attributes : in Simple_Xml.Xml_Io.Xml_Attributes; 
+       Value      : in String;
+       Depth      : in Integer) 
+    is
       Tmp_Node : Ada_Mr.Xml.Node_Access := new Ada_Mr.Xml.Node;
     begin
       Tmp_Node.Tag   := Ada.Strings.Unbounded.To_Unbounded_String(Tag);
@@ -24,19 +36,25 @@ package body Ada_Mr.Xml.Parser is
       end if;
     end Open_Node;
     
-    procedure Close_Node (Depth : in Integer)  is
+    procedure Close_Node
+      (Depth : in Integer)
+    is
     begin
       if depth > 1 then
         Root_Node := Root_Node.Parent;
       end if;
     end Close_Node;
     
-    procedure Note_Version (Version  : in String) is
+    procedure Note_Version
+      (Version  : in String) 
+    is
     begin
       null;
     end Note_Version;
     
-    procedure Note_Encoding (Encoding  : in String) is
+    procedure Note_Encoding
+      (Encoding  : in String)
+    is
     begin
       null;
     end Note_Encoding;
@@ -46,7 +64,12 @@ package body Ada_Mr.Xml.Parser is
       null;
     end On_Error;
     
-    procedure Parse_File is new Simple_Xml.Xml_Io.Parse(Open_Node, Close_Node, Note_Version, Note_Encoding, On_Error);
+    procedure Parse_File is new Simple_Xml.Xml_Io.Parse
+      (Open_Node, 
+       Close_Node,
+       Note_Version,
+       Note_Encoding,
+       On_Error);
     
   begin
     if File_Name /= "" then
@@ -63,7 +86,14 @@ package body Ada_Mr.Xml.Parser is
   end Parse;
   
   
-  function Is_Valid_Xml_String(Str : String) return Boolean is
+  
+  -------------------------
+  -- Is_Valid_Xml_String --
+  -------------------------
+  function Is_Valid_Xml_String
+    (Str : String)
+    return Boolean 
+  is
   begin
     return Ada_Mr.Helper.Starts_With(Str, "<?xml");
   end Is_Valid_Xml_String;

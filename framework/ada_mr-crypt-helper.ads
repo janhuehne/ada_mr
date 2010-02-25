@@ -48,23 +48,27 @@ package Ada_Mr.Crypt.Helper is
   
   function Compute_HMAC 
     (Message : String; 
-     Key     : String) return String;
+     Key     : String) 
+    return String;
   -- Returns the hmac as a string by a given message and a key.
   
   function Create_Access_Token
     (Identifier  : String; 
-     Worker_Type : String) return String;
+     Worker_Type : String) 
+    return String;
   -- Returns a MD5 hash as a string. This function computes 
   -- the access_token.
   
   function Encrypt
     (Message : String; 
-     Key     : String) return String;
+     Key     : String) 
+    return String;
   -- Returns an encrypted message.
   
   function Decrypt
     (Message : String; 
-     Key :     String) return String;
+     Key :     String) 
+    return String;
   -- Decrypts a message and returns it.
   
   Wrong_HMAC : exception;

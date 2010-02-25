@@ -5,8 +5,54 @@ with Ada_Mr.Xml.Parser;
 with Ada.Command_Line;
 
 package body Ada_Mr.Helper is
+  ---------------------------
+  -- String_To_Worker_Type --
+  ---------------------------
+  function String_To_Worker_Type
+    (Arg : String)
+    return Worker_Type 
+  is
+  begin
+    if Ada_Mr.Helper.Is_Equal(Arg, "Master", true) then
+      return Master;
+    elsif Ada_Mr.Helper.Is_Equal(Arg, "Mapper", true) then
+      return Mapper;
+    elsif Ada_Mr.Helper.Is_Equal(Arg, "Reducer", true) then
+      return Reducer;
+    else
+      raise Unknow_Worker_Type;
+    end if;
+  end String_To_Worker_Type;
   
-  function Starts_With(Item : String; Pattern : String; Ignore_Case : Boolean := false) return Boolean is
+  
+  
+  ---------------
+  -- To_String --
+  ---------------
+  function To_String
+    (Arg : Worker_Type)
+    return String
+  is
+  begin
+    case Arg is
+      when Master => return "Master";
+      when Mapper => return "Mapper";
+      when Reducer => return "Reducer";
+      when Invalid => return "N/A";
+    end case;
+  end To_String;
+  
+  
+  
+  -----------------
+  -- Starts_With --
+  -----------------
+  function Starts_With
+    (Item        : String;
+     Pattern     : String;
+     Ignore_Case : Boolean := false)
+    return Boolean 
+  is
   begin
     return Is_Equal(Item(Pattern'First .. Pattern'Last), Pattern, Ignore_Case);
   exception
@@ -14,7 +60,16 @@ package body Ada_Mr.Helper is
   end Starts_With;
   
   
-  function Is_Equal(Arg_1 : String; Arg_2 : String; Ignore_Case : Boolean := false) return Boolean is
+  
+  --------------
+  -- Is_Equal --
+  --------------
+  function Is_Equal
+    (Arg_1       : String;
+     Arg_2       : String;
+     Ignore_Case : Boolean := false)
+    return Boolean 
+  is
     String_1 : String := Arg_1;
     String_2 : String := Arg_2;
   begin
@@ -36,7 +91,13 @@ package body Ada_Mr.Helper is
   end Is_Equal;
   
   
-  function Is_Equal(Item : String; Input_Length : Natural; Pattern : String; Ignore_Case : Boolean := false) return Boolean is
+  function Is_Equal
+    (Item         : String;
+     Input_Length : Natural;
+     Pattern      : String;
+     Ignore_Case  : Boolean := false)
+    return Boolean 
+  is
   begin
     return Is_Equal(Item(Item'First .. Input_Length), Pattern, Ignore_Case);
   exception
@@ -44,7 +105,12 @@ package body Ada_Mr.Helper is
   end Is_Equal;
   
   
-  function Is_Equal(Arg_1 : String; Arg_2 : Ada.Strings.Unbounded.Unbounded_String; Ignore_Case : Boolean := false) return Boolean is
+  function Is_Equal
+    (Arg_1       : String;
+     Arg_2       : Ada.Strings.Unbounded.Unbounded_String;
+     Ignore_Case : Boolean := false) 
+    return Boolean
+  is
   begin
     return Is_Equal(Arg_1, Ada.Strings.Unbounded.To_String(Arg_2), Ignore_Case);
   exception
@@ -52,7 +118,16 @@ package body Ada_Mr.Helper is
   end Is_Equal;
   
   
-  function Sub_Str(Input : String; From : Integer; To : Integer) return String is
+  
+  -------------
+  -- Sub_Str --
+  -------------
+  function Sub_Str
+    (Input : String;
+     From  : Integer;
+     To    : Integer)
+    return String 
+  is
     Left  : Integer := 0;
     Right : Integer := 0;
   begin
@@ -72,8 +147,15 @@ package body Ada_Mr.Helper is
   end Sub_Str;
   
   
-  procedure Put(Str : String; Field_Length : Natural := 0; Space_Pos : Natural := 1) is
-    
+  
+  ---------
+  -- Put --
+  ---------
+  procedure Put
+    (Str          : String;
+     Field_Length : Natural := 0;
+     Space_Pos    : Natural := 1) 
+  is
     Field : Natural := Field_Length;
     
     procedure Print_Spaces is
@@ -104,14 +186,29 @@ package body Ada_Mr.Helper is
   end Put;
   
   
-  procedure Put_Line(Str : String; Field_Length : Natural := 0; Space_Pos : Natural := 1) is
+  
+  --------------
+  -- Put_Line --
+  --------------
+  procedure Put_Line
+    (Str          : String;
+     Field_Length : Natural := 0;
+     Space_Pos    : Natural := 1)
+  is
   begin
     Put(Str, Field_Length, Space_Pos);
     Ada.Text_IO.New_Line;
   end Put_Line;
   
   
-  function Does_File_Exist (Name : String) return Boolean is
+  
+  ---------------------
+  -- Does_File_Exist --
+  ---------------------
+  function Does_File_Exist
+    (Name : String) 
+    return Boolean
+  is
     The_File : Ada.Text_IO.File_Type;
   begin
     Ada.Text_IO.Open (The_File, Ada.Text_IO.In_File, Name);
@@ -122,7 +219,14 @@ package body Ada_Mr.Helper is
   end Does_File_Exist;
   
   
-  procedure Print_Exception(Error : Ada.Exceptions.Exception_Occurrence; Message : String := "") is
+  
+  ---------------------
+  -- Print_Exception --
+  ---------------------
+  procedure Print_Exception
+    (Error  : Ada.Exceptions.Exception_Occurrence; 
+    Message : String := "")
+  is
   begin
     if Message /= "" then
       Ada_Mr.Logger.Put_Line(Message, Ada_Mr.Logger.Info);
@@ -133,7 +237,18 @@ package body Ada_Mr.Helper is
   end Print_Exception;
   
   
-  function Send(Host : String; Port : String; Command : String; Tries : Natural := 1; Wait_Between_Tries : Natural := 5) return String is
+  
+  ----------
+  -- Send --
+  ----------
+  function Send
+    (Host               : String;
+     Port               : String;
+     Command            : String; 
+     Tries              : Natural := 1; 
+     Wait_Between_Tries : Natural := 5)
+  return String
+  is
     use GNAT.Sockets;
     
     Addr : Sock_Addr_Type(Family_Inet);
@@ -149,7 +264,14 @@ package body Ada_Mr.Helper is
   end Send;
   
   
-  function Send(Host : String; Port : GNAT.Sockets.Port_Type; Command : String; Tries : Natural := 1; Wait_Between_Tries : Natural := 5) return String is
+  function Send
+    (Host               : String;
+     Port               : GNAT.Sockets.Port_Type;
+     Command            : String;
+     Tries              : Natural := 1;
+     Wait_Between_Tries : Natural := 5)
+    return String 
+  is
     use GNAT.Sockets;
     
     Addr : Sock_Addr_Type(Family_Inet);
@@ -165,7 +287,14 @@ package body Ada_Mr.Helper is
   end Send;
   
   
-  function Send(Host : GNAT.Sockets.Inet_Addr_Type; Port : GNAT.Sockets.Port_Type; Command : String; Tries : Natural := 1; Wait_Between_Tries : Natural := 5) return String is
+  function Send
+    (Host               : GNAT.Sockets.Inet_Addr_Type;
+     Port               : GNAT.Sockets.Port_Type;
+     Command            : String;
+     Tries              : Natural := 1;
+     Wait_Between_Tries : Natural := 5)
+    return String
+  is
     use GNAT.Sockets;
   
     Addr : Sock_Addr_Type(Family_Inet);
@@ -180,7 +309,14 @@ package body Ada_Mr.Helper is
     end if;
   end Send;
   
-  function Send(Addr : GNAT.Sockets.Sock_Addr_Type; Command : String; Tries : Natural; Wait_Between_Tries : Natural := 5) return String is
+  
+  function Send
+    (Addr               : GNAT.Sockets.Sock_Addr_Type;
+     Command            : String;
+     Tries              : Natural;
+     Wait_Between_Tries : Natural := 5)
+    return String
+  is
     Response : ASU.Unbounded_String;
   begin
     for I in 1 .. Tries loop
@@ -204,7 +340,12 @@ package body Ada_Mr.Helper is
     return ASU.To_String(Response);
   end Send;
   
-  function Send(Addr : GNAT.Sockets.Sock_Addr_Type; Command : String) return String is
+  
+  function Send
+    (Addr : GNAT.Sockets.Sock_Addr_Type;
+     Command : String)
+    return String 
+  is
     use GNAT.Sockets;
     
     Sock            : Socket_Type;
@@ -253,7 +394,6 @@ package body Ada_Mr.Helper is
     end;
   exception
     when Error : others =>
---      ShutDown_Socket(Sock);
       Close_Selector(Read_Selector);
       Finalize;
       
@@ -261,38 +401,27 @@ package body Ada_Mr.Helper is
   end Send;
   
   
-  function String_To_Worker_Type(Arg : String) return Worker_Type is
-  begin
-    if Ada_Mr.Helper.Is_Equal(Arg, "Master", true) then
-      return Master;
-    elsif Ada_Mr.Helper.Is_Equal(Arg, "Mapper", true) then
-      return Mapper;
-    elsif Ada_Mr.Helper.Is_Equal(Arg, "Reducer", true) then
-      return Reducer;
-    else
-      raise Unknow_Worker_Type;
-    end if;
-  end String_To_Worker_Type;
   
-  
-  function To_String(Arg : Worker_Type) return String is
-  begin
-    case Arg is
-      when Master => return "Master";
-      when Mapper => return "Mapper";
-      when Reducer => return "Reducer";
-      when Invalid => return "N/A";
-    end case;
-  end To_String;
-  
-  
-  function Trim(Input : String) return String is
+  ----------
+  -- Trim --
+  ----------
+  function Trim
+    (Input : String)
+    return String
+  is
   begin
     return Ada.Strings.Fixed.Trim(Input, Ada.Strings.Both);
   end Trim;
   
   
-  procedure Parse_Configuration(Config_File : String; W_Type : Worker_Type) is
+  
+  -------------------------
+  -- Parse_Configuration --
+  -------------------------
+  procedure Parse_Configuration
+    (Config_File : String;
+     W_Type : Worker_Type)
+  is
     Config_Xml : Ada_Mr.Xml.Node_Access;
   begin
     
@@ -439,9 +568,14 @@ package body Ada_Mr.Helper is
   
   
   
+  -------------------------
+  -- Print_Configuration --
+  -------------------------
   procedure Print_Configuration is
     
-    procedure Print_Entry(C : String_String_Maps.Cursor) is
+    procedure Print_Entry
+      (C : String_String_Maps.Cursor)
+    is
     begin
       Put(
         To_Upper(String_String_Maps.Key(C)),
@@ -466,13 +600,24 @@ package body Ada_Mr.Helper is
   end Print_Configuration;
   
   
-  function Read_Configuration(Prefix : String; Key : String) return String is
+  
+  ------------------------
+  -- Read_Configuration --
+  ------------------------
+  function Read_Configuration
+    (Prefix : String; 
+     Key : String)
+    return String 
+  is
   begin
     return Read_Configuration(To_Lower(Prefix & "-" & Key));
   end Read_Configuration;
   
   
-  function Read_Configuration(Key : String) return String is
+  function Read_Configuration
+    (Key : String)
+    return String
+  is
   begin
     return String_String_Maps.Element(
       String_String_Maps.Find(Configuration, To_Lower(Key))
@@ -483,7 +628,14 @@ package body Ada_Mr.Helper is
   end Read_Configuration;
   
   
-  function Read_Configuration_Or_Null(Key : String) return String is
+  
+  --------------------------------
+  -- Read_Configuration_Or_Null --
+  --------------------------------
+  function Read_Configuration_Or_Null
+    (Key : String)
+    return String
+  is
   begin
     return Read_Configuration(Key);
   exception
@@ -491,7 +643,11 @@ package body Ada_Mr.Helper is
   end Read_Configuration_Or_Null;
   
   
-  function Read_Configuration_Or_Null(Prefix : String; Key : String) return String is
+  function Read_Configuration_Or_Null
+    (Prefix : String;
+     Key : String)
+    return String
+  is
   begin
     return Read_Configuration(Prefix & "-" & Key);
   exception
@@ -499,7 +655,13 @@ package body Ada_Mr.Helper is
   end Read_Configuration_Or_Null;
   
   
-  procedure Set_Default_Configuration(W_Type : Worker_Type) is
+  
+  -------------------------------
+  -- Set_Default_Configuration --
+  -------------------------------
+  procedure Set_Default_Configuration
+    (W_Type : Worker_Type)
+  is
   begin
     -- default config file
     case W_Type is
@@ -541,13 +703,28 @@ package body Ada_Mr.Helper is
   end Set_Default_Configuration;
   
   
-  procedure Add_Configuration(Prefix : String; Key : String; Value : String) is
+  
+  -----------------------
+  -- Add_Configuration --
+  -----------------------
+  procedure Add_Configuration
+    (Prefix : String;
+     Key : String;
+     Value : String)
+  is
   begin
     Add_Configuration(Prefix & "-" & Key, Value);
   end Add_Configuration;
   
   
-  procedure Add_Configuration(Key : String; Value : String) is
+  
+  -----------------------
+  -- Add_Configuration --
+  -----------------------
+  procedure Add_Configuration
+    (Key : String;
+     Value : String) 
+  is
     Lower_Key : String := To_Lower(Key);
     C         : String_String_Maps.Cursor;
   begin
@@ -569,9 +746,17 @@ package body Ada_Mr.Helper is
   end Add_Configuration;
   
   
-  procedure Parse_Command_Line_Arguments(W_Type : Worker_Type) is
-    
-    function Map_Command_Line_Argument_To_Config_Argument(Command_Line_Argument : String) return String is
+  
+  ----------------------------------
+  -- Parse_Command_Line_Arguments --
+  ----------------------------------
+  procedure Parse_Command_Line_Arguments
+    (W_Type : Worker_Type) 
+  is
+    function Map_Command_Line_Argument_To_Config_Argument
+      (Command_Line_Argument : String)
+    return String
+    is
     begin
       if Ada_Mr.Helper.Is_Equal(Command_Line_Argument, "i") then
         return "identifier";

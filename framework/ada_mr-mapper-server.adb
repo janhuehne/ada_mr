@@ -1,8 +1,5 @@
--- System libs
 with Ada.Exceptions;
 with Ada.Text_IO;
-
--- Project libs
 with Ada_Mr.Xml;
 with Ada_Mr.Xml.Parser;
 with Ada_Mr.Xml.Helper;
@@ -11,13 +8,26 @@ with Ada_Mr.Logger;
 
 package body Ada_Mr.Mapper.Server is 
   
-  function Exit_Server return Boolean is
+  -----------------
+  -- Exit_Server --
+  -----------------
+  function Exit_Server
+   return Boolean 
+  is
   begin
     return Ada_Mr.Mapper.Helper.Aborted.Check;
   end Exit_Server;
   
   
-  procedure Process_Request(S : Stream_Access; From : Ada_Mr.Helper.Worker_Type; Xml_Root : Ada_Mr.Xml.Node_Access) is
+  
+  ---------------------
+  -- Process_Request --
+  ---------------------
+  procedure Process_Request
+    (S        : Stream_Access;
+     From     : Ada_Mr.Helper.Worker_Type;
+     Xml_Root : Ada_Mr.Xml.Node_Access)
+   is
     use Ada_Mr.Helper;
   begin
     if From = Master then
@@ -42,7 +52,6 @@ package body Ada_Mr.Mapper.Server is
         String'Output(S, Ada_Mr.Xml.Helper.Create_System_Control(Ada_Mr.Xml.Helper.Mapper, "okay"));
       end if;
     end if;
-      
   exception
     when Error : others => 
       Ada_Mr.Helper.Print_Exception(Error);

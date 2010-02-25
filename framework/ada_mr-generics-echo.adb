@@ -9,23 +9,32 @@ with Ada_Mr.Crypt.Helper;
 
 
 package body Ada_Mr.Generics.Echo is
-  
+  ------------
+  -- Buffer --
+  ------------
   protected body Buffer is
-    entry Deposit(X : in Echo_Access) when Count < Max_Tasks is
+    entry 
+      Deposit
+        (X : in Echo_Access) when Count < Max_Tasks 
+    is
     begin
       Buf(I) := X;
       I := I + 1;
       Count := Count + 1;
     end Deposit;
     
-    entry Extract(X : out Echo_Access) when Count > 0 is
+    entry Extract
+      (X : out Echo_Access) when Count > 0 
+    is
     begin
       X := Buf(J);
       J := J + 1;
       Count := Count - 1;
     end Extract;
     
-    function Num_Waiting return Natural is
+    function Num_Waiting 
+      return Natural 
+    is
     begin
       return Count;
     end Num_Waiting;
@@ -33,6 +42,9 @@ package body Ada_Mr.Generics.Echo is
   
   
   
+  ----------
+  -- Echo --
+  ----------
   task body Echo is 
     Sock : Socket_Type;
     S : Stream_Access;
@@ -51,7 +63,10 @@ package body Ada_Mr.Generics.Echo is
     Empty(Input_Set);
     Empty(WSet);
     
-    accept Start(N_Sock : IN Socket_Type; Self : IN Echo_Access) do
+    accept Start
+      (N_Sock : IN Socket_Type; 
+       Self : IN Echo_Access)
+    do
       Sock := N_Sock;
       Me   := Self;
     end Start;
@@ -80,7 +95,11 @@ package body Ada_Mr.Generics.Echo is
               Xml_Root    : Ada_Mr.Xml.Node_Access;
             begin
               Xml_Root := Ada_Mr.Xml.Parser.Parse(Content => Request);
-              Process_Request(S, Ada_Mr.Xml.Helper.Request_From(Xml_Root), Ada_Mr.Xml.Helper.Get_Verified_Content(Xml_Root));
+              Process_Request(
+                S, 
+                Ada_Mr.Xml.Helper.Request_From(Xml_Root), 
+                Ada_Mr.Xml.Helper.Get_Verified_Content(Xml_Root)
+              );
             exception
               when Error : others =>
                 Ada_Mr.Xml.Helper.Send_Error(S, Ada_Mr.Xml.Helper.Master, Error);
@@ -111,8 +130,6 @@ package body Ada_Mr.Generics.Echo is
         terminate;
       end select;
     end loop;
-    
---    Close_Selector(Input_Selector);
   end Echo;
   
 end Ada_Mr.Generics.Echo;

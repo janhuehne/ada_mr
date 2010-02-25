@@ -19,6 +19,9 @@ with Ada_Mr.Xml.Parser;
 
 package body Ada_Mr.Master.Main is
   
+  -----------------
+  -- Master_Task --
+  -----------------
   task body Master_Task is
     Server_Task    : Server.Server.Server_Task;
     Observer_Task  : Observer.Runner_Task;
@@ -40,7 +43,9 @@ package body Ada_Mr.Master.Main is
     
     loop
       select
-        accept Start(Self : Master_Task_Access) do
+        accept Start
+          (Self : Master_Task_Access) 
+        do
           Main_Task := Self;
         end Start;
         
@@ -103,17 +108,25 @@ package body Ada_Mr.Master.Main is
       abort Console_Task;
   end Master_Task;
   
-  procedure Stop_Master_Task is
+  
+  
+  ----------------------
+  -- Stop_Master_Task --
+  ----------------------
+  procedure Stop_Master_Task 
+  is
   begin
     Main_Task.Stop;
   end Stop_Master_Task;
   
   
   
-  ----------------------------------------------------
-  -- GENERIC OBSERVER TASK                           -
-  ----------------------------------------------------
-  function Exit_Observer return Boolean is
+  ----------------------
+  -- Stop_Master_Task --
+  ----------------------
+  function Exit_Observer
+    return Boolean 
+  is
   begin
     if Ada_Mr.Master.Helper.Aborted.Get_Exit = true OR Ada_Mr.Master.Helper.Aborted.Get_Abort = true then
       return true;
@@ -123,7 +136,12 @@ package body Ada_Mr.Master.Main is
   end Exit_Observer;
   
   
-  procedure Observe is
+  
+  -------------
+  -- Observe --
+  -------------
+  procedure Observe 
+  is
     use GNAT.Sockets;
   begin
     loop
@@ -156,27 +174,35 @@ package body Ada_Mr.Master.Main is
           exit;
         end;
         
-    --    return true;
       end if;
     end loop;
     
     Worker.Stop_All;
-  --  Main_Task.Stop;
-  --  return false;
   end Observe;
-
-
-
-  function "="(Left, Right : Job_Entry_Record_Access) return Boolean is
+  
+  
+  
+  ---------
+  -- "=" --
+  ---------
+  function "="
+    (Left, Right : Job_Entry_Record_Access) 
+    return Boolean 
+  is
   begin
     return true;
   end "=";
   
   
   
-  protected body Jobs is
-  
-    procedure Add(Job : My_Job) is
+  ----------
+  -- Jobs --
+  ----------
+  protected body Jobs 
+  is
+    procedure Add
+      (Job : My_Job) 
+    is
       Job_Entry : Job_Entry_Record_Access := new Job_Entry_Record;
     begin
       Job_Entry.Job := Job;
@@ -188,7 +214,11 @@ package body Ada_Mr.Master.Main is
       Ada_Mr.Logger.Put_Line("--> Job successfully imported.", Ada_Mr.Logger.Info);
     end Add;
     
-    function Get_By_Id(Id : Natural) return Job_Entry_Record_Access is
+    
+    function Get_By_Id
+      (Id : Natural)
+      return Job_Entry_Record_Access 
+    is
       Cursor : Job_Entry_Record_Vectors.Cursor := Jobs.First;
     begin
       loop
@@ -208,7 +238,10 @@ package body Ada_Mr.Master.Main is
       return null;
     end Get_By_Id;
     
-    function Get_Next_Pending return Job_Entry_Record_Access is
+    
+    function Get_Next_Pending 
+      return Job_Entry_Record_Access 
+    is
       Cursor : Job_Entry_Record_Vectors.Cursor := Jobs.First;
     begin
       loop
@@ -229,17 +262,26 @@ package body Ada_Mr.Master.Main is
       Ada.Exceptions.Raise_Exception(Ada_Mr.Master.Helper.No_Job_Found'Identity, "No futher job found.");
     end Get_Next_Pending;
     
-    function Count return Natural is
+    
+    function Count
+      return Natural
+    is
     begin
       return Natural(Jobs.Length);
     end Count;
     
-    function Count_By_State(State : Ada_Mr.Master.Helper.Job_State) return Natural is
+    
+    function Count_By_State
+      (State : Ada_Mr.Master.Helper.Job_State)
+      return Natural 
+    is
       use Ada_Mr.Master.Helper;
       
       Counter : Natural := 0;
       
-      procedure Count(Cursor : Job_Entry_Record_Vectors.Cursor) is
+      procedure Count
+        (Cursor : Job_Entry_Record_Vectors.Cursor) 
+      is
         Element : Job_Entry_Record_Access := Job_Entry_Record_Vectors.Element(Cursor);
       begin
         if Element.State = State then
@@ -253,14 +295,16 @@ package body Ada_Mr.Master.Main is
       return Counter;
     end Count_By_State;
     
-    procedure Print is
-      
-      procedure Print(Cursor : Job_Entry_Record_Vectors.Cursor) is
+    
+    procedure Print 
+    is
+      procedure Print
+        (Cursor : Job_Entry_Record_Vectors.Cursor) 
+      is
         Element : Job_Entry_Record_Access := Job_Entry_Record_Vectors.Element(Cursor);
       begin
         Print_Job(Element.Job, Ada_Mr.Master.Helper.To_String(Element.State), ASU.To_String(Element.Message));
       end Print;
-      
     begin
       Ada.Text_IO.New_Line;
       Ada.Text_IO.Put_Line("Jobs:");
@@ -274,34 +318,65 @@ package body Ada_Mr.Master.Main is
   end Jobs;
   
   
-  procedure Change_Job_State(Job_Entry : in out Job_Entry_Record_Access; State : Ada_Mr.Master.Helper.Job_State; Message : String := "") is
+  
+  
+  ----------------------
+  -- Change_Job_State --
+  ----------------------
+  procedure Change_Job_State
+    (Job_Entry : in out Job_Entry_Record_Access;
+     State : Ada_Mr.Master.Helper.Job_State;
+     Message : String := "") 
+  is
   begin
     Job_Entry.State := State;
     
     if Message /= "" then
       Job_Entry.Message := ASU.To_Unbounded_String(Message);
     end if;
-    
   end Change_Job_State;
   
   
-  function Job_Entry_To_Xml(Job_Entry : Job_Entry_Record_Access) return String is
+  
+  ----------------------
+  -- Job_Entry_To_Xml --
+  ----------------------
+  function Job_Entry_To_Xml
+    (Job_Entry : Job_Entry_Record_Access)
+    return String
+  is
   begin
     return To_Xml(Job_Entry.Job);
   end Job_Entry_To_Xml;
   
-  function Job_Is_Null(Job_Entry : Job_Entry_Record_Access) return Boolean is
+  
+  
+  -----------------
+  -- Job_Is_Null --
+  -----------------
+  function Job_Is_Null
+    (Job_Entry : Job_Entry_Record_Access) 
+    return Boolean 
+  is
   begin
     return Job_Entry = Null;
   end Job_Is_Null;
   
   
+  
+  ------------
+  -- Worker --
+  ------------
   protected body Worker is
   
-    procedure Add(New_Worker : in out Ada_Mr.Master.Helper.Worker_Record_Access) is
+    procedure Add
+      (New_Worker : in out Ada_Mr.Master.Helper.Worker_Record_Access) 
+    is
       Cursor : Ada_Mr.Master.Helper.Worker_Entry_Vectors.Cursor := Worker.First;
       
-      function Create_Identifier return ASU.Unbounded_String is
+      function Create_Identifier
+        return ASU.Unbounded_String 
+      is
         Identifier : ASU.Unbounded_String;
       begin
         loop
@@ -359,7 +434,8 @@ package body Ada_Mr.Master.Main is
     end Add;
     
     
-    procedure Stop_All is
+    procedure Stop_All
+    is
       Worker_Access : Ada_Mr.Master.Helper.Worker_Record_Access;
     begin
       
@@ -394,7 +470,10 @@ package body Ada_Mr.Master.Main is
     end Stop_All;
     
     
-    function Find_By_Identifier(Identifier : String) return Ada_Mr.Master.Helper.Worker_Record_Access is
+    function Find_By_Identifier
+      (Identifier : String)
+      return Ada_Mr.Master.Helper.Worker_Record_Access 
+    is
       Cursor : Ada_Mr.Master.Helper.Worker_Entry_Vectors.Cursor := Worker.First;
     begin
       loop
@@ -416,7 +495,10 @@ package body Ada_Mr.Master.Main is
     end Find_By_Identifier;
     
     
-    function Exists_Identifier(Identifier : String) return Boolean is
+    function Exists_Identifier
+      (Identifier : String)
+      return Boolean 
+    is
       Worker : Ada_Mr.Master.Helper.Worker_Record_Access;
     begin
       Worker := Find_By_Identifier(Identifier);
@@ -426,7 +508,10 @@ package body Ada_Mr.Master.Main is
     end Exists_Identifier;
     
     
-    function Find_By_Access_Token_And_Type(Access_Token : String; W_Type : Ada_Mr.Helper.Worker_Type) return Ada_Mr.Master.Helper.Worker_Record_Access is
+    function Find_By_Access_Token_And_Type
+      (Access_Token : String; W_Type : Ada_Mr.Helper.Worker_Type) 
+      return Ada_Mr.Master.Helper.Worker_Record_Access 
+    is
       Cursor : Ada_Mr.Master.Helper.Worker_Entry_Vectors.Cursor := Worker.First;
     begin
       loop
@@ -446,11 +531,13 @@ package body Ada_Mr.Master.Main is
       end loop;
       
       Ada.Exceptions.Raise_Exception(Ada_Mr.Master.Helper.No_Worker_Found'Identity, "No worker found");
-      
     end Find_By_Access_Token_And_Type;
     
     
-    function Find_All_By_Type(W_Type : Ada_Mr.Helper.Worker_Type) return Ada_Mr.Master.Helper.Worker_Entry_Vectors.Vector is
+    function Find_All_By_Type
+      (W_Type : Ada_Mr.Helper.Worker_Type)
+      return Ada_Mr.Master.Helper.Worker_Entry_Vectors.Vector
+    is
       Type_Vector : Ada_Mr.Master.Helper.Worker_Entry_Vectors.Vector;
       
       procedure Find(C : Ada_Mr.Master.Helper.Worker_Entry_Vectors.Cursor) is
@@ -466,9 +553,12 @@ package body Ada_Mr.Master.Main is
       return Type_Vector;
     end Find_All_By_Type;
     
-    procedure Print is
-      
-      procedure Print(Cursor : Ada_Mr.Master.Helper.Worker_Entry_Vectors.Cursor) is
+    
+    procedure Print 
+    is
+      procedure Print
+        (Cursor : Ada_Mr.Master.Helper.Worker_Entry_Vectors.Cursor) 
+      is
         Worker_Entry : Ada_Mr.Master.Helper.Worker_Record_Access := Ada_Mr.Master.Helper.Worker_Entry_Vectors.Element(Cursor);
       begin
         Ada_Mr.Helper.Put(ASU.To_String(Worker_Entry.Identifier), 30, 2);
@@ -503,16 +593,25 @@ package body Ada_Mr.Master.Main is
   
   
   
-  ----------------------------------------------------
-  -- GENERIC CONSOLE METHODS                        --
-  ----------------------------------------------------
-  function Banner return String is
+  ------------
+  -- Banner --
+  ------------
+  function Banner 
+    return String 
+  is
   begin
     return "ADA MR Master";
   end Banner;
   
   
-  procedure Process_User_Input(User_Input : String; To_Controll : Master_Task_Access) is
+  
+  ------------------------
+  -- Process_User_Input --
+  ------------------------
+  procedure Process_User_Input
+    (User_Input : String; 
+    To_Controll : Master_Task_Access) 
+  is
   begin
     if (Is_Equal(User_Input, "help", true)) then
       Ada.Text_IO.Put_Line("");
@@ -543,9 +642,6 @@ package body Ada_Mr.Master.Main is
       Ada.Text_IO.Put_Line("Unknown command: " & User_Input);
     end if;
   end Process_User_Input;
-  
-  
-  
   
   
   

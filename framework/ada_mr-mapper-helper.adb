@@ -5,25 +5,40 @@ with Ada_Mr.Xml.Parser;
 
 package body Ada_Mr.Mapper.Helper is
   
+  -------------
+  -- Aborted --
+  -------------
   protected body Aborted is
   
-    procedure Stop is
+    procedure Stop 
+    is
     begin
       Abort_It := true;
     end Stop;
     
-    function Check return Boolean is
+    function Check
+     return Boolean
+    is
     begin
       return Abort_It;
     end Check;
     
   end Aborted;
   
-  procedure Send_Result(Reducer_Result_Map : Ada_Mr.Helper.String_String_Maps.Map) is
+  
+  
+  -----------------
+  -- Send_Result --
+  -----------------
+  procedure Send_Result
+    (Reducer_Result_Map : Ada_Mr.Helper.String_String_Maps.Map) 
+  is
     Master_Ip   : GNAT.Sockets.Inet_Addr_Type;
     Master_Port : GNAT.Sockets.Port_Type;
     
-    procedure Send_Result_To_Reducer(Cursor : Ada_Mr.Helper.String_String_Maps.Cursor) is
+    procedure Send_Result_To_Reducer
+      (Cursor : Ada_Mr.Helper.String_String_Maps.Cursor)
+    is
       Reducer_Identifier : String := Ada_Mr.Helper.String_String_Maps.Key(Cursor);
       Result             : String := Ada_Mr.Helper.String_String_Maps.Element(Reducer_Result_Map, Reducer_Identifier);
     begin

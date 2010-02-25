@@ -2,21 +2,20 @@ with Ada.Text_IO;
 with Ada.Strings.Unbounded;
 with Ada.IO_Exceptions;
 with Ada_Mr.Helper;
-
 with Ada.Characters.Handling;
 use Ada.Characters.Handling;
-
 with Ada_Mr.Xml;
 with Ada_Mr.Xml.Parser;
 with Ada_Mr.Xml.Helper;
-
 with Ada.Exceptions;
 with Ada_Mr.Reducer.Helper;
-
 with Ada_Mr.Logger;
 
 package body Ada_Mr.Reducer.Runner is 
   
+  ---------
+  -- Run --
+  ---------
   procedure Run is
     Master_Ip   : GNAT.Sockets.Inet_Addr_Type;
     Master_Port : GNAT.Sockets.Port_Type;

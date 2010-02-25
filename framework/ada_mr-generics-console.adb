@@ -5,13 +5,18 @@ with Ada_Mr.Logger;
 
 package body Ada_Mr.Generics.Console is
   
+  -------------
+  -- Console --
+  -------------
   task body Console is
     In_String           : String(1..20);
     In_Last             : Natural;
     To_Controll         : To_Controll_Task_Access;
   begin
-    accept Start(M_Arg : To_Controll_Task_Access) do
-      To_Controll         := M_Arg;
+    accept Start
+      (M_Arg : To_Controll_Task_Access)
+    do
+      To_Controll := M_Arg;
     end Start;
     
     Ada_Mr.Logger.Put_Line("Welcome to " & Banner & " console!", Ada_Mr.Logger.System);
@@ -38,9 +43,7 @@ package body Ada_Mr.Generics.Console is
       end if;
         
       Ada.Text_IO.Put(":> ");
-
     end loop;
-    
   end Console;
   
 end Ada_Mr.Generics.Console;

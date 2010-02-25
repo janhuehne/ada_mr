@@ -15,9 +15,9 @@ with Ada.Exceptions;
 
 package body Ada_Mr.Reducer.Main is
 
-----------------------------------------------------
--- REDUCER TASK                                   -
-----------------------------------------------------
+  ------------------
+  -- Reducer_Task --
+  ------------------
   task body Reducer_Task is
     Server_Task       : Server.Server.Server_Task;
     Runner_Task       : Runner.Runner.Runner_Task;
@@ -41,7 +41,9 @@ package body Ada_Mr.Reducer.Main is
     
     loop
       select
-        accept Start(Self : Reducer_Task_Access) do
+        accept Start
+          (Self : Reducer_Task_Access) 
+        do
           Main_Task := Self;
         end;
         
@@ -86,13 +88,23 @@ package body Ada_Mr.Reducer.Main is
   end Reducer_Task;
   
   
-  procedure Stop_Reducer_Task is
+  
+  -----------------------
+  -- Stop_Reducer_Task --
+  -----------------------
+  procedure Stop_Reducer_Task
+  is
   begin
     Main_Task.Stop;
   end Stop_Reducer_Task;
   
   
-  procedure Merge_Mapper_Results is
+  
+  --------------------------
+  -- Merge_Mapper_Results --
+  --------------------------
+  procedure Merge_Mapper_Results
+  is
     Stop_Map_Reduce_System : Boolean := False;
   begin
     loop
@@ -106,7 +118,6 @@ package body Ada_Mr.Reducer.Main is
         );
       end if;
     end loop;
-    
     
     if Stop_Map_Reduce_System = True then
       Ada_Mr.Logger.Put_Line("Stopping the complete map reduce system", Ada_Mr.Logger.System);
@@ -134,10 +145,12 @@ package body Ada_Mr.Reducer.Main is
   
   
   
-----------------------------------------------------
--- GENERIC CONSOLE INSTANCE                       --
-----------------------------------------------------
-  function Banner return String is
+  ------------
+  -- Banner --
+  ------------
+  function Banner 
+    return String 
+  is
   begin
     return "ADA MR Reducer";
   end Banner;

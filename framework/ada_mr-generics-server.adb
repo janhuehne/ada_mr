@@ -10,7 +10,9 @@ with Ada_Mr.Logger;
 
 package body Ada_Mr.Generics.Server is
   use GNAT.Sockets;
-  
+  -----------------
+  -- Server_Task --
+  -----------------
   task body Server_Task is
     Server          : Socket_Type;
     New_Sock        : Socket_Type;
@@ -28,7 +30,10 @@ package body Ada_Mr.Generics.Server is
   begin
     loop
       select
-        accept Start(Host : GNAT.Sockets.Inet_Addr_Type; Port : GNAT.Sockets.Port_Type) do
+        accept Start(
+          Host : GNAT.Sockets.Inet_Addr_Type; 
+          Port : GNAT.Sockets.Port_Type) 
+        do
           Addr.Addr := Host;
           Addr.Port := Port;
         end Start;
@@ -55,7 +60,8 @@ package body Ada_Mr.Generics.Server is
         Empty(Accept_Set);
         Empty(WSet);
         
-        Ada_Mr.Logger.Put_Line("Ready to accept connections on " & Image(Addr.Addr) & " with port " & Addr.Port'Img & ".", Ada_Mr.Logger.System);
+        Ada_Mr.Logger.Put_Line("Ready to accept connections on " & Image(Addr.Addr) 
+          & " with port " & Addr.Port'Img & ".", Ada_Mr.Logger.System);
         
         loop
           exit when Exit_Server;

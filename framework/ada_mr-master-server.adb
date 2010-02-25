@@ -16,7 +16,12 @@ with Ada_Mr.Crypt.Helper;
 
 package body Ada_Mr.Master.Server is 
   
-  function Exit_Server return Boolean is
+  -----------------
+  -- Exit_Server --
+  -----------------
+  function Exit_Server
+    return Boolean 
+  is
   begin
     if Ada_Mr.Master.Helper.Aborted.Get_Exit = true OR Ada_Mr.Master.Helper.Aborted.Get_Abort = true then
       return true;
@@ -26,7 +31,15 @@ package body Ada_Mr.Master.Server is
   end Exit_Server;
   
   
-  procedure Process_Request(S : Stream_Access; From : Ada_Mr.Helper.Worker_Type; Xml_Root : Ada_Mr.Xml.Node_Access) is
+  
+  ---------------------
+  -- Process_Request --
+  ---------------------
+  procedure Process_Request
+    (S        : Stream_Access;
+     From     : Ada_Mr.Helper.Worker_Type;
+     Xml_Root : Ada_Mr.Xml.Node_Access) 
+  is
     use Ada_Mr.Helper;
   begin
     

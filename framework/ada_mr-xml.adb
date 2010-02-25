@@ -3,19 +3,33 @@ with Ada.Exceptions;
 
 package body Ada_Mr.Xml is
   
-  procedure Add_Node(Root_Node : in out Node_Access; Child : in out Node_Access) is
+  --------------
+  -- Add_Node --
+  --------------
+  procedure Add_Node
+    (Root_Node : in out Node_Access;
+     Child     : in out Node_Access)
+  is
   begin
     Child.Parent := Root_Node;
     Root_Node.Children.Append(Child);
   end Add_Node;
   
-  procedure Print(Root_Node : in Node_Access; Depth : Integer := 0) is
-    
-    procedure Iterate_Vector(c: Node_Access_Vector.Cursor) is
+  
+  
+  -----------
+  -- Print --
+  -----------
+  procedure Print
+    (Root_Node : in Node_Access;
+     Depth     : Integer := 0) 
+  is
+    procedure Iterate_Vector
+      (C : Node_Access_Vector.Cursor) 
+    is
     begin
-      Print(Node_Access_Vector.Element(c), Depth + 1);
+      Print(Node_Access_Vector.Element(C), Depth + 1);
     end Iterate_Vector;
-    
   begin
     if Root_Node.Children.Is_Empty = true then
       Ada.Text_IO.Put((1 .. Depth => ' '));
@@ -31,14 +45,23 @@ package body Ada_Mr.Xml is
   end Print;
   
   
-  function To_String(Root_Node : in Node_Access; Depth : Integer := 0) return String is
+  
+  ---------------
+  -- To_String --
+  ---------------
+  function To_String
+    (Root_Node : in Node_Access;
+     Depth     : Integer := 0) 
+    return String 
+  is
     Result : ASU.Unbounded_String;
     
-    procedure Iterate_Vector(c: Node_Access_Vector.Cursor) is
+    procedure Iterate_Vector
+      (C : Node_Access_Vector.Cursor) 
+    is
     begin
-      ASU.Append(Result, To_String(Node_Access_Vector.Element(c), Depth + 1));
+      ASU.Append(Result, To_String(Node_Access_Vector.Element(C), Depth + 1));
     end Iterate_Vector;
-    
   begin
     if Root_Node.Children.Is_Empty = true then
       ASU.Append(Result, "<" & ASU.To_String(Root_Node.Tag) & ">");
@@ -51,18 +74,24 @@ package body Ada_Mr.Xml is
     end if;
     
     return ASU.To_String(Result);
-    
   end To_String;
   
   
-  function Node_Content_To_String(Root_Node : in Node_Access) return String is
+  
+  ----------------------------
+  -- Node_Content_To_String --
+  ----------------------------
+  function Node_Content_To_String
+    (Root_Node : in Node_Access)
+    return String 
+  is
     Result : ASU.Unbounded_String;
     
-    procedure Iterate_Vector(c: Node_Access_Vector.Cursor) is
+    procedure Iterate_Vector
+      (C : Node_Access_Vector.Cursor) is
     begin
-      ASU.Append(Result, To_String(Node_Access_Vector.Element(c), 0));
+      ASU.Append(Result, To_String(Node_Access_Vector.Element(C), 0));
     end Iterate_Vector;
-    
   begin
     if Root_Node.Children.Is_Empty = true then
       ASU.Append(Result, "<" & ASU.To_String(Root_Node.Tag) & ">");
@@ -78,7 +107,15 @@ package body Ada_Mr.Xml is
   end Node_Content_To_String;
   
   
-  function Find_Child_With_Tag(Root_Node : in Node_Access; Tag : in String) return Node_Access is
+  
+  -------------------------
+  -- Find_Child_With_Tag --
+  -------------------------
+  function Find_Child_With_Tag
+    (Root_Node : in Node_Access;
+     Tag       : in String)
+    return Node_Access
+  is
   begin
     if ASU.To_String(Root_Node.Tag) = Tag then
       return Root_Node;
@@ -101,7 +138,16 @@ package body Ada_Mr.Xml is
     return null;
   end Find_Child_With_Tag;
   
-  function Get_Value(Root : Node_Access; Tag : String) return String is
+  
+  
+  ---------------
+  -- Get_Value --
+  ---------------
+  function Get_Value
+    (Root : Node_Access; 
+     Tag  : String)
+    return String 
+  is
     Found_Node : Node_Access := Find_Child_With_Tag(Root, Tag);  
   begin
     return ASU.To_String(Found_Node.Value);
@@ -109,7 +155,16 @@ package body Ada_Mr.Xml is
     when CONSTRAINT_ERROR => Ada.Exceptions.Raise_Exception(Node_Not_Found'Identity, "Tag """ & Tag & """ not found.");
   end Get_Value;
   
-  function Get_Value_Or_Empty(Root : Node_Access; Tag : String) return String is
+  
+  
+  ------------------------
+  -- Get_Value_Or_Empty --
+  ------------------------
+  function Get_Value_Or_Empty
+    (Root : Node_Access; 
+     Tag  : String) 
+    return String 
+  is
   begin
     return Get_Value(Root, Tag);
   exception
@@ -117,13 +172,29 @@ package body Ada_Mr.Xml is
   end Get_Value_Or_Empty;
   
   
-  function Get_Tag(Root : Node_Access) return String is
+  
+  -------------
+  -- Get_Tag --
+  -------------
+  function Get_Tag
+    (Root : Node_Access)
+    return String 
+  is
   begin
     return ASU.To_String(Root.Tag);
   end Get_Tag;
   
-  function "="(Left, Right : Ada_Mr.Xml.Node_Access) return Boolean is
+  
+  
+  ---------
+  -- "=" --
+  ---------
+  function "="
+    (Left, Right : Ada_Mr.Xml.Node_Access)
+    return Boolean 
+  is
   begin
     return true;
   end "=";
+  
 end Ada_Mr.Xml;

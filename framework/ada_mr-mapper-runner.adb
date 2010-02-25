@@ -1,26 +1,19 @@
---with Ada_Mr.Helper.Worker_Type.Text_IO;
---with Ada_Mr.Helper.Worker_Type.Strings.Unbounded;
---with Ada_Mr.Helper.Worker_Type.IO_Exceptions;
---
---with Ada_Mr.Helper.Worker_Type.Characters.Handling;
---use Ada_Mr.Helper.Worker_Type.Characters.Handling;
 with Ada.Exceptions;
-
 with Ada_Mr.Xml.Parser;
 with Ada_Mr.Xml.Helper;
-
---with Ada_Mr.Helper.Worker_Type.Exceptions;
 with Ada_Mr.Mapper.Helper;
-
 with Ada_Mr.Logger;
 with Ada_Mr.Helper;
-
 with Ada.Calendar;
 with GNAT.Calendar.Time_IO;
 
 package body Ada_Mr.Mapper.Runner is 
   
-  procedure Run is
+  ---------
+  -- Run --
+  ---------
+  procedure Run 
+  is
     Master_Ip   : GNAT.Sockets.Inet_Addr_Type;
     Master_Port : GNAT.Sockets.Port_Type;
   begin

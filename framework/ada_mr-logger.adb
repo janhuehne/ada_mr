@@ -6,20 +6,36 @@ with Ada_Mr.Helper;
 
 package body Ada_Mr.Logger is
   
-  procedure Set_Output_Level(Level : Log_Level) is
+  ----------------------
+  -- Set_Output_Level --
+  ----------------------
+  procedure Set_Output_Level
+    (Level : Log_Level)
+  is
   begin
     Output_Level := Level;
   end Set_Output_Level;
   
   
-  procedure Set_Output_Level(Level : String) is
+  procedure Set_Output_Level
+    (Level : String)
+  is
   begin
     Set_Output_Level(
       From_String(Level)
     );
   end Set_Output_Level;
   
-  procedure Put(Item : String; Level : Log_Level; Prefix : String := "") is
+  
+  
+  ---------
+  -- Put --
+  ---------
+  procedure Put
+    (Item   : String;
+     Level  : Log_Level;
+     Prefix : String := "") 
+  is
   begin
     if Has_Correct_Level(Level) then
       if Prefix /= "" then
@@ -31,7 +47,15 @@ package body Ada_Mr.Logger is
   end Put;
   
   
-  procedure Put_Line(Item : String; Level : Log_Level; Prefix : String := "") is
+  
+  --------------
+  -- Put_Line --
+  --------------
+  procedure Put_Line
+    (Item   : String;
+     Level  : Log_Level;
+     Prefix : String := "")
+  is
   begin
     if Has_Correct_Level(Level) then
       if Prefix /= "" then
@@ -43,43 +67,88 @@ package body Ada_Mr.Logger is
   end Put_Line;
   
   
-  procedure Info(Item : String; Prefix : String := "") is
+  
+  ----------
+  -- Info --
+  ----------
+  procedure Info
+    (Item   : String;
+     Prefix : String := "") 
+  is
   begin
     Put_Line(Item, Info, Prefix);
   end Info;
   
   
-  procedure Warn(Item : String; Prefix : String := "") is
+  
+  ----------
+  -- Warn --
+  ----------
+  procedure Warn
+    (Item : String;
+     Prefix : String := "") 
+  is
   begin
     Put_Line(Item, Warn, Prefix);
   end Warn;
   
   
-  procedure Error(Item : String; Prefix : String := "") is
+  
+  -----------
+  -- Error --
+  -----------
+  procedure Error
+    (Item : String;
+     Prefix : String := "")
+  is
   begin
     Put_Line(Item, Err, Prefix);
   end Error;
   
   
-  procedure User(Item : String; Prefix : String := "") is
+  
+  ----------
+  -- User --
+  ----------
+  procedure User
+    (Item : String;
+     Prefix : String := "")
+  is
   begin
     Put_Line(Item, User, Prefix);
   end User;
   
   
-  procedure System(Item : String; Prefix : String := "") is
+  
+  ------------
+  -- System --
+  ------------
+  procedure System
+    (Item : String;
+     Prefix : String := "")
+  is
   begin
     Put_Line(Item, System, Prefix);
   end System;
   
   
+  
+  -----------
+  -- Debug --
+  -----------
   procedure Debug(Item : String; Prefix : String := "") is
   begin
     Put_Line(Item, Debug, Prefix);
   end Debug;
   
   
-  procedure New_Line(Level : Log_Level) is
+  
+  --------------
+  -- New_Line --
+  --------------
+  procedure New_Line
+    (Level : Log_Level)
+  is
   begin
     if Has_Correct_Level(Level) then
       Ada.Text_IO.New_Line;
@@ -87,13 +156,26 @@ package body Ada_Mr.Logger is
   end New_Line;
   
   
-  function Now return String is
+  
+  ---------
+  -- Now --
+  ---------
+  function Now
+    return String 
+  is
   begin
     return GNAT.Calendar.Time_IO.Image(Ada.Calendar.Clock, "%Y-%m-%d %H:%M:%S");
   end Now;
   
   
-  function Has_Correct_Level(Level : Log_Level) return Boolean is
+  
+  -----------------------
+  -- Has_Correct_Level --
+  -----------------------
+  function Has_Correct_Level
+    (Level : Log_Level) 
+    return Boolean 
+  is
   begin
     case Output_Level is
       when Debug => 
@@ -117,7 +199,15 @@ package body Ada_Mr.Logger is
     return false;
   end Has_Correct_Level;
   
-  function Image(Level : Log_Level) return String is
+  
+  
+  -----------
+  -- Image --
+  -----------
+  function Image
+    (Level : Log_Level)
+    return String
+  is
   begin
     case Level is
       when Info => return "INFO";
@@ -130,7 +220,14 @@ package body Ada_Mr.Logger is
   end Image;
   
   
-  function From_String(Level : String) return Log_Level is
+  
+  -----------------
+  -- From_String --
+  -----------------
+  function From_String
+    (Level : String)
+    return Log_Level
+  is
   begin
     if Ada_Mr.Helper.Is_Equal("info", Level, true) then
       return Info;
