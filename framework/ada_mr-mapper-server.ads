@@ -33,8 +33,8 @@
 --  </AUTHOR>
 --
 --  <PURPOSE>
---    Provides the runner package for the Ada_Mr.Mapper component. This package
---    contains logic for local mapper server.
+--    Provides the server package for the Ada_Mr.Mapper component. This package
+--    contains the local server to handle incomming requests.
 --  </PURPOSE>
 -------------------------------------------------------------------------------
 

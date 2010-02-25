@@ -1,36 +1,79 @@
+-------------------------------------------------------------------------------
+-- <STRONG>Copyright &copy; 2009, 2010 by Jan-Hendrik H&uuml;hne.</STRONG>
+-- <BLOCKQUOTE>
+--   This program is free software; you can redistribute it and/or
+--   modify it under the terms of the GNU General Public License as
+--   published by the Free Software Foundation; either version 2 of the
+--   License, or (at your option) any later version.
+-- </BLOCKQUOTE>
+-- <BLOCKQUOTE>
+--   This program is distributed in the hope that it will be useful,
+--   but WITHOUT ANY WARRANTY; without even the implied warranty of
+--   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+--   General Public License for more details.
+-- </BLOCKQUOTE>
+-- <BLOCKQUOTE>
+--   You should have received a copy of the GNU General Public License
+--   along with this program; if not, write to the Free Software
+--   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+--   02111-1307, USA.
+-- </BLOCKQUOTE>
+-- <BLOCKQUOTE>
+--   As a special exception, if other files instantiate generics from
+--   this unit, or you link this unit with other files to produce an
+--   executable, this unit does not by itself cause the resulting
+--   executable to be covered by the GNU General Public License. This
+--   exception does not however invalidate any other reasons why the
+--   executable file might be covered by the GNU Public License.
+-- </BLOCKQUOTE>
+--
+--  <AUTHOR>
+--    Bauhaus-University Weimar<br />
+--    Jan-Hendrik H&uuml;hne <jan.huehne@uni-weimar.de>
+--  </AUTHOR>
+--
+--  <PURPOSE>
+--    Provides the main package for the Ada_Mr.Master component.
+--  </PURPOSE>
+-------------------------------------------------------------------------------
+
 with Ada.Containers.Vectors;
 with Ada.Strings.Unbounded;
-
 with Ada_Mr.Xml;
 with Ada_Mr.Master.Helper;
 with Ada_Mr.Master.Server;
 with Ada_Mr.Generics.Console;
-  with Ada_Mr.Generics.Runner;
-
+with Ada_Mr.Generics.Runner;
 with Ada_Mr.Helper;
 
 generic
   type My_Job is private;
-  with function From_Xml(Xml_Node : Ada_Mr.Xml.Node_Access) return My_Job;
-  with function To_Xml(Job : in My_Job) return String;
-  with procedure Set_Job_Id(The_Job : in out My_Job);
-  with function Get_Job_Id(Job : in My_Job) return Natural;
-  with procedure Print_Job(Job : in My_Job; State : String; Message : String);
+  with function From_Xml
+    (Xml_Node : Ada_Mr.Xml.Node_Access)
+    return My_Job;
+  with function To_Xml
+    (Job : in My_Job)
+    return String;
+  with procedure Set_Job_Id
+    (The_Job : in out My_Job);
+  with function Get_Job_Id
+    (Job : in My_Job)
+    return Natural;
+  with procedure Print_Job
+    (Job : in My_Job; 
+     State : String; 
+     Message : String);
   with procedure Split_Raw_Data;
-  with function Get_Next_Raw_Job return My_Job;
+  with function Get_Next_Raw_Job
+    return My_Job;
   
 package Ada_Mr.Master.Main is
   
-----------------------------------------------------
--- PACKAGE RENAMES                                 -
-----------------------------------------------------
   package ASU renames Ada.Strings.Unbounded;
-
-
-
-----------------------------------------------------
--- PACKAGE INSTANCES                               -
-----------------------------------------------------
+  
+  
+  
+  
   package Job_Vector is new Ada.Containers.Vectors(
     Element_Type => My_Job, 
     Index_Type => Positive
@@ -38,9 +81,7 @@ package Ada_Mr.Master.Main is
   
   
   
-----------------------------------------------------
--- MASTER TASK                                     -
-----------------------------------------------------
+  
   type Master_Task;
   type Master_Task_Access is access Master_Task;
   
@@ -49,13 +90,18 @@ package Ada_Mr.Master.Main is
     entry Stop;
   end Master_Task;
   
-  procedure Stop_Master_Task;
   
-----------------------------------------------------
--- GENERIC OBSERVER TASK                           -
-----------------------------------------------------
+  procedure Stop_Master_Task;
+  -- Stops the master task.
+  
+  
+  
+  
   function Exit_Observer return Boolean;
+  -- Returns <code>True</code> when the observer should terminate.
+  
   procedure Observe;
+  -- Observes serval variables and states.
   
   package Observer is new Ada_Mr.Generics.Runner(
     Observe
@@ -65,9 +111,7 @@ package Ada_Mr.Master.Main is
   
   
   
-----------------------------------------------------
--- JOB ENTRY RECORD DEFINITIONS AND METHODS        -
-----------------------------------------------------
+  
   type Job_Entry_Record is record
     Job     : My_Job;
     State   : Ada_Mr.Master.Helper.Job_State := Ada_Mr.Master.Helper.Pending;
@@ -76,7 +120,11 @@ package Ada_Mr.Master.Main is
   
   type Job_Entry_Record_Access is access Job_Entry_Record;
   
-  function "="(Left, Right : Job_Entry_Record_Access) return Boolean;
+  function "="
+    (Left, Right : Job_Entry_Record_Access)
+    return Boolean;
+  -- Returns <code>True</code> if <code>left = right</code>.
+  
   
   package Job_Entry_Record_Vectors is new Ada.Containers.Vectors(
     Element_Type => Job_Entry_Record_Access,
@@ -85,21 +133,40 @@ package Ada_Mr.Master.Main is
   );
   
   
-  function Job_Entry_To_Xml(Job_Entry : Job_Entry_Record_Access) return String;
-  procedure Change_Job_State(Job_Entry : in out Job_Entry_Record_Access; State : Ada_Mr.Master.Helper.Job_State; Message : String := "");
+  function Job_Entry_To_Xml
+    (Job_Entry : Job_Entry_Record_Access)
+    return String;
+  -- Converts a <code>Job_Entry</code> into a xml string.
+  
+  
+  procedure Change_Job_State
+    (Job_Entry : in out Job_Entry_Record_Access; 
+     State     : Ada_Mr.Master.Helper.Job_State;
+     Message   : String := "");
+  -- Changes the state of a job and sets a message.
   
   
   
-----------------------------------------------------
--- PROTECTED TYPE TO HANDLE JOBS                   -
-----------------------------------------------------
+  
   protected Jobs is
-    procedure Add(Job : My_Job);
+    procedure Add
+      (Job : My_Job);
+    -- Adds a new job.
+    
     function Get_By_Id(Id : Natural) return Job_Entry_Record_Access;
+    -- Returns a job specified by the <code>Id</code>.
+      
     function Get_Next_Pending return Job_Entry_Record_Access;
+    -- Returns a job with state <code>Pending</code>.
+    
     function Count return Natural;
+    -- Counts all jobs and returns the results.
+    
     function Count_By_State(State : Ada_Mr.Master.Helper.Job_State) return Natural;
+    -- Counts all jobs with a specific state and returns the result.
+    
     procedure Print;
+    -- Prints a job on STD/IO.
   private
     Jobs : Job_Entry_Record_Vectors.Vector;
   end Jobs;
@@ -110,13 +177,36 @@ package Ada_Mr.Master.Main is
 -- PROTECTED TYPE TO HANDLE JOBS                   -
 ----------------------------------------------------
   protected Worker is
-    procedure Add(New_Worker : in out Ada_Mr.Master.Helper.Worker_Record_Access);
+    procedure Add
+      (New_Worker : in out Ada_Mr.Master.Helper.Worker_Record_Access);
+    -- Adds a new worker.
+    
     procedure Stop_All;
-    function Exists_Identifier(Identifier : String) return Boolean;
-    function Find_By_Identifier(Identifier : String) return Ada_Mr.Master.Helper.Worker_Record_Access;
-    function Find_By_Access_Token_And_Type(Access_Token : String; W_Type : Ada_Mr.Helper.Worker_Type) return Ada_Mr.Master.Helper.Worker_Record_Access;
-    function Find_All_By_Type(W_Type : Ada_Mr.Helper.Worker_Type) return Ada_Mr.Master.Helper.Worker_Entry_Vectors.Vector;
+    -- Stop all connected workers.
+    
+    function Exists_Identifier
+      (Identifier : String)
+      return Boolean;
+    -- Returns <code>True</code> if a worker with the <code>Identifier</code> is connected.
+      
+    function Find_By_Identifier
+      (Identifier : String) 
+      return Ada_Mr.Master.Helper.Worker_Record_Access;
+    -- Returns the worker with the <code>Identifier</code>.
+    
+    function Find_By_Access_Token_And_Type
+      (Access_Token : String; 
+       W_Type       : Ada_Mr.Helper.Worker_Type)
+      return Ada_Mr.Master.Helper.Worker_Record_Access;
+    -- Returns the worker with the specified <code>access_token</code> and the worker type.
+    
+    function Find_All_By_Type
+      (W_Type : Ada_Mr.Helper.Worker_Type)
+      return Ada_Mr.Master.Helper.Worker_Entry_Vectors.Vector;
+    -- Returns a vector with all workers matched the given worker type.
+    
     procedure Print;
+    -- Prints the worker details on STD/IO.
   private
     Worker : Ada_Mr.Master.Helper.Worker_Entry_Vectors.Vector;
     
@@ -126,9 +216,7 @@ package Ada_Mr.Master.Main is
   
   
   
-----------------------------------------------------
--- GENERIC SERVER INSTANCE                         -
-----------------------------------------------------
+  
   package Server is new Ada_Mr.Master.Server(
     My_Job,
     Job_Entry_Record_Access,
@@ -146,12 +234,14 @@ package Ada_Mr.Master.Main is
   
   
   
-----------------------------------------------------
--- GENERIC CONSOLE INSTANCE                       --
-----------------------------------------------------
+  
   function Banner return String;
---  procedure Parse_Configuration(Config_Xml : Ada_Mr.Xml.Node_Access);
-  procedure Process_User_Input(User_Input : String; To_Controll : Master_Task_Access);
+  -- Returns the name of this component
+  
+  procedure Process_User_Input
+    (User_Input  : String; 
+     To_Controll : Master_Task_Access);
+  -- Processes the user inputs
   
   package Console is new Ada_Mr.Generics.Console(
     Master_Task_Access,
@@ -159,8 +249,6 @@ package Ada_Mr.Master.Main is
     Process_User_Input
   );
   
-  
 private
   Main_Task : Master_Task_Access;
-  
 end Ada_Mr.Master.Main;
