@@ -1,0 +1,58 @@
+
+
+          _____               __  __ _____      _____          _                     
+    /\   |  __ \   /\        |  \/  |  __ \    |  __ \        | |                    
+   /  \  | |  | | /  \ ______| \  / | |__) |   | |__) |___  __| |_   _  ___ ___ _ __ 
+  / /\ \ | |  | |/ /\ \______| |\/| |  _  /    |  _  // _ \/ _` | | | |/ __/ _ \ '__|
+ / ____ \| |__| / ____ \     | |  | | | \ \    | | \ \  __/ (_| | |_| | (__  __/ |   
+/_/    \_\_____/_/    \_\    |_|  |_|_|  \_\   |_|  \_\___|\__,_|\__,_|\___\___|_|   
+
+
+
+[2010-02-25 19:53:30][WARN] Configuration file: "reducer_config.xml" not found!
+
+
+**************************************
+Configuration parameter
+--------------------------------------
+LOCAL_SERVER-PORT                       9000                                                        
+SETTINGS-TIMEOUT_CONNECTION_TRIES       5                                                           
+MASTER-IP                               127.0.0.1                                                   
+SETTINGS-MAX_CONNECTION_TRIES           5                                                           
+LOCAL_SERVER-IP                         0.0.0.0                                                     
+CRYPTO-HMAC                             Default_Not_Secure                                          
+MASTER-PORT                             7000                                                        
+CONFIG_FILE                             reducer_config.xml                                          
+SETTINGS-LOG_LEVEL                      err                                                         
+
+
+[2010-02-25 19:53:30][SYSTEM] Server task started
+[2010-02-25 19:53:30][SYSTEM] Ready to accept connections on 0.0.0.0 with port  9000.
+[2010-02-25 19:53:30][SYSTEM] Runner task started!
+[2010-02-25 19:53:30][SYSTEM] Runner task started!
+Reducer result:
+  'A':  6
+  'H':  2
+  'O':  3
+  '!':  1
+  'D':  2
+  'R':  2
+  'N':  2
+  'U':  1
+  ' ':  9
+  '.':  1
+  'C':  4
+  'M':  1
+  'T':  4
+  'B':  1
+  'I':  5
+  'P':  2
+  'W':  1
+  'E':  4
+  'L':  5
+  'S':  3
+[2010-02-25 19:53:31][SYSTEM] Stopping all reducer tasks
+[2010-02-25 19:53:32][SYSTEM] Terminating runner task
+[2010-02-25 19:53:32][SYSTEM] Terminating runner task
+[2010-02-25 19:53:32][SYSTEM] Runner task terminated
+[2010-02-25 19:53:32][SYSTEM] Runner task terminated
