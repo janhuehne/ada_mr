@@ -1,3 +1,6 @@
+#! /usr/bin/env python
+import os
+
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation; either version 2 of the
@@ -20,8 +23,6 @@
 # exception does not however invalidate any other reasons why the
 # executable file might be covered by the GNU Public License.
 
-#! /usr/bin/env python
-import os
 
 # readin workspace
 default_workspace = '~/ada_mr'
