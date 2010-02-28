@@ -1,0 +1,15 @@
+To run the test, please follow these instructions:
+
+1.) Run the script "run_framework.sh"
+    --> Master, Reducer and Mapper will be compiled and started.
+    
+2.) Check the reducer logfiles: tail -f reducer_1.log reducer_2.log 
+
+3.) If a collision is found, kill all processes (ps) manualy. (kill -9 process_id)
+
+4.) Compile the test program with make
+
+4.) Run the following command: "./md5_collision_search_test reducer_1.log 14" 
+    or "./md5_collision_search_test reducer_2.log 14".
+
+5.) This program checks, if there is a collision.
